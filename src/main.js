@@ -6,8 +6,6 @@ window.onload = () => init();
 const game = new GameManager();
 
 function init() {
-    console.log("Starting game");
-
     setCanvasSize();
     window.onresize = () => {
         setCanvasSize();
@@ -15,12 +13,19 @@ function init() {
     }
 
     game.initialize();
-    window.requestAnimationFrame(renderLoop);
+    window.requestAnimationFrame(gameLoop);
 }
 
-function renderLoop() {
+let previousTime = 0;
+
+function gameLoop(timestamp) {
+    // Calculate time since last frame
+    const deltaTime = timestamp - previousTime
+    previousTime = timestamp;
+
+    game.update(deltaTime);
     game.render(game.player.camera);
-    window.requestAnimationFrame(renderLoop);
+    window.requestAnimationFrame(gameLoop);
 }
 
 // Set canvas to cover whole screen

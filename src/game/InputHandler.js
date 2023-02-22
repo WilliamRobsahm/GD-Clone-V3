@@ -4,7 +4,7 @@ export default class InputHandler {
     constructor(game) {
         this.game = game;
 
-        this.mouseClick = true
+        this.click = false;
         this.mouseX = 0;
         this.mouseY = 0;
 
@@ -29,12 +29,12 @@ export default class InputHandler {
             event.preventDefault();
 
             if(event.button == 0) {
-                this.mouseClick = true;
+                this.click = true;
             }
         });
 
         document.addEventListener('mouseup', event => {
-            this.mouseClick = false;
+            this.click = false;
         });
 
         document.addEventListener('mousemove', event => {
@@ -48,7 +48,17 @@ export default class InputHandler {
         });
     }
 
-    getClick() { return this.mouseClick }
+    getJump() {
+        if(this.keys.includes(" ") || 
+            this.keys.includes("w") || 
+            this.keys.includes("W") || 
+            this.keys.includes("arrowUp")) {
+            return true;
+        }
+        return this.click;
+    }
+
+    getClick() { return this.click }
 
     getMouseX() { return this.mouseX }
 

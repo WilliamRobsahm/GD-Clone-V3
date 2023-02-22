@@ -16,11 +16,11 @@ export default class GameRenderer {
         ctx.clearRect(camera.x, camera.y, canvas.width, canvas.height);
     }
 
-    FPS(physicsFPS, renderFPS, camera) {
+    renderFPS(fps, camera) {
         ctx.fillStyle = "white";
         ctx.textAlign = "right";
         ctx.font = "16px Arial"
-        ctx.fillText(`${physicsFPS} / ${renderFPS}`, camera.getRightX() - 20, camera.getY() + 30);
+        ctx.fillText(`${fps} FPS`, camera.getRightX() - 20, camera.getY() + 30);
     }
 
     render() {

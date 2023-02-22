@@ -25,6 +25,8 @@ export default class Player {
         this.y = 0 - this.game.defaultSize;
         this.dx = 0;
         this.dy = 0;
+        this.grounded = false;
+        this.gravity = 0;
 
         this.size = this.game.defaultSize;
 
@@ -32,8 +34,8 @@ export default class Player {
         this.setSpeed("NORMAL");
     }
 
-    getX() { return this.x }
-    getY() { return this.y }
+    getX() { return Math.floor(this.x) }
+    getY() { return Math.floor(this.y) }
 
     getDX() { return this.dx }
     getDY() { return this.dy }
@@ -61,13 +63,33 @@ export default class Player {
             return;
         }
 
-        this.dx = (this.speeds[speed] * this.game.defaultSize) / this.game.FPS;
+        this.dx = (this.speeds[speed] * this.game.defaultSize / 60);
     }
 
-    update() {
-        this.x += this.dx;
-        this.y += this.dy;
+    handleInput(input) {
+        this.gamemode.handleInput(input);
+    }
+
+    update(input, d) {
+        this.grounded = false;
+        if(this.floorCollision(0,null)) {
+            this.y = 0 - this.getHeight();
+            this.dy = 0;
+            this.grounded = true;
+        };
+        this.gamemode.updateGravity(d);
+        this.gamemode.handleInput(input);
+        this.x += this.dx * d;
+        this.y += this.dy * d;
         this.camera.updateX();
+    }
+
+    floorCollision(lowerFloorY, upperFloorY) {
+        if(this.getY() + this.getHeight() + this.dy >= lowerFloorY) {
+            return true;
+        }
+
+        return false;
     }
 
     render() {
