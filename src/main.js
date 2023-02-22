@@ -9,14 +9,17 @@ function init() {
     console.log("Starting game");
 
     setCanvasSize();
-    window.onresize = () => setCanvasSize();
+    window.onresize = () => {
+        setCanvasSize();
+        game.player.camera.realign();
+    }
 
     game.initialize();
     window.requestAnimationFrame(renderLoop);
 }
 
 function renderLoop() {
-    game.render();
+    game.render(game.player.camera);
     window.requestAnimationFrame(renderLoop);
 }
 

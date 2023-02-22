@@ -2,35 +2,22 @@ export default class FPSCounter {
     constructor(game) {
         this.game = game; // Pointer
 
-        this.renderFPS = {
-            counter: 0,
-            display: 0,
-        }
+        this.counter = 0;
+        this.fps = 0;
 
-        this.physicsFPS = {
-            counter: 0,
-            display: 0,
-        }
-
-        let updateInterval = setInterval(this.updateDisplay.bind(this),1000);
+        this.updateInterval = setInterval(() => this.updateDisplay(), 1000);
     }
 
-    getRenderFPS() { return this.renderFPS.display }
-
-    getPhysicsFPS() { return this.physicsFPS.display }
-
-    incrementRender() {
-        this.renderFPS.counter += 1;
+    getFPS() { 
+        return this.fps
     }
 
-    incrementPhysics() {
-        this.physicsFPS.counter += 1;
+    increment() {
+        this.counter += 1;
     }
 
     updateDisplay() {
-        this.renderFPS.display = this.renderFPS.counter;
-        this.physicsFPS.display = this.physicsFPS.counter;
-        this.renderFPS.counter = 0;
-        this.physicsFPS.counter = 0;
+        this.fps = this.counter;
+        this.counter = 0;
     }
 }

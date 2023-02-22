@@ -26,4 +26,13 @@ export default class GameRenderer {
     render() {
         
     }
+
+    renderFloor(camera, floorHeight) {
+        ctx.fillStyle = "white";
+        ctx.fillRect(camera.getX(), 0, camera.getWidth(), floorHeight); 
+    }
+
+    renderObject(object) {
+        object.render();
+    }
 }

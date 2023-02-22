@@ -7,29 +7,32 @@ export default class PlayerCamera {
         this.y = 0;
         this.w = canvas.width;
         this.h = canvas.height;
+
+        this.realign();
     }
 
-    getX() {
-        return this.x;
+    getX() { return this.x }
+
+    getY() { return this.y }
+
+    getRightX() { return this.getX() + this.getWidth() }
+
+    getBottomY() { return this.getY() + this.getHeight() }
+
+    getWidth() { return canvas.width }
+
+    getHeight() { return canvas.height }
+
+    // Update the camera to follow the player horizontally
+    updateX() {
+        let playerScreenPosition = canvas.width * 0.24
+        this.x = this.player.getX() - playerScreenPosition;
     }
 
-    getY() {
-        return this.y;
-    }
-
-    getRightX() {
-        return this.x + canvas.width;
-    }
-
-    getBottomY() {
-        return this.y + canvas.height;
-    }
-
-    getWidth() {
-        return canvas.width;
-    }
-
-    getHeight() {
-        return canvas.height;
+    realign() {
+        this.w = canvas.width;
+        this.h = canvas.height;
+        
+        this.y = -canvas.height + this.player.game.floorHeight;
     }
 }
