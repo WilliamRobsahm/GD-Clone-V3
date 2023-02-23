@@ -1,3 +1,4 @@
+import Level from "../level/level.js";
 import FPSCounter from "../misc/FPSCounter.js";
 import { canvas, ctx } from "../misc/global.js";
 import Player from "../player/Player.js";
@@ -16,6 +17,7 @@ export class GameManager {
         this.input = new InputHandler(this);
         this.renderer = new GameRenderer(this);
         this.player = new Player(this);
+        this.level = new Level(this);
         this.FPSCounter = new FPSCounter(this);
     }
 
@@ -26,6 +28,7 @@ export class GameManager {
         // On 60 fps, 'physicsMultiplier' will be about 1. On higher hz, it will be lower.
         let physicsMultiplier = 1000 / deltaTime / 60;
         this.player.update(this.input, physicsMultiplier);
+        this.level.background.update(this.player.camera, this.player.getDX());
     }
 
     render(camera) {
@@ -37,11 +40,14 @@ export class GameManager {
         // Clear canvas
         this.renderer.clear(canvas, ctx, camera);
 
+        this.level.background.render();
+
         this.renderer.renderObject(this.player);
         this.renderer.renderFloor(camera, this.floorHeight);
 
         // Render FPS Counter
         this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);
+        
 
         ctx.fillRect(1000, -500, 100, 100)
         ctx.restore();
