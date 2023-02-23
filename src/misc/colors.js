@@ -1,4 +1,4 @@
-import { clamp } from "./util";
+import { clamp } from "./util.js";
 
 export const colors = {
     white: {r:255, g:255, b:255},

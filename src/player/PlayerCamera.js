@@ -11,9 +11,9 @@ export default class PlayerCamera {
         this.realign();
     }
 
-    getX() { return this.x }
+    getX() { return Math.floor(this.x) }
 
-    getY() { return this.y }
+    getY() { return Math.floor(this.y) }
 
     getRightX() { return this.getX() + this.getWidth() }
 

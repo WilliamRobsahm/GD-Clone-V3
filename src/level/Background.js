@@ -14,7 +14,6 @@ export default class Background {
     }
 
     update(camera, distance) {
-        console.log(distance);
         this.x += distance * this.multiplier;
         if(this.x + this.width < camera.getX()) {
             this.x += this.width;

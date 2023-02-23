@@ -13,7 +13,7 @@ export default class GameRenderer {
      * @param {PlayerCamera} camera 
      */
     clear(canvas, ctx, camera) {
-        ctx.clearRect(camera.x, camera.y, canvas.width, canvas.height);
+        ctx.clearRect(camera.getX(), camera.getY(), canvas.width, canvas.height);
     }
 
     renderFPS(fps, camera) {
@@ -27,9 +27,15 @@ export default class GameRenderer {
         
     }
 
-    renderFloor(camera, floorHeight) {
+    renderFloor(camera, floorHeight, channels) {
         ctx.fillStyle = "white";
         ctx.fillRect(camera.getX(), 0, camera.getWidth(), floorHeight); 
+    }
+
+    renderObjects(objects, channels) {
+        for(let i = 0; i < objects.length ; i++) {
+            objects[i].render(channels);
+        }
     }
 
     renderObject(object) {

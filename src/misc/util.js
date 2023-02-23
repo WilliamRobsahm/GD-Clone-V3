@@ -26,3 +26,10 @@ export function setAttributes(object,attributes) {
         object[a] = attributes[a];
     }
 }
+
+export function rotateCanvas(ctx, x, y, degrees)
+{
+    ctx.translate(x, y);
+    ctx.rotate(degrees * Math.PI / 180);
+    ctx.translate(-x, -y);
+}
