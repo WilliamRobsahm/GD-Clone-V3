@@ -1,4 +1,4 @@
-import Hitbox from "./Hitbox.js";
+import ObjectHitbox from "./ObjectHitbox.js";
 
 export class Object {
     constructor(name, gX, gY, sX, sY, rotation, game) {
@@ -30,7 +30,7 @@ export class Object {
     }
 
     setHitbox(hitbox) {
-        this.hitbox = new Hitbox(hitbox.type, hitbox.width, hitbox.height, hitbox.offsetX, hitbox.offsetY)
+        this.hitbox = new ObjectHitbox(hitbox.type, hitbox.width, hitbox.height, hitbox.offsetX, hitbox.offsetY)
     }
 
     render(channels) {

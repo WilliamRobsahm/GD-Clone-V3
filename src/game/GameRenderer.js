@@ -1,4 +1,5 @@
 import { ctx } from "../misc/global.js";
+import { setAttributes } from "../misc/util.js";
 import PlayerCamera from "../player/PlayerCamera.js";
 
 export default class GameRenderer {
@@ -27,9 +28,20 @@ export default class GameRenderer {
         
     }
 
-    renderFloor(camera, floorHeight, channels) {
-        ctx.fillStyle = "white";
-        ctx.fillRect(camera.getX(), 0, camera.getWidth(), floorHeight); 
+    renderBackground(background, channels) {
+        background.render(channels);
+    }
+
+    renderFloor(floor, camera, floorHeight, channels) {
+        floor.render(channels);
+
+        // Floor line
+        setAttributes(ctx, {strokeStyle: channels.line.getColor(), lineWidth: 3});
+        ctx.beginPath();
+        ctx.moveTo(camera.getX(), 1.5);
+        ctx.lineTo(camera.getX() + camera.getWidth(), 1.5);
+        ctx.stroke();
+        ctx.closePath();
     }
 
     renderObjects(objects, channels) {

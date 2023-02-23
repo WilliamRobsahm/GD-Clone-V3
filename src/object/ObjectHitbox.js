@@ -1,7 +1,7 @@
 
 
 
-export default class Hitbox {
+export default class ObjectHitbox {
     constructor(hitboxType, width, height, offsetX, offsetY) {
         this.type = hitboxType;
         this.width = width;

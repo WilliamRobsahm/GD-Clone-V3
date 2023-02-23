@@ -35,6 +35,7 @@ export class GameManager {
         let physicsMultiplier = 1000 / deltaTime / 60;
         this.player.update(this.input, physicsMultiplier);
         this.level.background.update(this.player.camera, this.player.getDX());
+        this.level.floor.update(this.player.camera, this.player.getDX());
     }
 
     render(camera) {
@@ -46,11 +47,11 @@ export class GameManager {
         // Clear canvas
         this.renderer.clear(canvas, ctx, camera);
 
-        this.level.background.render(this.level.colorChannels);
+        this.renderer.renderBackground(this.level.background, this.level.colorChannels)
 
         this.renderer.renderObject(this.player);
         this.renderer.renderObjects(this.level.objects, this.level.colorChannels);
-        this.renderer.renderFloor(camera, this.floorHeight, this.level.colorChannels);
+        this.renderer.renderFloor(this.level.floor, camera, this.floorHeight, this.level.colorChannels);
 
         // Render FPS Counter
         this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);

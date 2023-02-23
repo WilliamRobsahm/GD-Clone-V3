@@ -2,6 +2,7 @@ import PlayerCamera from "./PlayerCamera.js";
 import { CubeGamemode } from "./gamemodes/CubeGamemode.js";
 import { GamemodeEnum } from "./gamemodes/PlayerGamemodes.js";
 import { ctx } from "../misc/global.js";
+import PlayerHitbox from "./PlayerHitbox.js";
 
 
 export default class Player {
@@ -32,6 +33,15 @@ export default class Player {
 
         this.setGamemode("CUBE");
         this.setSpeed("NORMAL");
+
+        this.innerSize = this.size / 2;
+        this.innerOffset = (this.size - this.innerSize) / 2
+
+        this.outerHitbox = new PlayerHitbox(this, this.size, this.size);
+        this.innerHitbox = new PlayerHitbox(this, this.innerSize, this.innerSize);
+
+        this.outerHitbox.setPosition(this.x, this.y);
+        this.innerHitbox.setPosition(this.x + this.innerOffset, this.y + this.innerOffset);
     }
 
     getX() { return Math.floor(this.x) }
@@ -79,9 +89,15 @@ export default class Player {
         };
         this.gamemode.updateGravity(d);
         this.gamemode.handleInput(input);
+
+
         this.x += this.dx * d;
         this.y += this.dy * d;
+
         this.camera.updateX();
+        
+        this.outerHitbox.setPosition(this.x, this.y);
+        this.innerHitbox.setPosition(this.x + this.innerOffset, this.y + this.innerOffset);
     }
 
     floorCollision(lowerFloorY, upperFloorY) {
@@ -93,7 +109,13 @@ export default class Player {
     }
 
     render() {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 3;
         ctx.fillStyle = "red";
-        ctx.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+
+        ctx.beginPath();
+        ctx.rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        ctx.fill();
+        ctx.stroke();
     }
 }

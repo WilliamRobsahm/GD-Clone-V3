@@ -13,7 +13,7 @@ export default class ColorChannel {
     }
 
     getColor() {
-        let color = {r: this.r, g: this.g, b: this.b}
+        let color = this.getValues();
         if(this.alpha == 1) {
             return RGB(color);
         } else {
@@ -21,4 +21,7 @@ export default class ColorChannel {
         }
     }
 
+    getValues() { return {r: this.r, g: this.g, b: this.b} }
+    getAlpha() { return this.alpha }
+    isBlending() { return this.blending }
 }

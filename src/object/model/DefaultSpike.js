@@ -13,9 +13,9 @@ export class DefaultSpike extends ObjectModel {
         // Create gradient
         let gradient = ctx.createLinearGradient(0, object.getY() + 24, 0, object.getY() + 64);
         gradient.addColorStop(0, RGBA(colors.black, 1));
-        gradient.addColorStop(1, RGBA(colors.black, 0));
+        gradient.addColorStop(1, RGBA(colors.black, 0.2));
 
-        setAttributes(ctx, {fillStyle: gradient, strokeStyle: channels.obj.getColor(), lineWidth: 2});
+        setAttributes(ctx, {fillStyle: gradient, strokeStyle: channels.obj.getColor(), lineWidth: 3});
 
         // Render spike
         ctx.beginPath();
