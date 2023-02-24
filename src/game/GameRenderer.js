@@ -44,10 +44,8 @@ export default class GameRenderer {
         ctx.closePath();
     }
 
-    renderObjects(objects, channels) {
-        for(let i = 0; i < objects.length ; i++) {
-            objects[i].render(channels);
-        }
+    renderLevelObjects(level, camera) {
+        level.renderObjects(camera);
     }
 
     renderObject(object) {

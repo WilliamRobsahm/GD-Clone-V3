@@ -9,6 +9,8 @@ export class Object {
         this.shiftX = sX;
         this.shiftY = sY;
         this.rotation = rotation;
+
+        this.chunk = null;
     }
 
     getX() { return this.gridX * 64 + this.shiftX }
@@ -31,6 +33,10 @@ export class Object {
 
     setHitbox(hitbox) {
         this.hitbox = new ObjectHitbox(hitbox.type, hitbox.width, hitbox.height, hitbox.offsetX, hitbox.offsetY)
+    }
+
+    setChunk(index) {
+        this.chunk = index;
     }
 
     render(channels) {
