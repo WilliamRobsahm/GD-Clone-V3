@@ -2,7 +2,14 @@ import { clamp } from "./util.js";
 
 export const colors = {
     white: {r:255, g:255, b:255},
-    black: {r:0, g:0, b:0,}
+    black: {r:0, g:0, b:0},
+    hazardHitbox: {r:255, g:63, b:63},
+    solidHitbox: {r:63, g:63, b:255},
+    specialHitbox: {r:63, g:255, b:63},
+}
+
+function validColorObject(clr) {
+    return (clr && clr.hasOwnProperty("r") && clr.hasOwnProperty("g") && clr.hasOwnProperty("b"));
 }
 
 /**
@@ -11,7 +18,7 @@ export const colors = {
  * @returns {string}
  */
 export function RGB(clr) {
-    return `rgb(${clr.r},${clr.g},${clr.b})`;
+    return validColorObject(clr) ? `rgb(${clr.r},${clr.g},${clr.b})` : 'rgb(0,0,0)';
 }
 
 /**
@@ -21,6 +28,7 @@ export function RGB(clr) {
  * @returns {string}
  */
 export function RGBM(clr, multiplier) {
+    if(!validColorObject(clr)) { return 'rgb(0,0,0)' }
     let r = clamp(clr.r * multiplier, 0, 255);
     let g = clamp(clr.g * multiplier, 0, 255);
     let b = clamp(clr.b * multiplier, 0, 255);
@@ -28,7 +36,7 @@ export function RGBM(clr, multiplier) {
 }
 
 /**
- * Return an RGA string from an RGB object amd an alpha value
+ * Return an RGA string from an RGB object and an alpha value
  * @param {object} clr RGB object. Requires 'r', 'g', and 'b' attributes
  * @param {number} alpha Alpha value, between 0 and 1
  * @returns {string}

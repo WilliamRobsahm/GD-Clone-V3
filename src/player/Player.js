@@ -2,8 +2,7 @@ import PlayerCamera from "./PlayerCamera.js";
 import { CubeGamemode } from "./gamemodes/CubeGamemode.js";
 import { GamemodeEnum } from "./gamemodes/PlayerGamemodes.js";
 import { ctx } from "../misc/global.js";
-import PlayerHitbox from "./PlayerHitbox.js";
-
+import PlayerHitbox from "../collision/PlayerHitbox.js";
 
 export default class Player {
     constructor(game) {
@@ -29,16 +28,15 @@ export default class Player {
         this.grounded = false;
         this.gravity = 0;
 
-        this.size = this.game.defaultSize;
-
         this.setGamemode("CUBE");
         this.setSpeed("NORMAL");
 
+        this.size = this.game.defaultSize;
         this.innerSize = this.size / 2;
         this.innerOffset = (this.size - this.innerSize) / 2
 
-        this.outerHitbox = new PlayerHitbox(this, this.size, this.size);
-        this.innerHitbox = new PlayerHitbox(this, this.innerSize, this.innerSize);
+        this.outerHitbox = new PlayerHitbox(this, "PLAYER_OUTER", this.size);
+        this.innerHitbox = new PlayerHitbox(this, "PLAYER_INNER", this.innerSize);
 
         this.outerHitbox.setPosition(this.x, this.y);
         this.innerHitbox.setPosition(this.x + this.innerOffset, this.y + this.innerOffset);
@@ -57,8 +55,7 @@ export default class Player {
     setGamemode(gamemode) {
         let index = GamemodeEnum[gamemode];
         if(index === undefined) {
-            console.log(`ERROR: "${gamemode}" is an invalid gamemode`);
-            return;
+            throw new Error(`"${gamemode}" is an invalid gamemode`);
         }
 
         this.gamemode = this.gamemodeList[index];
@@ -69,8 +66,7 @@ export default class Player {
     setSpeed(speed) {
         let blocksPerSecond = this.speeds[speed];
         if(blocksPerSecond === undefined) {
-            console.log(`ERROR: "${speed}" is an invalid speed`);
-            return;
+            throw new Error(`"${speed}" is an invalid gamemode`);
         }
 
         this.dx = (this.speeds[speed] * this.game.defaultSize / 60);
@@ -98,6 +94,10 @@ export default class Player {
         
         this.outerHitbox.setPosition(this.x, this.y);
         this.innerHitbox.setPosition(this.x + this.innerOffset, this.y + this.innerOffset);
+    }
+
+    updateCollision(level) {
+        
     }
 
     floorCollision(lowerFloorY, upperFloorY) {

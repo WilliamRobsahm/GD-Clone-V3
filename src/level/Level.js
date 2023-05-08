@@ -1,3 +1,4 @@
+import { ctx } from "../misc/global.js";
 import Chunk from "./Chunk.js";
 import ColorChannel from "./ColorChannel.js";
 import ParallaxElement from "./ParallaxElement.js";
@@ -97,6 +98,19 @@ export default class Level {
             if(chunk.checkRenderingCondition(camera)) {
                 chunk.renderObjects(this.colorChannels);
             }
+        })
+    }
+
+    renderHitboxes(camera) {
+        this.chunks.forEach(chunk => {
+            if(chunk.checkCollisionCondition(this.game.player)) {
+                ctx.fillStyle = "rgba(255,0,0,0.2)";
+                ctx.fillRect(chunk.gridX * 64, -1000, chunk.size * 64, 1000);
+            }
+
+            if(chunk.checkRenderingCondition(camera)) {
+                chunk.renderHitboxes();
+            }            
         })
     }
 }

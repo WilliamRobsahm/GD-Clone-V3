@@ -9,15 +9,16 @@ export default class ObjectBuilder {
 
     createObject(name, gridX, gridY, shiftX, shiftY, rotation) {
         let object = new Object(name, gridX, gridY, shiftX, shiftY, rotation, this.game);
-        let modelName = "";
         switch(name) {
             case "default_block":
-                modelName = "default_block"; break;
-                
+                object.setModel(this.models.getModel("default_block"));
+                object.createHitbox("SOLID");
+                break;
             case "default_spike":
-                modelName = "default_spike"; break;
+                object.setModel(this.models.getModel("default_spike"));
+                object.createHitbox("HAZARD", 16, 32, 24, 16);
+                break;
         }
-        object.setModel(this.models.getModel(modelName));
 
         return object.model ? object : null 
     }

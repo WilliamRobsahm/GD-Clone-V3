@@ -14,8 +14,10 @@ export default class Chunk {
     }
 
     // Return true if player is close enough to the chunk to check collision for all objects in it
-    collisionCheck() {
-
+    checkCollisionCondition(player) {
+        let leeway = 32;
+        return (this.gridX + this.size) * 64 > player.getX() - leeway &&
+        this.gridX * 64 < player.getX() + player.getWidth() + leeway
     }
 
     /**
@@ -37,6 +39,12 @@ export default class Chunk {
     renderObjects(channels) {
         for(let i = 0; i < this.objectList.length; i++) {
             this.level.getObject(this.objectList[i]).render(channels);
+        }
+    }
+
+    renderHitboxes() {
+        for(let i = 0; i < this.objectList.length; i++) {
+            this.level.getObject(this.objectList[i]).getHitbox()?.render();
         }
     }
 }

@@ -9,6 +9,7 @@ import InputHandler from "./InputHandler.js";
 export class GameManager {
     // Declare game constants
     constructor() {
+        this.showHitboxes = true;
         this.defaultSize = 64;
         this.floorHeight = 200;
         this.chunkSize = 4;
@@ -16,6 +17,7 @@ export class GameManager {
 
     // Set up other objects. This can't be done in constructor since other stuff has to be done beforehand, such as setting canvas size.
     initialize() {
+        console.log("balls 2");
         this.input = new InputHandler(this);
         this.renderer = new GameRenderer(this);
         this.objectBuilder = new ObjectBuilder(this);
@@ -50,7 +52,12 @@ export class GameManager {
         this.renderer.renderBackground(this.level.background, this.level.colorChannels)
 
         this.renderer.renderObject(this.player);
+
         this.renderer.renderLevelObjects(this.level, camera);
+        if(this.showHitboxes) {
+            this.renderer.renderHitboxes(this.level, camera);
+        }
+
         this.renderer.renderFloor(this.level.floor, camera, this.floorHeight, this.level.colorChannels);
 
         // Render FPS Counter

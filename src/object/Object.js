@@ -1,13 +1,13 @@
-import ObjectHitbox from "./ObjectHitbox.js";
+import ObjectHitbox from "..collision/ObjectHitbox.js";
 
 export class Object {
-    constructor(name, gX, gY, sX, sY, rotation, game) {
+    constructor(name, gridX, gridY, shiftX, shiftY, rotation, game) {
         this.game = game;
         this.name = name;
-        this.gridX = gX;
-        this.gridY = gY;
-        this.shiftX = sX;
-        this.shiftY = sY;
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.shiftX = shiftX;
+        this.shiftY = shiftY;
         this.rotation = rotation;
 
         this.chunk = null;
@@ -27,12 +27,20 @@ export class Object {
 
     getRotation() { return this.rotation }
 
+    getHitbox() { return this.hitbox }
+
     setModel(model) {
         this.model = model;
     }
 
-    setHitbox(hitbox) {
-        this.hitbox = new ObjectHitbox(hitbox.type, hitbox.width, hitbox.height, hitbox.offsetX, hitbox.offsetY)
+    createHitbox(hitboxType, width, height, offsetX, offsetY) {
+        this.hitbox = new ObjectHitbox(this,
+            hitboxType, 
+            width ?? this.getWidth(), 
+            height ?? this.getHeight(), 
+            offsetX ?? 0, 
+            offsetY ?? 0
+        );
     }
 
     setChunk(index) {
