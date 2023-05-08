@@ -35,11 +35,8 @@ export default class Player {
         this.innerSize = this.size / 2;
         this.innerOffset = (this.size - this.innerSize) / 2
 
-        this.outerHitbox = new PlayerHitbox(this, "PLAYER_OUTER", this.size);
-        this.innerHitbox = new PlayerHitbox(this, "PLAYER_INNER", this.innerSize);
-
-        this.outerHitbox.setPosition(this.x, this.y);
-        this.innerHitbox.setPosition(this.x + this.innerOffset, this.y + this.innerOffset);
+        this.outerHitbox = new PlayerHitbox(this, "PLAYER_OUTER", this.size, 0);
+        this.innerHitbox = new PlayerHitbox(this, "PLAYER_INNER", this.innerSize, this.innerOffset);
     }
 
     getX() { return Math.floor(this.x) }
@@ -91,9 +88,6 @@ export default class Player {
         this.y += this.dy * d;
 
         this.camera.updateX();
-        
-        this.outerHitbox.setPosition(this.x, this.y);
-        this.innerHitbox.setPosition(this.x + this.innerOffset, this.y + this.innerOffset);
     }
 
     updateCollision(level) {

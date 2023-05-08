@@ -5,11 +5,13 @@ const HITBOX_OPACITY = 0.5;
 const HITBOX_LINE_WIDTH = 3;
 
 export default class Hitbox {
-    constructor(hitboxType, width, height, rotation) {
+    constructor(hitboxType, width, height, rotation, offsetX, offsetY) {
         this.type = hitboxType;
         this.width = width;
         this.height = height;
         this.rotation = rotation;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
 
         this.color;
         switch(this.type) {

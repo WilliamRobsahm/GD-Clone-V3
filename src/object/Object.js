@@ -1,4 +1,4 @@
-import ObjectHitbox from "..collision/ObjectHitbox.js";
+import ObjectHitbox from "../collision/ObjectHitbox.js";
 
 export class Object {
     constructor(name, gridX, gridY, shiftX, shiftY, rotation, game) {
