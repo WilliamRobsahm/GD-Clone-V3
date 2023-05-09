@@ -3,12 +3,21 @@ import Chunk from "./Chunk.js";
 import ColorChannel from "./ColorChannel.js";
 import ParallaxElement from "./ParallaxElement.js";
 
+const BG_MOVEMENT_MULTIPLIER = 0.5;
+
 export default class Level {
     constructor(game, properties, objectData) {
         this.game = game;
-        this.name = properties.name ? properties.name : ""
-        this.background = new ParallaxElement(this, "background", 0.5, 3, 0);
-        this.floor = new ParallaxElement(this, "floor", 0, 5, 0);
+        this.name = properties.name ?? "";
+
+        this.background = new ParallaxElement(this, "background", BG_MOVEMENT_MULTIPLIER);
+        this.background.setVariant(properties.background ?? 0);
+        this.floor = new ParallaxElement(this, "floor");
+        this.floor.setVariant(properties.background ?? 0);
+
+        this.initialSpeed = properties.initialSpeed ?? "NORMAL";
+        this.initialGamemode = properties.initialGamemode ?? "CUBE";
+
         this.objectData = objectData;
         this.objects = [];
         this.colorChannels = {

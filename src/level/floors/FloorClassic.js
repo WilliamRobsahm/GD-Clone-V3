@@ -1,14 +1,11 @@
 import { RGBM } from "../../misc/colors.js";
 import { ctx } from "../../misc/global.js";
+import ParallaxBase from "../ParallaxBase.js";
 
-export default class FloorClassic {
+export default class FloorClassic extends ParallaxBase {
     constructor(width, height) {
-        this.width = width;
-        this.height = height;
+        super(width, height);
     }
-    
-    getWidth() { return this.width }
-    getHeight() { return this.height }
 
     renderInit(x, y, channels) {
         let color = channels.g.getValues();
@@ -26,7 +23,9 @@ export default class FloorClassic {
         this.outlineGradient.addColorStop(1, RGBM(color, 0));
     }
 
-    render(x, y) {
+    renderSegment(x, y, segmentNo) {
+        x = this.getSegmentX(x, segmentNo);
+        
         // Draw solid ground color
         ctx.fillStyle = this.mainGradient;
         ctx.fillRect(x, y, this.width, this.height);
@@ -46,6 +45,5 @@ export default class FloorClassic {
             ctx.fillStyle = this.squareGradient;
             ctx.fillRect(xPos, yPos, size, size);
         }
-        
     }
 }

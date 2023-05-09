@@ -8,6 +8,9 @@ export class LevelManager {
             new Level(game, {
                 name: "Alternate Reality",
                 background: 0,
+                floor: 0,
+                initialSpeed: "NORMAL",
+                initialGamemode: "CUBE",
             }, [
                 {name:"default_spike",gx:10,gy:0},
                 {name:"default_spike",gx:11,gy:0},
