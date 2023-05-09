@@ -60,14 +60,13 @@ export class GameManager {
 
         // Render Hitboxes
         if(config.showHitboxes)
-            this.renderer.renderHitboxes(this.level, camera);
+            this.renderer.renderHitboxes(this.level, this.player, camera);
 
         this.renderer.renderFloor(this.level.floor, camera, this.floorHeight, this.level.colorChannels);
 
         // Render FPS Counter
         if(config.showFPS)
             this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);
-
         
         ctx.restore();
     }

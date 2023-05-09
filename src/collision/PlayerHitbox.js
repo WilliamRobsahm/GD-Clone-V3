@@ -7,10 +7,10 @@ export default class PlayerHitbox extends Hitbox {
     }
 
     getX() {
-        return this.player.getX();
+        return this.player.getX() + this.offsetX;
     }
 
     getY() {
-        return this.player.getY();
+        return this.player.getY() + this.offsetY;
     }
 }

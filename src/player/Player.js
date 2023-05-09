@@ -9,6 +9,8 @@ import InputHandler from "../game/InputHandler.js";
 import config from "../game/config.js";
 
 const RESPAWN_TIME_MS = 1000;
+const PLAYER_SIZE = 64;
+const PLAYER_INNER_SIZE = 24;
 
 export default class Player {
     constructor(game) {
@@ -31,7 +33,7 @@ export default class Player {
         }
 
         this.x = 0;
-        this.y = 0 - this.game.defaultSize;
+        this.y = 0 - PLAYER_SIZE;
         this.dx = 0;
         this.dy = 0;
         this.grounded = false;
@@ -40,8 +42,8 @@ export default class Player {
         this.setGamemode("CUBE");
         this.setSpeed("NORMAL");
 
-        this.size = this.game.defaultSize;
-        this.innerSize = this.size / 2;
+        this.size = PLAYER_SIZE;
+        this.innerSize = PLAYER_INNER_SIZE;
         this.innerOffset = (this.size - this.innerSize) / 2
 
         this.outerHitbox = new PlayerHitbox(this, "PLAYER_OUTER", this.size, 0);
@@ -139,10 +141,13 @@ export default class Player {
         const chunks = level.getChunksInCollisionRange(this);
 
         for(let i = 0; i < chunks.length; i++) {
+
+            // Hazard objects
             const hazardObjects = chunks[i].getHazardObjects();
             for(let j = 0; j < hazardObjects.length; j++) {
                 if(Collision.overlapRect(this.outerHitbox, hazardObjects[j].hitbox)) {
                     this.onDeath();
+                    return;
                 }
             }
         }
@@ -199,5 +204,10 @@ export default class Player {
         ctx.rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
         ctx.fill();
         ctx.stroke();
+    }
+
+    renderHitbox() {
+        this.outerHitbox.render();
+        this.innerHitbox.render();
     }
 }
