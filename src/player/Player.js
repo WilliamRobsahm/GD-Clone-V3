@@ -120,8 +120,8 @@ export default class Player {
 
         if(this.isAlive) {
             this.updatePhysics(d);
-            this.updateCollision(level);
             this.move(d);
+            this.updateCollision(level);
         } else {
             this.updateRespawnTimer(d);
             if(this.canRespawn()) {

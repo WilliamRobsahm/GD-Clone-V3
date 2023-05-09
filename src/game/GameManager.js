@@ -46,8 +46,10 @@ export class GameManager {
         let physicsMultiplier = deltaTime / (1000 / 60);
 
         this.player.update(physicsMultiplier, this.input, this.level);
-        this.level.background.update(this.player.camera, this.player.getDX());
-        this.level.floor.update(this.player.camera, this.player.getDX());
+        
+        let dx = this.player.getDX() * physicsMultiplier
+        this.level.background.update(this.player.camera, dx);
+        this.level.floor.update(this.player.camera, dx);
     }
 
     render(camera) {
