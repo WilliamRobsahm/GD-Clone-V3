@@ -48,9 +48,11 @@ export default class Collision {
      */
     static objectFloorCollision(player, objectHitbox) {
 
+        let pos = player.getNextPosition();
+
         // Is player in the correct X position to even be *able* to interact with the object?
-        const overlapX = (player.getX() <= objectHitbox.getX2() &&
-            player.getX2() >= objectHitbox.getX());
+        const overlapX = (pos.x <= objectHitbox.getX2() &&
+            pos.x2 >= objectHitbox.getX());
 
         if(!overlapX) return false;
 
@@ -62,8 +64,9 @@ export default class Collision {
 
             // If player is falling and overlapping with the top quarter of the object (within margin),
             // The player collides with the floor.
-            if(player.getY2() >= objectHitbox.getY() && 
-                player.getY2() <= objectHitbox.getY() + margin + player.getDY()) {
+
+            if(pos.y2 >= objectHitbox.getY() && 
+                pos.y2 <= objectHitbox.getY() + margin + player.getDY()) {
                     return true;
             }
         }

@@ -43,7 +43,7 @@ export class GameManager {
         // All physics are designed for 60 FPS, but 'physicsMultiplier' determines how much of that will be done each frame.
         // On 60 fps, 'physicsMultiplier' will be around 1 (with slight fluxuation). On higher hz, it will be lower.
         // This also means that performance issues won't slow down the game.
-        let physicsMultiplier = 1000 / deltaTime / 60;
+        let physicsMultiplier = deltaTime / (1000 / 60);
 
         this.player.update(physicsMultiplier, this.input, this.level);
         this.level.background.update(this.player.camera, this.player.getDX());

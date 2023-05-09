@@ -62,6 +62,15 @@ export default class Player {
 
     getHeight() { return this.size }
     getWidth() { return this.size }
+
+    getNextPosition() {
+        return { 
+            x: this.getX() + this.getDX(),
+            x2: this.getX2() + this.getDX(),
+            y: this.getY() + this.getDY(),
+            y2: this.getY2() + this.getDY(),
+        }
+    }
         
 
     setGamemode(gamemode) {
@@ -112,6 +121,7 @@ export default class Player {
         if(this.isAlive) {
             this.updatePhysics(d);
             this.updateCollision(level);
+            this.move(d);
         } else {
             this.updateRespawnTimer(d);
             if(this.canRespawn()) {
@@ -132,11 +142,6 @@ export default class Player {
         };
 
         this.gamemode.updateGravity(d);
-
-        this.x += this.dx * d;
-        this.y += this.dy * d;
-
-        this.camera.updateX();
     }
 
     updateCollision(level) {
@@ -174,6 +179,12 @@ export default class Player {
                 }
             }
         }
+    }
+
+    move(d) {
+        this.x += this.dx * d;
+        this.y += this.dy * d;
+        this.camera.updateX();
     }
 
     onDeath() {
