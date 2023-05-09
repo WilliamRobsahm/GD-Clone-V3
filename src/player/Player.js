@@ -6,6 +6,7 @@ import PlayerHitbox from "../collision/PlayerHitbox.js";
 import Collision from "../collision/Collision.js";
 import Level from "../level/Level.js";
 import InputHandler from "../game/InputHandler.js";
+import config from "../game/config.js";
 
 const RESPAWN_TIME_MS = 1000;
 
@@ -78,7 +79,19 @@ export default class Player {
     }
 
     handleInput(input) {
-        this.gamemode.handleInput(input);
+
+        if(this.isAlive)
+            this.gamemode.handleInput(input);
+
+        // Show Hitboxes
+        if(input.getSingleKeyPress(config.controls.toggleShowHitboxes)) {
+            config.showHitboxes = !config.showHitboxes;
+        }
+            
+        // Show FPS
+        if(input.getSingleKeyPress(config.controls.toggleShowFPS)) {
+            config.showFPS = !config.showFPS;
+        }
     }
 
     /**
@@ -88,8 +101,10 @@ export default class Player {
      * @param {Level} level Active level
      */
     update(d, input, level) {
+        this.handleInput(input);
+
         if(this.isAlive) {
-            this.updatePhysics(input, d);
+            this.updatePhysics(d);
             this.updateCollision(level);
         } else {
             this.updateRespawnTimer(d);
@@ -99,7 +114,7 @@ export default class Player {
         }
     }
 
-    updatePhysics(input, d) {
+    updatePhysics(d) {
         if(!this.isAlive) return;
 
         this.grounded = false;
@@ -111,7 +126,6 @@ export default class Player {
         };
 
         this.gamemode.updateGravity(d);
-        this.gamemode.handleInput(input);
 
         this.x += this.dx * d;
         this.y += this.dy * d;

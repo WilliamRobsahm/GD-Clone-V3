@@ -1,3 +1,4 @@
+import config from "./config.js";
 
 export default class InputHandler {
 
@@ -49,12 +50,12 @@ export default class InputHandler {
     }
 
     getJump() {
-        if(this.keys.includes(" ") || 
-            this.keys.includes("w") || 
-            this.keys.includes("W") || 
-            this.keys.includes("arrowUp")) {
-            return true;
+        for(let i = 0; i < config.controls.jump.length; i++) {
+            if(this.keys.includes(config.controls.jump[i])) {
+                return true;
+            }
         }
+
         return this.click;
     }
 
@@ -64,8 +65,24 @@ export default class InputHandler {
 
     getMouseY() { return this.mouseY }
 
+    /**
+     * If key is currently pressed, return true and remove it from the keys.
+     * Used when we only want the effect of the key press to activate once, instead of every frame.
+     * @param {string} key The key we want to check. ()
+     * @returns {boolean}
+     */
+    getSingleKeyPress(key) {
+        /*
+        if(this.keys.includes(key.toUpperCase())) {
+            this.removeKey(key);
+            return true;
+        }
+        return false;
+        */
+    }
+
     removeKey(key) {
-        this.keys.splice(this.keys.indexOf(key),1);
+        this.keys.splice(this.keys.indexOf(key.toUpperCase()),1);
     }
 }
 

@@ -4,13 +4,13 @@ import { canvas, ctx } from "../misc/global.js";
 import ObjectBuilder from "../object/ObjectBuilder.js";
 import Player from "../player/Player.js";
 import PlayerCamera from "../player/PlayerCamera.js";
+import config from "./config.js";
 import GameRenderer from "./GameRenderer.js";
 import InputHandler from "./InputHandler.js";
 
 export class GameManager {
     // Declare game constants
     constructor() {
-        this.showHitboxes = true;
         this.defaultSize = 64;
         this.floorHeight = 200;
         this.chunkSize = 4;
@@ -57,14 +57,16 @@ export class GameManager {
         this.renderer.renderObject(this.player);
 
         this.renderer.renderLevelObjects(this.level, camera);
-        if(this.showHitboxes) {
+
+        // Render Hitboxes
+        if(config.showHitboxes)
             this.renderer.renderHitboxes(this.level, camera);
-        }
 
         this.renderer.renderFloor(this.level.floor, camera, this.floorHeight, this.level.colorChannels);
 
         // Render FPS Counter
-        this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);
+        if(config.showFPS)
+            this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);
 
         
         ctx.restore();
