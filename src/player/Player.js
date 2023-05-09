@@ -150,6 +150,17 @@ export default class Player {
                     return;
                 }
             }
+
+            // Solid objects
+            const solidObjects = chunks[i].getSolidObjects();
+            for(let j = 0; j < solidObjects.length; j++) {
+
+                // Collision with inner hitbox
+                if(Collision.overlapRect(this.innerHitbox, solidObjects[j].hitbox)) {
+                    this.onDeath();
+                    return;
+                }
+            }
         }
     }
 

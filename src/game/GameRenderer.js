@@ -49,8 +49,8 @@ export default class GameRenderer {
     }
 
     renderHitboxes(level, player, camera) {
-        level.renderHitboxes(camera);
         player.renderHitbox();
+        level.renderHitboxes(camera);
     }
 
     renderObject(object) {
