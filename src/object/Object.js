@@ -47,6 +47,14 @@ export class Object {
         this.chunk = index;
     }
 
+    isHazard() {
+        return (this.hitbox && this.hitbox.type == "HAZARD");
+    }
+
+    isSolid() {
+        return (this.hitbox && this.hitbox.type == "SOLID");
+    }
+
     render(channels) {
         this.model.render(this, channels);
     }

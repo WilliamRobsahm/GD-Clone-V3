@@ -3,6 +3,11 @@ import { CubeGamemode } from "./gamemodes/CubeGamemode.js";
 import { GamemodeEnum } from "./gamemodes/PlayerGamemodes.js";
 import { ctx } from "../misc/global.js";
 import PlayerHitbox from "../collision/PlayerHitbox.js";
+import Collision from "../collision/Collision.js";
+import Level from "../level/Level.js";
+import InputHandler from "../game/InputHandler.js";
+
+const RESPAWN_TIME_MS = 1000;
 
 export default class Player {
     constructor(game) {
@@ -13,6 +18,9 @@ export default class Player {
             new CubeGamemode(this),
         ]
         this.gamemode = null;
+
+        this.isAlive = true;
+        this.respawnTimer = 0;
 
         this.speeds = {
             SLOW: 8.4,
@@ -73,16 +81,37 @@ export default class Player {
         this.gamemode.handleInput(input);
     }
 
-    update(input, d) {
+    /**
+     * Main function for updating the player. Routes to different update functions, depending on conditions.
+     * @param {number} d Delta / Physics Multiplier. ≈1 on 60 FPS
+     * @param {InputHandler} input Input Handler object
+     * @param {Level} level Active level
+     */
+    update(d, input, level) {
+        if(this.isAlive) {
+            this.updatePhysics(input, d);
+            this.updateCollision(level);
+        } else {
+            this.updateRespawnTimer(d);
+            if(this.canRespawn()) {
+                console.log("TODO respawn");
+            }
+        }
+    }
+
+    updatePhysics(input, d) {
+        if(!this.isAlive) return;
+
         this.grounded = false;
+
         if(this.floorCollision(0,null)) {
             this.y = 0 - this.getHeight();
             this.dy = 0;
             this.grounded = true;
         };
+
         this.gamemode.updateGravity(d);
         this.gamemode.handleInput(input);
-
 
         this.x += this.dx * d;
         this.y += this.dy * d;
@@ -91,7 +120,47 @@ export default class Player {
     }
 
     updateCollision(level) {
-        
+        if(!this.isAlive) return;
+
+        const chunks = level.getChunksInCollisionRange(this);
+
+        for(let i = 0; i < chunks.length; i++) {
+            const hazardObjects = chunks[i].getHazardObjects();
+            for(let j = 0; j < hazardObjects.length; j++) {
+                if(Collision.overlapRect(this.outerHitbox, hazardObjects[j].hitbox)) {
+                    this.onDeath();
+                }
+            }
+        }
+    }
+
+    onDeath() {
+        this.isAlive = false;
+        this.respawnTimer = 0;
+        this.dx = 0;
+        this.dy = 0;
+    }
+
+    /**
+     * Increases the respawn timer by the amount of milliseconds passed since the last frame.
+     * @param {number} d Delta / Physics Multiplier
+     */
+    updateRespawnTimer(d) {
+        this.respawnTimer += 1000 / 60 * d;
+    }
+
+    canRespawn() {
+        return this.respawnTimer > RESPAWN_TIME_MS;
+    }
+
+    /**
+     * Set the object position and speed to the level's initial values.
+     * @param {Level} level The active level
+     */
+    respawn(level) {
+        this.x = 0;
+        this.y = 0 - this.game.defaultSize;
+
     }
 
     floorCollision(lowerFloorY, upperFloorY) {
@@ -103,6 +172,7 @@ export default class Player {
     }
 
     render() {
+        if(!this.isAlive) return;
         ctx.strokeStyle = "black";
         ctx.lineWidth = 3;
         ctx.fillStyle = "red";

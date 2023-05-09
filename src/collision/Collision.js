@@ -1,8 +1,8 @@
-import Hitbox from "./hitbox";
+import Hitbox from "./hitbox.js";
 
 export default class Collision {
     constructor() {}
-
+    
     /**
      * Check if two rectangular objects intersect
      * @param {Hitbox} hitbox1 First hitbox (Presumably the player)

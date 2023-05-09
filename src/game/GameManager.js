@@ -3,6 +3,7 @@ import FPSCounter from "../misc/FPSCounter.js";
 import { canvas, ctx } from "../misc/global.js";
 import ObjectBuilder from "../object/ObjectBuilder.js";
 import Player from "../player/Player.js";
+import PlayerCamera from "../player/PlayerCamera.js";
 import GameRenderer from "./GameRenderer.js";
 import InputHandler from "./InputHandler.js";
 
@@ -17,7 +18,6 @@ export class GameManager {
 
     // Set up other objects. This can't be done in constructor since other stuff has to be done beforehand, such as setting canvas size.
     initialize() {
-        console.log("balls 2");
         this.input = new InputHandler(this);
         this.renderer = new GameRenderer(this);
         this.objectBuilder = new ObjectBuilder(this);
@@ -35,7 +35,8 @@ export class GameManager {
         // On 60 fps, 'physicsMultiplier' will be around 1 (with slight fluxuation). On higher hz, it will be lower.
         // This also means that performance issues won't slow down the game.
         let physicsMultiplier = 1000 / deltaTime / 60;
-        this.player.update(this.input, physicsMultiplier);
+
+        this.player.update(physicsMultiplier, this.input, this.level);
         this.level.background.update(this.player.camera, this.player.getDX());
         this.level.floor.update(this.player.camera, this.player.getDX());
     }

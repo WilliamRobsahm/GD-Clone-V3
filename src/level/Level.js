@@ -32,6 +32,34 @@ export default class Level {
         return this.objects[index];
     }
 
+    /**
+     * Return an array of all chunks that are within rendering range
+     * @returns {Chunk[]}
+     */
+    getChunksInRenderingRange(camera) {
+        const renderableChunks = [];
+        for(let i = 0; i < this.chunks.length; i++) {
+            if(this.chunks[i].inRenderingRange(camera)) {
+                renderableChunks.push(this.chunks[i]);
+            }
+        }
+        return renderableChunks;
+    }
+
+    /**
+     * Return an array of all chunks that are within collision range
+     * @returns {Chunk[]}
+     */
+    getChunksInCollisionRange(player) {
+        const collidibleChunks = [];
+        for(let i = 0; i < this.chunks.length; i++) {
+            if(this.chunks[i].inCollisionRange(player)) {
+                collidibleChunks.push(this.chunks[i]);
+            }
+        }
+        return collidibleChunks;
+    }
+
     loadLevel(builder) {
         this.loadObjects(builder);
         this.levelLength = this.findLength();
@@ -94,23 +122,16 @@ export default class Level {
 
     // Has to be reworked once object layers are added
     renderObjects(camera) {
-        this.chunks.forEach(chunk => {
-            if(chunk.checkRenderingCondition(camera)) {
-                chunk.renderObjects(this.colorChannels);
-            }
-        })
+        let chunkList = this.getChunksInRenderingRange(camera);
+        chunkList.forEach(chunk => {
+            chunk.renderObjects(this.colorChannels);
+        });
     }
 
     renderHitboxes(camera) {
-        this.chunks.forEach(chunk => {
-            if(chunk.checkCollisionCondition(this.game.player)) {
-                ctx.fillStyle = "rgba(255,0,0,0.2)";
-                ctx.fillRect(chunk.gridX * 64, -1000, chunk.size * 64, 1000);
-            }
-
-            if(chunk.checkRenderingCondition(camera)) {
-                chunk.renderHitboxes();
-            }            
+        let chunkList = this.getChunksInRenderingRange(camera);
+        chunkList.forEach(chunk => {
+            chunk.renderHitboxes();     
         })
     }
 }

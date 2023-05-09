@@ -13,8 +13,30 @@ export default class Chunk {
         this.objectList.push(index);
     }
 
+    getHazardObjects() {
+        const hazardObjects = [];
+        this.objectList.forEach(objIndex => {
+            let obj = this.level.getObject(objIndex);
+            if(obj.isHazard()) {
+                hazardObjects.push(obj);
+            }
+        });
+        return hazardObjects;
+    }
+
+    getSolidObjects() {
+        const solidObjects = [];
+        this.objectList.forEach(objIndex => {
+            let obj = this.level.getObject(objIndex);
+            if(obj.isSolid()) {
+                solidObjects.push(obj);
+            }
+        });
+        return solidObjects;
+    }
+
     // Return true if player is close enough to the chunk to check collision for all objects in it
-    checkCollisionCondition(player) {
+    inCollisionRange(player) {
         let leeway = 32;
         return (this.gridX + this.size) * 64 > player.getX() - leeway &&
         this.gridX * 64 < player.getX() + player.getWidth() + leeway
@@ -24,7 +46,7 @@ export default class Chunk {
      * Return true if chunk is on screen and its objects should be rendered
      * @param {PlayerCamera} camera 
      */
-    checkRenderingCondition(camera) {
+    inRenderingRange(camera) {
         // Gives one extra tile of leeway on both ends, 
         // to prevent any larger objects (like saws) from popping in/out of existance.
         let leeway = 64;
