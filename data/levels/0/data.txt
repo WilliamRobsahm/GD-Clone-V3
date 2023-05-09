@@ -1,0 +1,8 @@
+{
+	"speed":1,
+	"gamemode":0,
+	"pulseBPM":132,
+	"pulseOffset":0,
+	"channels":{"bg":{"r":80,"g":80,"b":200},"g":{"r":80,"g":80,"b":160},"obj":{"r":255,"g":255,"b":255}},
+	"objects":[]
+}

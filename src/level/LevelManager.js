@@ -1,4 +1,5 @@
 import Level from "./level.js"
+import LevelInfo from "./LevelInfo.js";
 
 export class LevelManager {
     constructor(game) {
@@ -36,6 +37,39 @@ export class LevelManager {
             ]
             )
         ]
+
+        this.mainLevelInfo = [];
+        this.mainLevelsLoaded = false;
+        this.getMainLevelInfo((data) => {
+            this.mainLevelInfo = data;
+            this.mainLevelsLoaded = true;
+            console.log(data);
+        });
+    }
+
+    getMainLevelInfo(onLoad) {
+        var xml = new XMLHttpRequest();
+        var url = "api/getMainLevels.php";
+        xml.open("get", url, true);
+
+        xml.onreadystatechange = function() {
+            if(xml.readyState == 4 && xml.status == 200) {
+                let jsonData;
+                try { jsonData = JSON.parse(this.responseText) } 
+                catch { console.error("Invalid JSON: " + this.responseText) }
+                
+                const levelInfoList = [];
+                jsonData.forEach(leveldata => {
+                    let info;
+                    try { info = JSON.parse(leveldata) } 
+                    catch { console.error("Invalid JSON: " + leveldata) }
+                    levelInfoList.push(new LevelInfo(info));
+                });
+
+                onLoad(levelInfoList);
+            }
+        };
+        xml.send();
     }
 
     getLevel(levelID) {
