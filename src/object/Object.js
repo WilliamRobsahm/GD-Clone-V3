@@ -16,6 +16,9 @@ export class Object {
     getX() { return this.gridX * 64 + this.shiftX }
     getY() { return -this.gridY * 64 + this.shiftY - 64 }
 
+    getX2() { return this.getX() + this.getWidth() }
+    getY2() { return this.getY() + this.getHeight() }
+
     getGridX() { return this.gridX }
     getGridY() { return this.gridY }
 

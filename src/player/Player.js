@@ -37,7 +37,7 @@ export default class Player {
         this.dx = 0;
         this.dy = 0;
         this.grounded = false;
-        this.gravity = 0;
+        this.gravity = 1;
 
         this.setGamemode("CUBE");
         this.setSpeed("NORMAL");
@@ -51,7 +51,10 @@ export default class Player {
     }
 
     getX() { return Math.floor(this.x) }
+    getX2() { return this.getX() + this.getWidth() }
+
     getY() { return Math.floor(this.y) }
+    getY2() { return this.getY() + this.getHeight() }
 
     getDX() { return this.dx }
     getDY() { return this.dy }
@@ -154,9 +157,17 @@ export default class Player {
             // Solid objects
             const solidObjects = chunks[i].getSolidObjects();
             for(let j = 0; j < solidObjects.length; j++) {
+                let obj = solidObjects[j];
+
+                // Check if player is standing on object
+                if(Collision.objectFloorCollision(this, obj.hitbox)) {
+                    this.grounded = true;
+                    this.dy = 0;
+                    this.y = (this.gravity == 1 ? obj.getY() : solidObjects[j].getY2()) - this.getHeight();
+                }
 
                 // Collision with inner hitbox
-                if(Collision.overlapRect(this.innerHitbox, solidObjects[j].hitbox)) {
+                if(Collision.overlapRect(this.innerHitbox, obj.hitbox)) {
                     this.onDeath();
                     return;
                 }

@@ -117,7 +117,7 @@ export default class Level {
     setupChunks(chunkSize) {
 
         // Create chunks
-        for(let x = 0; x < this.getLength(); x += chunkSize) {
+        for(let x = 0; x <= this.getLength(); x += chunkSize) {
             this.chunks.push(new Chunk(this, x, chunkSize));
         }
 
