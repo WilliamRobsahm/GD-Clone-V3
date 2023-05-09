@@ -72,13 +72,11 @@ export default class InputHandler {
      * @returns {boolean}
      */
     getSingleKeyPress(key) {
-        /*
         if(this.keys.includes(key.toUpperCase())) {
             this.removeKey(key);
             return true;
         }
         return false;
-        */
     }
 
     removeKey(key) {
