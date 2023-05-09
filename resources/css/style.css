@@ -4,6 +4,11 @@
     overflow: hidden;
 }
 
+@font-face{
+    font-family:"Arco";
+    src:url("assets/font/ARCO.ttf") format("truetype");
+}
+
 canvas{
     position:relative;
 }
