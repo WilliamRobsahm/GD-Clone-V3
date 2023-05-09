@@ -120,6 +120,11 @@ export default class Level {
         }
     }
 
+    reset() {
+        this.background.resetPosition();
+        this.floor.resetPosition();
+    }
+
     // Has to be reworked once object layers are added
     renderObjects(camera) {
         let chunkList = this.getChunksInRenderingRange(camera);

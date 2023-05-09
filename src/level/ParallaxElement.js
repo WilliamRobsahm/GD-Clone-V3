@@ -4,32 +4,28 @@ import FloorClassic from "./floors/FloorClassic.js";
 
 // Used for background and floor
 export default class ParallaxElement {
-    constructor(level, type, multiplier, amount, element) {
+    constructor(level, type, multiplier, amount, id) {
         this.level = level;
         this.multiplier = multiplier;
         this.amount = amount;
+        this.type = type;
 
-
-        if(type == "floor") {
+        if(this.type == "floor") {
             this.y = 0;
-            switch(element) {
+            switch(id) {
                 case 0:
                     this.element = new FloorClassic(800,200);
                     break;
             }
-            this.x = -this.element.getWidth();
-            this.y = 0;
-        } else if(type == "background") {
-            switch(element) {
+        } else if(this.type == "background") {
+            switch(id) {
                 case 0:
                     this.element = new BackgroundClassic(1000, 1000);
                     break;
             }
-            this.x = -this.element.getWidth();
-            this.y = -this.element.getHeight();
         }
-        
-        
+
+        this.resetPosition();
     }
 
     update(camera, distance) {
@@ -37,6 +33,15 @@ export default class ParallaxElement {
         if(this.x + this.element.getWidth() < camera.getX()) {
             this.x += this.element.getWidth();
         }
+    }
+
+    /**
+     * Move the element to its initial position.
+     */
+    resetPosition() {
+        this.x = -this.element.getWidth();
+        this.y = this.type == "floor" ? 0 : -this.element.getHeight();
+        console.log(this.x, this.y);
     }
 
     render(channels) {

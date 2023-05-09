@@ -26,6 +26,8 @@ export class GameManager {
         this.level = this.levelManager.getLevel(0);
         this.level.loadLevel(this.objectBuilder);
         this.FPSCounter = new FPSCounter(this);
+
+        this.player.respawn(this.level);
     }
 
     update(deltaTime) {

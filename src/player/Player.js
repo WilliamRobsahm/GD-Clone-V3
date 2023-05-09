@@ -94,7 +94,7 @@ export default class Player {
         } else {
             this.updateRespawnTimer(d);
             if(this.canRespawn()) {
-                console.log("TODO respawn");
+                this.respawn(level);
             }
         }
     }
@@ -158,9 +158,13 @@ export default class Player {
      * @param {Level} level The active level
      */
     respawn(level) {
+        this.isAlive = true;
         this.x = 0;
         this.y = 0 - this.game.defaultSize;
-
+        this.setGamemode("CUBE");
+        this.setSpeed("NORMAL");
+        this.camera.reset();
+        level.reset();
     }
 
     floorCollision(lowerFloorY, upperFloorY) {

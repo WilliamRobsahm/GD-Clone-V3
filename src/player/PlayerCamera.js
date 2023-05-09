@@ -7,8 +7,6 @@ export default class PlayerCamera {
         this.y = 0;
         this.w = canvas.width;
         this.h = canvas.height;
-
-        this.realign();
     }
 
     getX() { return Math.floor(this.x) }
@@ -22,6 +20,11 @@ export default class PlayerCamera {
     getWidth() { return canvas.width }
 
     getHeight() { return canvas.height }
+
+    reset() {
+        this.updateX();
+        this.realign();
+    }
 
     // Update the camera to follow the player horizontally
     updateX() {
