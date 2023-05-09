@@ -57,7 +57,7 @@ export default class Collision {
         let margin = objectHitbox.getHeight() * OBJECT_GROUNDING_MARGIN;
 
         // Normal gravity
-        if(player.gravity == 1) {
+        if(player.gravityMode == 1) {
             if(player.getDY() < 0) return false; 
 
             // If player is falling and overlapping with the top quarter of the object (within margin),
@@ -69,7 +69,7 @@ export default class Collision {
         }
 
         // Reverse gravity
-        else if(player.gravity == -1) {
+        else if(player.gravityMode == -1) {
             if(player.getDY() > 0) return false;
 
             // If player is falling up and overlapping with the bottom quarter of the object (within margin),

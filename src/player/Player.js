@@ -37,7 +37,8 @@ export default class Player {
         this.dx = 0;
         this.dy = 0;
         this.grounded = false;
-        this.gravity = 1;
+        this.gravityMode = 1;
+        this.gravity = 0;
 
         this.setGamemode("CUBE");
         this.setSpeed("NORMAL");
@@ -163,7 +164,7 @@ export default class Player {
                 if(Collision.objectFloorCollision(this, obj.hitbox)) {
                     this.grounded = true;
                     this.dy = 0;
-                    this.y = (this.gravity == 1 ? obj.getY() : solidObjects[j].getY2()) - this.getHeight();
+                    this.y = (this.gravityMode == 1 ? obj.getY() : solidObjects[j].getY2()) - this.getHeight();
                 }
 
                 // Collision with inner hitbox
