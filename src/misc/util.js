@@ -33,3 +33,14 @@ export function rotateCanvas(ctx, x, y, degrees)
     ctx.rotate(degrees * Math.PI / 180);
     ctx.translate(-x, -y);
 }
+
+/**
+ * Return true if 'index' can be used as an index for the list without causing issues.
+ * (i.e. it's a number between 0 and list length)
+ * @param {Array} list 
+ * @param {number} index 
+ * @returns {boolean}
+ */
+export function isValidListIndex(list, index) {
+    return (!isNaN(index) && index >= 0 && index < list.length)
+}

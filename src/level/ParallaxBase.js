@@ -17,7 +17,7 @@ export default class ParallaxBase {
     }
 
     // Prepare colors and gradients, stuff which is universal for all background segments.
-    renderInit(x, y, channels) {}
+    renderInit(x, y, channelManager) {}
 
     // Render a segment of the background or floor. Multiple segments are rendered to make sure the whole screen is covered
     renderSegment(x, y, segmentNo) {}

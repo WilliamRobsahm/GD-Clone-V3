@@ -1,6 +1,4 @@
 
-
-
 /**
  * Data structure for the basic information about a level
  * Does not contain objects or color channels, and is only used for showing lists of levels.

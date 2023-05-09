@@ -3,8 +3,9 @@ import LevelInfo from "./LevelInfo.js";
 
 export class LevelManager {
     constructor(game) {
-        
+        this.game = game;
 
+        /*
         this.levels = [
             new Level(game, {
                 name: "Alternate Reality",
@@ -13,7 +14,7 @@ export class LevelManager {
                 initialSpeed: "NORMAL",
                 initialGamemode: "CUBE",
             }, [
-                {name:"default_spike",gx:10,gy:0},
+		        {name:"default_spike",gx:10,gy:0},
                 {name:"default_spike",gx:11,gy:0},
                 {name:"default_block",gx:12,gy:0},
                 {name:"default_block",gx:13,gy:0},
@@ -33,21 +34,18 @@ export class LevelManager {
 
                 {name:"default_spike",gx:45,gy:0},
                 {name:"default_spike",gx:46,gy:0},
-                {name:"default_spike",gx:47,gy:0},
-            ]
+                {name:"default_spike",gx:47,gy:0}
+	]
             )
         ]
-
+        */
         this.mainLevelInfo = [];
-        this.mainLevelsLoaded = false;
-        this.getMainLevelInfo((data) => {
-            this.mainLevelInfo = data;
-            this.mainLevelsLoaded = true;
-            console.log(data);
-        });
+        
     }
 
-    getMainLevelInfo(onLoad) {
+    // Get the basic level data for all main levels (name, difficulty, etc.)
+    // Only for displaying in the menu. It does not access the level's content.
+    getMainLevels(onLoad) {
         var xml = new XMLHttpRequest();
         var url = "api/getMainLevels.php";
         xml.open("get", url, true);
@@ -70,6 +68,38 @@ export class LevelManager {
             }
         };
         xml.send();
+    }
+
+    // Get full level content from level ID
+    loadMainLevelData(levelID, onLoad) {
+
+        // Check if levelID is valid
+        let levelInfo;
+        for(let i = 0; i < this.mainLevelInfo.length; i++) {
+            if(this.mainLevelInfo[i].id === levelID) {
+                levelInfo = this.mainLevelInfo[i];
+            }
+        }
+        if(!levelInfo) return;
+
+        // Request level data
+        var xml = new XMLHttpRequest();
+        var url = `api/getLevelFromId.php?id=${levelInfo.id}`;
+        xml.open("get", url, true);
+
+        xml.onreadystatechange = function() {
+            if(xml.readyState == 4 && xml.status == 200) {
+                console.log(this.responseText);
+                let data;
+                try { data = JSON.parse(this.responseText) } 
+                catch { console.error("Invalid JSON: " + this.responseText) }
+
+                onLoad(data, levelInfo);
+            }
+        };
+        xml.send();
+
+        
     }
 
     getLevel(levelID) {

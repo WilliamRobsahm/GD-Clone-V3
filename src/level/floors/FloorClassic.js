@@ -7,20 +7,20 @@ export default class FloorClassic extends ParallaxBase {
         super(width, height);
     }
 
-    renderInit(x, y, channels) {
-        let color = channels.g.getValues();
+    renderInit(x, y, channelManager) {
+        let g = channelManager.getValues("g");
 
         this.mainGradient = ctx.createLinearGradient(0, y, 0, y + 300);
-        this.mainGradient.addColorStop(0, RGBM(color, 1));
-        this.mainGradient.addColorStop(1, RGBM(color, 0));
+        this.mainGradient.addColorStop(0, RGBM(g, 1));
+        this.mainGradient.addColorStop(1, RGBM(g, 0));
 
         this.squareGradient = ctx.createLinearGradient(0, y, 0, y + 300);
-        this.squareGradient.addColorStop(0, RGBM(color, 0.8));
-        this.squareGradient.addColorStop(1, RGBM(color, 0));
+        this.squareGradient.addColorStop(0, RGBM(g, 0.8));
+        this.squareGradient.addColorStop(1, RGBM(g, 0));
 
         this.outlineGradient = ctx.createLinearGradient(0, y, 0, y + 300);
-        this.outlineGradient.addColorStop(0, RGBM(color, 0.6));
-        this.outlineGradient.addColorStop(1, RGBM(color, 0));
+        this.outlineGradient.addColorStop(0, RGBM(g, 0.6));
+        this.outlineGradient.addColorStop(1, RGBM(g, 0));
     }
 
     renderSegment(x, y, segmentNo) {

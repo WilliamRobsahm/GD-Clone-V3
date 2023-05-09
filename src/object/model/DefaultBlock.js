@@ -15,7 +15,7 @@ export class DefaultBlock extends ObjectModel {
         gradient.addColorStop(0, RGBA(colors.black, 1));
         gradient.addColorStop(1, RGBA(colors.black, 0.2));
 
-        setAttributes(ctx, {fillStyle: gradient, strokeStyle: channels.obj.getColor(), lineWidth: 3});
+        setAttributes(ctx, {fillStyle: gradient, strokeStyle: channels.getColor("obj"), lineWidth: 3});
         
         // Render block
         ctx.beginPath();

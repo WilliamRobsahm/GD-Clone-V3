@@ -1,31 +1,33 @@
-import { ctx } from "../misc/global.js";
+import ObjectBuilder from "../object/ObjectBuilder.js";
 import Chunk from "./Chunk.js";
 import ColorChannel from "./ColorChannel.js";
+import ColorChannelManager from "./ColorChannelManager.js";
 import ParallaxElement from "./ParallaxElement.js";
 
 const BG_MOVEMENT_MULTIPLIER = 0.5;
+const CHUNK_SIZE = 4;
 
+/**
+ * Represents the currently loaded level
+ */
 export default class Level {
-    constructor(game, properties, objectData) {
+    constructor(game) {
         this.game = game;
-        this.name = properties.name ?? "";
+        this.title;
+        this.background;
+        this.floor;
+        this.initialSpeed;
+        this.initialGamemode;
+        this.colorChannels;
+        this.objects = [];
 
         this.background = new ParallaxElement(this, "background", BG_MOVEMENT_MULTIPLIER);
-        this.background.setVariant(properties.background ?? 0);
         this.floor = new ParallaxElement(this, "floor");
-        this.floor.setVariant(properties.background ?? 0);
-
-        this.initialSpeed = properties.initialSpeed ?? "NORMAL";
-        this.initialGamemode = properties.initialGamemode ?? "CUBE";
-
-        this.objectData = objectData;
+        
         this.objects = [];
-        this.colorChannels = {
-            bg: new ColorChannel(60, 90, 255, false),
-            g: new ColorChannel(40, 70, 180, false),
-            line: new ColorChannel(255, 255, 255, false),
-            obj: new ColorChannel(255, 255, 255, false),
-        }
+
+        this.colors = new ColorChannelManager();
+
         this.levelLength = 0;
         this.chunks = [];
     }
@@ -69,16 +71,40 @@ export default class Level {
         return collidibleChunks;
     }
 
-    loadLevel(builder) {
-        this.loadObjects(builder);
+    /**
+     * 
+     * @param {object} levelData Contains level content. Objects, color channels, etc.
+     * @param {LevelInfo} levelInfo Contains name, difficulty, etc.
+     * @param {ObjectBuilder} builder Object builder
+     */
+    loadLevel(levelData, levelInfo, builder) {
+        console.log(levelData);
+        console.log(levelInfo);
+        this.id = levelInfo.id;
+        this.title = levelInfo.title;
+        this.difficulty = levelInfo.difficulty;
+        this.songId = levelInfo.songId;
+
+        this.initialSpeed = levelData.speed ?? 1;
+        this.initialGamemode = levelData.gamemode ?? 0;
+
+        this.pulseBpm = levelData.pulseBPM ?? null;
+        this.pulseOffset = levelData.pulseOffset ?? 0;
+
+        this.background.setVariant(levelData.background ?? 0);
+        this.floor.setVariant(levelData.background ?? 0);
+
+        this.colors.loadValues(levelData.channels);
+        this.loadObjects(levelData.objects, builder);
+
         this.levelLength = this.findLength();
-        this.setupChunks(this.game.chunkSize);
+        this.setupChunks(CHUNK_SIZE);
         console.log(this.chunks);
     }
 
-    loadObjects(builder) {
-        for(let i = 0; i < this.objectData.length; i++) {
-            let data = this.objectData[i];
+    loadObjects(objectData, builder) {
+        for(let i = 0; i < objectData.length; i++) {
+            let data = objectData[i];
             let object = builder.createObject(data.name, 
                 (data.gx ? data.gx : 0),
                 (data.gy ? data.gy : 0),
@@ -138,7 +164,7 @@ export default class Level {
     renderObjects(camera) {
         let chunkList = this.getChunksInRenderingRange(camera);
         chunkList.forEach(chunk => {
-            chunk.renderObjects(this.colorChannels);
+            chunk.renderObjects(this.colors);
         });
     }
 

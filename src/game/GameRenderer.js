@@ -36,7 +36,7 @@ export default class GameRenderer {
         floor.render(channels);
 
         // Floor line
-        setAttributes(ctx, {strokeStyle: channels.line.getColor(), lineWidth: 3});
+        setAttributes(ctx, {strokeStyle: channels.getColor("line"), lineWidth: 3});
         ctx.beginPath();
         ctx.moveTo(camera.getX(), 1.5);
         ctx.lineTo(camera.getX() + camera.getWidth(), 1.5);

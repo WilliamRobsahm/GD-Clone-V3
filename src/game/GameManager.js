@@ -1,3 +1,4 @@
+import Level from "../level/Level.js";
 import { LevelManager } from "../level/LevelManager.js";
 import FPSCounter from "../misc/FPSCounter.js";
 import { canvas, ctx } from "../misc/global.js";
@@ -13,7 +14,6 @@ export class GameManager {
     constructor() {
         this.defaultSize = 64;
         this.floorHeight = 200;
-        this.chunkSize = 4;
     }
 
     // Set up other objects. This can't be done in constructor since other stuff has to be done beforehand, such as setting canvas size.
@@ -22,12 +22,19 @@ export class GameManager {
         this.renderer = new GameRenderer(this);
         this.objectBuilder = new ObjectBuilder(this);
         this.player = new Player(this);
-        this.levelManager = new LevelManager(this);
-        this.level = this.levelManager.getLevel(0);
-        this.level.loadLevel(this.objectBuilder);
         this.FPSCounter = new FPSCounter(this);
 
-        this.player.respawn(this.level);
+        this.levelManager = new LevelManager(this);
+        this.level = new Level(this);
+
+        this.levelManager.getMainLevels((mainLevels) => {
+            this.levelManager.mainLevelInfo = mainLevels;
+
+            this.levelManager.loadMainLevelData(0, (leveldata, levelinfo) => {
+                this.level.loadLevel(leveldata, levelinfo, this.objectBuilder);
+                this.player.respawn(this.level);
+            });
+        });
     }
 
     update(deltaTime) {
@@ -52,7 +59,7 @@ export class GameManager {
         // Clear canvas
         this.renderer.clear(canvas, ctx, camera);
 
-        this.renderer.renderBackground(this.level.background, this.level.colorChannels)
+        this.renderer.renderBackground(this.level.background, this.level.colors)
 
         this.renderer.renderObject(this.player);
 
@@ -62,7 +69,7 @@ export class GameManager {
         if(config.showHitboxes)
             this.renderer.renderHitboxes(this.level, this.player, camera);
 
-        this.renderer.renderFloor(this.level.floor, camera, this.floorHeight, this.level.colorChannels);
+        this.renderer.renderFloor(this.level.floor, camera, this.floorHeight, this.level.colors);
 
         // Render FPS Counter
         if(config.showFPS)
