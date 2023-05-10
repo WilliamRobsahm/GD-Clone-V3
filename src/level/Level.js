@@ -43,6 +43,21 @@ export default class Level {
         return this.objects[index];
     }
 
+    getInitialGamemode() {
+        switch(this.initialGamemode) {
+            case 0: return "CUBE";
+        }
+    }
+
+    getInitialSpeed() {
+        switch(this.initialSpeed) {
+            case 0: return "SLOW";
+            case 1: return "NORMAL";
+            case 2: return "FAST";
+            case 3: return "FASTER";
+        }
+    }
+
     /**
      * Return an array of all chunks that are within rendering range
      * @returns {Chunk[]}

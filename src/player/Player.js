@@ -7,6 +7,7 @@ import Collision from "../collision/Collision.js";
 import Level from "../level/Level.js";
 import InputHandler from "../game/InputHandler.js";
 import config from "../game/config.js";
+import { rotateCanvas } from "../misc/util.js";
 
 const RESPAWN_TIME_MS = 1000;
 const PLAYER_SIZE = 64;
@@ -22,7 +23,7 @@ export default class Player {
         ]
         this.gamemode = null;
 
-        this.isAlive = true;
+        this.isAlive = false;
         this.respawnTimer = 0;
 
         this.speeds = {
@@ -40,8 +41,7 @@ export default class Player {
         this.gravityMode = 1;
         this.gravity = 0;
 
-        this.setGamemode("CUBE");
-        this.setSpeed("NORMAL");
+        this.rotationDeg = 0;
 
         this.size = PLAYER_SIZE;
         this.innerSize = PLAYER_INNER_SIZE;
@@ -59,6 +59,9 @@ export default class Player {
 
     getDX() { return this.dx }
     getDY() { return this.dy }
+
+    getCenterX() { return this.getX() + this.getWidth() / 2 }
+    getCenterY() { return this.getY() + this.getHeight() / 2 }
 
     getHeight() { return this.size }
     getWidth() { return this.size }
@@ -87,7 +90,7 @@ export default class Player {
     setSpeed(speed) {
         let blocksPerSecond = this.speeds[speed];
         if(blocksPerSecond === undefined) {
-            throw new Error(`"${speed}" is an invalid gamemode`);
+            throw new Error(`"${speed}" is an invalid speed`);
         }
 
         this.dx = (this.speeds[speed] * this.game.defaultSize / 60);
@@ -122,6 +125,8 @@ export default class Player {
             this.updatePhysics(d);
             this.move(d);
             this.updateCollision(level);
+            this.camera.updateX();
+            this.gamemode.updateRotation(d);
         } else {
             this.updateRespawnTimer(d);
             if(this.canRespawn()) {
@@ -184,7 +189,6 @@ export default class Player {
     move(d) {
         this.x += this.dx * d;
         this.y += this.dy * d;
-        this.camera.updateX();
     }
 
     onDeath() {
@@ -228,8 +232,15 @@ export default class Player {
         return false;
     }
 
+    rotate(deg) {
+        this.rotationDeg += deg;
+        this.rotationDeg = this.rotationDeg % 360;
+    }
+
     render() {
         if(!this.isAlive) return;
+
+        rotateCanvas(ctx, this.getCenterX(), this.getCenterY(), this.rotationDeg);
         ctx.strokeStyle = "black";
         ctx.lineWidth = 3;
         ctx.fillStyle = "red";
@@ -238,6 +249,7 @@ export default class Player {
         ctx.rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
         ctx.fill();
         ctx.stroke();
+        rotateCanvas(ctx, this.getCenterX(), this.getCenterY(), -this.rotationDeg);
     }
 
     renderHitbox() {
