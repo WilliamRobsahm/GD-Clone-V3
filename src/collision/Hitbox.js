@@ -1,4 +1,4 @@
-import { colors, RGB, RGBA } from "../misc/colors.js";
+import ColorHelper, { colors } from "../helpers/ColorHelper.js";
 import { ctx } from "../misc/global.js";
 
 const HITBOX_OPACITY = 0.5;
@@ -46,8 +46,8 @@ export default class Hitbox {
 
     render() {
 
-        ctx.fillStyle = RGBA(this.color, HITBOX_OPACITY);
-        ctx.strokeStyle = RGB(this.color);
+        ctx.fillStyle = ColorHelper.HSL(this.color, HITBOX_OPACITY);
+        ctx.strokeStyle = ColorHelper.HSL(this.color);
 
         ctx.lineWidth = HITBOX_LINE_WIDTH;
         ctx.beginPath();

@@ -10,8 +10,8 @@ export default class ParallaxElement {
         this.multiplier = multiplier;
         this.type = type;
         this.element;
-        this.x;
-        this.y;
+        this.x = 0;
+        this.y = 0;
     }
 
     update(camera, distance) {
@@ -60,16 +60,35 @@ export default class ParallaxElement {
         return Math.ceil(canvas.width / this.element.getWidth()) + 1;
     }
 
+    // Render using bg/g color channels
     render(channels) {
         if(!this.element) {
             this.setVariant();
-            return;
         }
 
         this.segmentCount = this.getSegmentCount();
 
         // Prepare element for rendering (set up gradients, etc.)
-        this.element.renderInit(this.x, this.y, channels);
+        let hsl = this.type == "background" ? channels.getValues("bg") : channels.getValues("g");
+        this.element.renderInit(this.x, this.y, hsl);
+
+        // Render background multiple times
+        for(let i = 0; i < this.segmentCount; i++) {
+            this.element.renderSegment(this.x, this.y, i);
+        }
+    }
+
+    // Render using hsv
+    menuRender(hue) {
+        if(!this.element) {
+            this.setVariant();
+        }
+
+        this.segmentCount = this.getSegmentCount();
+
+        // Prepare element for rendering (set up gradients, etc.)
+        let col = this.type == "background" ? `HSL(${hue},80,80)` : `HSL(${hue},80,70)`;
+        this.element.renderInit(this.x, this.y, col);
 
         // Render background multiple times
         for(let i = 0; i < this.segmentCount; i++) {

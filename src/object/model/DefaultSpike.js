@@ -1,6 +1,6 @@
-import { colors, RGBA } from "../../misc/colors.js";
 import { ctx } from "../../misc/global.js";
-import { setAttributes } from "../../misc/util.js";
+import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
+import { applyProperties } from "../../helpers/helper.js";
 import ObjectModel from "./ObjectModel.js";
 
 export class DefaultSpike extends ObjectModel {
@@ -12,10 +12,10 @@ export class DefaultSpike extends ObjectModel {
 
         // Create gradient
         let gradient = ctx.createLinearGradient(0, object.getY() + 24, 0, object.getY() + 64);
-        gradient.addColorStop(0, RGBA(colors.black, 1));
-        gradient.addColorStop(1, RGBA(colors.black, 0.2));
+        gradient.addColorStop(0, ColorHelper.HSL(colors.black));
+        gradient.addColorStop(1, ColorHelper.HSL(colors.black, 0.2));
 
-        setAttributes(ctx, {fillStyle: gradient, strokeStyle: channels.getColor("obj"), lineWidth: 3});
+        applyProperties(ctx, {fillStyle: gradient, strokeStyle: channels.getColor("obj"), lineWidth: 3});
 
         // Render spike
         ctx.beginPath();

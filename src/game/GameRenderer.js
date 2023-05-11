@@ -1,5 +1,5 @@
+import { applyProperties } from "../helpers/helper.js";
 import { ctx } from "../misc/global.js";
-import { setAttributes } from "../misc/util.js";
 import PlayerCamera from "../player/PlayerCamera.js";
 
 export default class GameRenderer {
@@ -28,15 +28,17 @@ export default class GameRenderer {
         
     }
 
-    renderBackground(background, channels) {
+    renderGameBackground(background, channels) {
         background.render(channels);
     }
 
-    renderFloor(floor, camera, floorHeight, channels) {
+    renderGameFloor(floor, camera, floorHeight, channels) {
         floor.render(channels);
+        this.renderFloorLine(floor, camera, channels)
+    }
 
-        // Floor line
-        setAttributes(ctx, {strokeStyle: channels.getColor("line"), lineWidth: 3});
+    renderFloorLine(floor, camera, channels) {
+        applyProperties(ctx, {strokeStyle: channels.getColor("line"), lineWidth: 3});
         ctx.beginPath();
         ctx.moveTo(camera.getX(), 1.5);
         ctx.lineTo(camera.getX() + camera.getWidth(), 1.5);

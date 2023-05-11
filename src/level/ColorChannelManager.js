@@ -1,4 +1,4 @@
-import { isValidListIndex } from "../misc/util.js";
+import { isValidListIndex } from "../helpers/helper.js";
 import ColorChannel from "./ColorChannel.js";
 
 const CHANNEL_COUNT = 100;
@@ -37,20 +37,20 @@ export default class ColorChannelManager {
 
     getColor(channelName) {
         const channel = this.getChannel(channelName);
-        return channel ? channel.getColor() : {r: 0, g: 0, b: 0};
+        return channel ? channel.getColor() : 'hsl(0,0%,0%)';
     }
 
     getValues(channelName) {
         const channel = this.getChannel(channelName);
-        return channel ? channel.getValues() : {r: 0, g: 0, b: 0};
+        return channel ? channel.getValues() : {h: 0, s: 0, l: 0};
     }
 
     reset() {
         for(const channel in this.main) 
-            this.main[channel].setColor();
+            this.main[channel].reset();
 
         this.numbered.forEach(channel => {
-            channel.setColor();
+            channel.reset();
         })
     }
     
@@ -62,7 +62,7 @@ export default class ColorChannelManager {
         this.reset();
         for(const channel in colorData) {
             let clr = colorData[channel];
-            this.getChannel(channel)?.setColor(clr.r, clr.g, clr.b, clr.blending, clr.a);
+            this.getChannel(channel)?.setColor(clr.h, clr.s, clr.l, clr.a, clr.blending);
         }
     }
 }

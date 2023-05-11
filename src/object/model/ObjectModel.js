@@ -1,5 +1,5 @@
 import { ctx } from "../../misc/global.js";
-import { rotateCanvas } from "../../misc/util.js";
+import { rotateCanvas } from "../../helpers/helper.js";
 
 export default class ObjectModel {
     constructor(game, width, height, name) {

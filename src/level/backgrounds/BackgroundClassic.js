@@ -1,4 +1,4 @@
-import { RGBM } from "../../misc/colors.js";
+import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import { ctx } from "../../misc/global.js";
 import ParallaxBase from "../ParallaxBase.js";
 
@@ -7,20 +7,18 @@ export default class BackgroundClassic extends ParallaxBase {
         super(width, height);
     }
 
-    renderInit(x, y, channelManager) {
-        let bg = channelManager.getValues("bg");
-
+    renderInit(x, y, hsl) {
         this.mainGradient = ctx.createLinearGradient(0, y, 0, y + this.height);
-        this.mainGradient.addColorStop(0, RGBM(bg, 0));
-        this.mainGradient.addColorStop(1, RGBM(bg, 1));
+        this.mainGradient.addColorStop(0, ColorHelper.HSL(colors.black));
+        this.mainGradient.addColorStop(1, ColorHelper.HSL(hsl));
 
         this.squareGradient = ctx.createLinearGradient(0, y + 100, 0, y + this.height);
-        this.squareGradient.addColorStop(0, RGBM(bg, 0));
-        this.squareGradient.addColorStop(1, RGBM(bg, 0.8));
+        this.squareGradient.addColorStop(0, ColorHelper.HSL(colors.black));
+        this.squareGradient.addColorStop(1, ColorHelper.HSL(hsl, 1, 0, 0.8));
 
         this.outlineGradient = ctx.createLinearGradient(0, y, 0, y + this.height);
-        this.outlineGradient.addColorStop(0, RGBM(bg, 0));
-        this.outlineGradient.addColorStop(1, RGBM(bg, 0.6));
+        this.outlineGradient.addColorStop(0, ColorHelper.HSL(colors.black));
+        this.outlineGradient.addColorStop(1, ColorHelper.HSL(hsl, 1, 0, 0.6));
     }
 
     renderSegment(x, y, segmentNo) {

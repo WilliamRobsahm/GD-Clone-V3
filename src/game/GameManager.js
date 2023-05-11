@@ -1,5 +1,6 @@
 import Level from "../level/Level.js";
 import { LevelManager } from "../level/LevelManager.js";
+import MenuManager from "../menu/MenuManager.js";
 import FPSCounter from "../misc/FPSCounter.js";
 import { canvas, ctx } from "../misc/global.js";
 import ObjectBuilder from "../object/ObjectBuilder.js";
@@ -14,6 +15,8 @@ export class GameManager {
     constructor() {
         this.defaultSize = 64;
         this.floorHeight = 200;
+
+        this.gameState = "IN_GAME";
     }
 
     // Set up other objects. This can't be done in constructor since other stuff has to be done beforehand, such as setting canvas size.
@@ -26,6 +29,9 @@ export class GameManager {
 
         this.levelManager = new LevelManager(this);
         this.level = new Level(this);
+
+        this.menu = new MenuManager(this);
+        //this.menu.enter();
 
         this.levelManager.getMainLevels((mainLevels) => {
             this.levelManager.mainLevelInfo = mainLevels;
@@ -46,38 +52,52 @@ export class GameManager {
         // This also means that performance issues won't slow down the game.
         let physicsMultiplier = deltaTime / (1000 / 60);
 
-        this.player.update(physicsMultiplier, this.input, this.level);
+        if(this.gameState == "MENU") {
+            this.menu.update(this.level, physicsMultiplier);
+            this.menu.handleInput(this.input);
+        } 
         
-        let dx = this.player.getDX() * physicsMultiplier
-        this.level.background.update(this.player.camera, dx);
-        this.level.floor.update(this.player.camera, dx);
+        else if(this.gameState == "IN_GAME") {
+            this.player.update(physicsMultiplier, this.input, this.level);
+        
+            let dx = this.player.getDX() * physicsMultiplier
+            this.level.background.update(this.player.camera, dx);
+            this.level.floor.update(this.player.camera, dx);
+        }
     }
 
     render(camera) {
 
-        // Set canvas position
         ctx.save();
         ctx.translate(-camera.getX(),-camera.getY());
 
         // Clear canvas
         this.renderer.clear(canvas, ctx, camera);
 
-        this.renderer.renderBackground(this.level.background, this.level.colors)
-
-        this.renderer.renderObject(this.player);
-
-        this.renderer.renderLevelObjects(this.level, camera);
-
-        // Render Hitboxes
-        if(config.showHitboxes)
-            this.renderer.renderHitboxes(this.level, this.player, camera);
-
-        this.renderer.renderFloor(this.level.floor, camera, this.floorHeight, this.level.colors);
-
-        // Render FPS Counter
-        if(config.showFPS)
-            this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);
+        if(this.gameState == "MENU") {
+            this.menu.render();
+        } 
         
+        else if(this.gameState == "IN_GAME") {
+            // Set canvas position
+
+            this.renderer.renderGameBackground(this.level.background, this.level.colors)
+
+            this.renderer.renderObject(this.player);
+
+            this.renderer.renderLevelObjects(this.level, camera);
+
+            // Render Hitboxes
+            if(config.showHitboxes)
+                this.renderer.renderHitboxes(this.level, this.player, camera);
+
+            this.renderer.renderGameFloor(this.level.floor, camera, this.floorHeight, this.level.colors);
+
+            // Render FPS Counter
+            if(config.showFPS)
+                this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);
+        }
+
         ctx.restore();
     }
 }

@@ -7,7 +7,7 @@ import Collision from "../collision/Collision.js";
 import Level from "../level/Level.js";
 import InputHandler from "../game/InputHandler.js";
 import config from "../game/config.js";
-import { rotateCanvas } from "../misc/util.js";
+import { rotateCanvas } from "../helpers/helper.js";
 
 const RESPAWN_TIME_MS = 1000;
 const PLAYER_SIZE = 64;
@@ -218,6 +218,7 @@ export default class Player {
         this.isAlive = true;
         this.x = 0;
         this.y = 0 - this.game.defaultSize;
+        this.rotationDeg = 0;
         this.setGamemode("CUBE");
         this.setSpeed("NORMAL");
         this.camera.reset();

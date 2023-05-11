@@ -6,8 +6,8 @@
     "pulseBPM":132,
     "pulseOffset":0,
     "channels":{
-        "bg":{"r":60,"g":90,"b":255},
-        "g":{"r":40,"g":70,"b":180}
+        "bg":{"h":230,"s":100,"l":62},
+        "g":{"h":230,"s":60,"l":40}
     },
     "objects":[
         {"name":"default_spike","gx":10,"gy":0},
