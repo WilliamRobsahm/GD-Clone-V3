@@ -1,4 +1,3 @@
-import PlayerCamera from "./PlayerCamera.js";
 import { CubeGamemode } from "./gamemodes/CubeGamemode.js";
 import { GamemodeEnum } from "./gamemodes/PlayerGamemodes.js";
 import { ctx } from "../misc/global.js";
@@ -8,6 +7,7 @@ import Level from "../level/Level.js";
 import InputHandler from "../game/InputHandler.js";
 import config from "../game/config.js";
 import { rotateCanvas } from "../helpers/helper.js";
+import Camera from "./Camera.js";
 
 const RESPAWN_TIME_MS = 1000;
 const PLAYER_SIZE = 64;
@@ -16,7 +16,7 @@ const PLAYER_INNER_SIZE = 24;
 export default class Player {
     constructor(game) {
         this.game = game;
-        this.camera = new PlayerCamera(this)
+        this.camera = new Camera();
 
         this.gamemodeList = [
             new CubeGamemode(this),
@@ -125,7 +125,7 @@ export default class Player {
             this.updatePhysics(d);
             this.move(d);
             this.updateCollision(level);
-            this.camera.updateX();
+            this.camera.updateX(this.getX());
             this.gamemode.updateRotation(d);
         } else {
             this.updateRespawnTimer(d);

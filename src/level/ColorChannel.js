@@ -17,11 +17,11 @@ export default class ColorChannel {
      * @param {boolean} blending Use additive filter when drawing
      */
     setColor(h, s, l, a, blending) {
-        if(h !== undefined) this.h = clamp(h, 0, 360);
-        if(s !== undefined) this.s = clamp(s, 0, 100);
-        if(l !== undefined) this.l = clamp(l, 0, 100);
-        if(a !== undefined) this.a = a;
-        if(blending !== undefined) this.blending = blending;
+        if(h !== undefined && h !== null) this.h = clamp(h, 0, 360);
+        if(s !== undefined && s !== null) this.s = clamp(s, 0, 100);
+        if(l !== undefined && l !== null) this.l = clamp(l, 0, 100);
+        if(a !== undefined && a !== null) this.a = a;
+        if(blending !== undefined && blending !== null) this.blending = blending;
     }
 
     /**

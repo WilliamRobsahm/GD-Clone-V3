@@ -2,10 +2,9 @@ import Level from "../level/Level.js";
 import { LevelManager } from "../level/LevelManager.js";
 import MenuManager from "../menu/MenuManager.js";
 import FPSCounter from "../misc/FPSCounter.js";
-import { canvas, ctx } from "../misc/global.js";
+import { canvas, ctx, FLOOR_HEIGHT } from "../misc/global.js";
 import ObjectBuilder from "../object/ObjectBuilder.js";
 import Player from "../player/Player.js";
-import PlayerCamera from "../player/PlayerCamera.js";
 import config from "./config.js";
 import GameRenderer from "./GameRenderer.js";
 import InputHandler from "./InputHandler.js";
@@ -14,9 +13,7 @@ export class GameManager {
     // Declare game constants
     constructor() {
         this.defaultSize = 64;
-        this.floorHeight = 200;
-
-        this.gameState = "IN_GAME";
+        this.gameState = "MENU";
     }
 
     // Set up other objects. This can't be done in constructor since other stuff has to be done beforehand, such as setting canvas size.
@@ -31,15 +28,17 @@ export class GameManager {
         this.level = new Level(this);
 
         this.menu = new MenuManager(this);
-        //this.menu.enter();
+        this.menu.enter();
 
         this.levelManager.getMainLevels((mainLevels) => {
             this.levelManager.mainLevelInfo = mainLevels;
 
+            /*
             this.levelManager.loadMainLevelData(0, (leveldata, levelinfo) => {
                 this.level.loadLevel(leveldata, levelinfo, this.objectBuilder);
                 this.player.respawn(this.level);
             });
+            */
         });
     }
 
@@ -61,41 +60,45 @@ export class GameManager {
             this.player.update(physicsMultiplier, this.input, this.level);
         
             let dx = this.player.getDX() * physicsMultiplier
-            this.level.background.update(this.player.camera, dx);
-            this.level.floor.update(this.player.camera, dx);
+            this.level.background.update(this.player.camera.getX(), dx);
+            this.level.floor.update(this.player.camera.getX(), dx);
         }
     }
 
-    render(camera) {
+    render() {
+        
+        const camera = this.gameState == "MENU" ? this.menu.camera : 
+                       this.gameState == "IN_GAME" ? this.player.camera : null;
 
+        // Set canvas position
         ctx.save();
         ctx.translate(-camera.getX(),-camera.getY());
 
         // Clear canvas
-        this.renderer.clear(canvas, ctx, camera);
+        GameRenderer.clear(canvas, ctx, camera);
 
+        // Render menu
         if(this.gameState == "MENU") {
             this.menu.render();
         } 
         
+        // Render game
         else if(this.gameState == "IN_GAME") {
-            // Set canvas position
+            
 
-            this.renderer.renderGameBackground(this.level.background, this.level.colors)
-
-            this.renderer.renderObject(this.player);
-
-            this.renderer.renderLevelObjects(this.level, camera);
+            GameRenderer.renderGameBackground(this.level.background, this.level.colors)
+            GameRenderer.renderObject(this.player);
+            GameRenderer.renderLevelObjects(this.level, camera);
 
             // Render Hitboxes
             if(config.showHitboxes)
-                this.renderer.renderHitboxes(this.level, this.player, camera);
+                GameRenderer.renderHitboxes(this.level, this.player, camera);
 
-            this.renderer.renderGameFloor(this.level.floor, camera, this.floorHeight, this.level.colors);
+            GameRenderer.renderGameFloor(this.level.floor, camera, this.level.colors, ctx);
 
             // Render FPS Counter
             if(config.showFPS)
-                this.renderer.renderFPS(this.FPSCounter.getFPS(), camera);
+                GameRenderer.renderFPS(this.FPSCounter.getFPS(), camera, ctx);
         }
 
         ctx.restore();

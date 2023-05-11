@@ -1,9 +1,10 @@
-import Level from '../level/Level.js';
+import Camera from '../player/Camera.js';
 import * as pages from './Pages.js';
 
 export default class MenuManager {
     constructor(game) {
         this.game = game;
+        this.camera = new Camera();
 
         this.isActive = false;
         this.pageList = {
@@ -11,6 +12,9 @@ export default class MenuManager {
             MAIN_LEVELS: new pages.MainLevels(),
             CUSTOMIZE_ICON: new pages.CustomizeIcon(),
         }
+        this.pageList.MAIN.level = this.game.level;
+        this.pageList.MAIN.camera = this.camera;
+
         this.activePage = null;
     }
 
@@ -25,7 +29,7 @@ export default class MenuManager {
     }
 
     update(d) {
-
+        this.activePage.update(d);
     }
 
     handleInput(input) {
@@ -45,11 +49,6 @@ export default class MenuManager {
 
     render() {
         if(!this.isActive || !this.activePage) return;
-
-        if(this.getActivePageName() == "MAIN") {
-            this.activePage.render(this.game.level);
-        } else {
-            this.activePage.render();
-        }
+        this.activePage.render();
     }
 }

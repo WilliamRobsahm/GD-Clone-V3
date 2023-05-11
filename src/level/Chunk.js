@@ -1,4 +1,4 @@
-import PlayerCamera from "../player/PlayerCamera.js";
+import PlayerCamera from "../player/Camera.js";
 
 export default class Chunk {
     constructor(level, gridX, size) {

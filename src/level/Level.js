@@ -14,12 +14,12 @@ export default class Level {
     constructor(game) {
         this.game = game;
         this.title;
-        this.background;
-        this.floor;
         this.initialSpeed;
         this.initialGamemode;
         this.colorChannels;
         this.objects = [];
+        
+        this.floorY = 0; // Determines at what Y position the background and floor are rendered
 
         this.background = new ParallaxElement(this, "background", BG_MOVEMENT_MULTIPLIER);
         this.floor = new ParallaxElement(this, "floor");

@@ -8,7 +8,15 @@ export default class PageBase {
         console.log("loading page " + this.name);
     }
 
+    update(d) {
+        
+    }
+
     handleInput() {
+        
+    }
+
+    render() {
         
     }
 }

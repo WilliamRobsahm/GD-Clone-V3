@@ -14,14 +14,14 @@ export default class ParallaxElement {
         this.y = 0;
     }
 
-    update(camera, distance) {
+    update(cameraX, distance) {
         if(!this.element) {
             this.setVariant();
             return;
         }
 
         this.x += distance * this.multiplier;
-        if(this.x + this.element.getWidth() < camera.getX()) {
+        if(this.x + this.element.getWidth() < cameraX) {
             this.x += this.element.getWidth();
         }
     }
@@ -52,7 +52,8 @@ export default class ParallaxElement {
     resetPosition() {
         if(!this.element) return;
         this.x = -this.element.getWidth();
-        this.y = this.type == "floor" ? 0 : -this.element.getHeight();
+        this.y = this.level.floorY;
+        if(this.type == "background") this.y -= this.element.getHeight();
     }
 
     getSegmentCount() {

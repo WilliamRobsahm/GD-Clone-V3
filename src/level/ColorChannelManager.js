@@ -9,7 +9,7 @@ export default class ColorChannelManager {
             bg: new ColorChannel(),
             g: new ColorChannel(),
             obj: new ColorChannel(),
-            line: new ColorChannel(),
+            line: new ColorChannel(null, null, null, null, true),
         };
 
         this.numbered = [];
