@@ -1,6 +1,6 @@
 import Level from "../level/Level.js";
 import { LevelManager } from "../level/LevelManager.js";
-import MenuManager from "../menu/MenuManager.js";
+import MenuManager from "../ui/MenuManager.js";
 import FPSCounter from "../misc/FPSCounter.js";
 import { canvas, ctx, FLOOR_HEIGHT } from "../misc/global.js";
 import ObjectBuilder from "../object/ObjectBuilder.js";
@@ -45,6 +45,7 @@ export class GameManager {
     update(deltaTime) {
         this.FPSCounter.increment();
         if(deltaTime > 200) return;
+        
 
         // All physics are designed for 60 FPS, but 'physicsMultiplier' determines how much of that will be done each frame.
         // On 60 fps, 'physicsMultiplier' will be around 1 (with slight fluxuation). On higher hz, it will be lower.
@@ -52,11 +53,14 @@ export class GameManager {
         let physicsMultiplier = deltaTime / (1000 / 60);
 
         if(this.gameState == "MENU") {
+            document.body.style.cursor = "default";
             this.menu.update(this.level, physicsMultiplier);
             this.menu.handleInput(this.input);
         } 
         
         else if(this.gameState == "IN_GAME") {
+            document.body.style.cursor = "none";
+
             this.player.update(physicsMultiplier, this.input, this.level);
         
             let dx = this.player.getDX() * physicsMultiplier
@@ -67,7 +71,7 @@ export class GameManager {
 
     render() {
         
-        const camera = this.gameState == "MENU" ? this.menu.camera : 
+        const camera = this.gameState == "MENU" ? this.menu.getCamera() : 
                        this.gameState == "IN_GAME" ? this.player.camera : null;
 
         // Set canvas position

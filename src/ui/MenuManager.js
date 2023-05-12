@@ -4,16 +4,15 @@ import * as pages from './Pages.js';
 export default class MenuManager {
     constructor(game) {
         this.game = game;
-        this.camera = new Camera();
 
         this.isActive = false;
         this.pageList = {
-            MAIN: new pages.MainMenu(),
-            MAIN_LEVELS: new pages.MainLevels(),
-            CUSTOMIZE_ICON: new pages.CustomizeIcon(),
+            MAIN: new pages.MainMenu(this),
+            MAIN_LEVELS: new pages.MainLevels(this),
+            CUSTOMIZE_ICON: new pages.CustomizeIcon(this),
+            EDITOR_MENU: new pages.EditorMenu(this),
         }
         this.pageList.MAIN.level = this.game.level;
-        this.pageList.MAIN.camera = this.camera;
 
         this.activePage = null;
     }
@@ -22,10 +21,15 @@ export default class MenuManager {
         return this.activePage ? this.activePage.name : null;
     }
 
+    getCamera() {
+        return this.activePage ? this.activePage.camera : null;
+    }
+
     loadPage(pageName) {
         if(!this.pageList.hasOwnProperty(pageName)) return;
         this.activePage = this.pageList[pageName];
         this.activePage.init();
+        this.activePage.update();
     }
 
     update(d) {
@@ -34,7 +38,7 @@ export default class MenuManager {
 
     handleInput(input) {
         if(!this.isActive || !this.activePage) return;
-        this.activePage.handleInput();
+        this.activePage.handleInput(input);
     }
 
     enter(startPage) {

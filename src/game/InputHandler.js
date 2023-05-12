@@ -82,6 +82,18 @@ export default class InputHandler {
     removeKey(key) {
         this.keys.splice(this.keys.indexOf(key.toUpperCase()),1);
     }
+
+    mouseOn(rect, camera) {
+        let mx = this.mouseX + camera?.getX() ?? 0;
+        let my = this.mouseY + camera?.getY() ?? 0;
+
+        return (
+            mx >= rect.getX() && 
+            mx <= rect.getX2() &&
+            my >= rect.getY() &&
+            my <= rect.getY2()
+        );
+    }
 }
 
 // Prevent right click menu from opening
