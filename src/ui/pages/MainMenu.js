@@ -1,6 +1,6 @@
 import GameRenderer from "../../game/GameRenderer.js";
-import { colors } from "../../helpers/ColorHelper.js";
 import { canvas, ctx } from "../../misc/global.js";
+import { MainMenuButtonModel } from "../elements/buttonmodels/MainMenuButton.js";
 import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
@@ -15,33 +15,33 @@ export class MainMenu extends PageBase {
         // Create buttons
 
         this.addButton("TO_ICON_MENU", this.mainContent, {
-            width: "200px",
-            height: "200px",
+            width: "180px",
+            height: "180px",
             offsetX: "-300px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
             centerX: true, centerY: true,
-            backgroundColor: colors.black,
+            model: new MainMenuButtonModel(null),
         }, () => {
             this.menu.loadPage("CUSTOMIZE_ICON");
         });
         
         this.addButton("TO_MAIN_LEVELS", this.mainContent, {
-            width: "300px",
-            height: "300px",
+            width: "240px",
+            height: "240px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
             centerX: true, centerY: true,
-            backgroundColor: colors.black,
+            model: new MainMenuButtonModel(null),
         }, () => {
             this.menu.loadPage("MAIN_LEVELS");
         });
 
         this.addButton("TO_EDITOR", this.mainContent, {
-            width: "200px",
-            height: "200px",
+            width: "180px",
+            height: "180px",
             offsetX: "300px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
             centerX: true, centerY: true,
-            backgroundColor: colors.black,
+            model: new MainMenuButtonModel(null),
         }, () => {
             this.menu.loadPage("EDITOR_MENU");
         });
