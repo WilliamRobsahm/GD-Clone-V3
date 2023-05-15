@@ -2,6 +2,7 @@ import { clamp } from "./helper.js";
 
 export const colors = {
     white: {h:0, s:0, l:100},
+    transparent: {h:0, s:0, l: 0, a: 0},
     black: {h:0, s:0, l:0},
     hazardHitbox: {h:0, s:100, l:60},
     specialHitbox: {h:120, s:100, l:60},
@@ -76,8 +77,8 @@ export default class ColorHelper {
 
     /**
      * Return a color string from an HSL object.
-     * @param {object} hsl HSL object. Requires 'h', 's', and 'l' attributes
-     * @param {number} alpha Alpha value, between 0 and 1
+     * @param {object} hsl HSL object. Requires 'h', 's', and 'l' attributes. May also include an 'a' attribute (alpha)
+     * @param {number} alpha Alpha value, between 0 and 1. May also be included in the HSL object as 'a'
      * @param {number} hueShift Added directly to hue value. (-180 to 180)
      * @param {number} brightness Rendering brightness. Has nothing to do with HSL Lightness.
      * @returns {string}
@@ -88,6 +89,7 @@ export default class ColorHelper {
         let h = hsl.h + clamp(hueShift, -180, 180);
         let s = hsl.s;
         let l = hsl.l;
+        if(hsl.a !== undefined) alpha = hsl.a;
         if(h < 0) h += 360;
 
         if(brightness === 1) {
