@@ -1,47 +1,64 @@
 import GameRenderer from "../../game/GameRenderer.js";
+import { colors } from "../../helpers/ColorHelper.js";
 import { canvas, ctx } from "../../misc/global.js";
+import uiText from "../elements/uiText.js";
+import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
-const COLOR_CYCLE_SPEED = 0.5; // Hue shift per frame
-const BG_SATURATION = 50;
-const BG_LIGHTNESS = 50;
-const BG_DX = 5;
+const BG_DX = 2;
 
 export class MainMenu extends PageBase {
     constructor(menu) {
         super(menu, "MAIN");
-        this.backgroundHue = 0;
         this.level;
 
         // Create buttons
 
-        this.addButton("TO_ICON_MENU", this.camera, {
+        this.addButton("TO_ICON_MENU", this.mainContent, {
             width: "200px",
             height: "200px",
-            offsetX: -300,
+            offsetX: "-300px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
-            centerX: true, centerY: true
+            centerX: true, centerY: true,
+            backgroundColor: colors.black,
         }, () => {
             this.menu.loadPage("CUSTOMIZE_ICON");
         });
         
-        this.addButton("TO_MAIN_LEVELS", this.camera, {
+        this.addButton("TO_MAIN_LEVELS", this.mainContent, {
             width: "300px",
             height: "300px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
-            centerX: true, centerY: true
+            centerX: true, centerY: true,
+            backgroundColor: colors.black,
         }, () => {
             this.menu.loadPage("MAIN_LEVELS");
         });
 
-        this.addButton("TO_EDITOR", this.camera, {
+        this.addButton("TO_EDITOR", this.mainContent, {
             width: "200px",
             height: "200px",
-            offsetX: 300,
+            offsetX: "300px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
-            centerX: true, centerY: true
+            centerX: true, centerY: true,
+            backgroundColor: colors.black,
         }, () => {
             this.menu.loadPage("EDITOR_MENU");
+        });
+
+        this.titleText = new uiText(this, this.mainContent, {
+            text: "Zheometry Jash",
+            centerY: false,
+            textAlignY: "TOP",
+            textOffsetY: "40px",
+            font: "96px Arco",
+        });
+        this.subTitleText = new uiText(this, this.mainContent, {
+            text: "A somewhat scuffed GD clone. By Salad",
+            centerY: false,
+            textAlignY: "TOP",
+            textOffsetY: "136px",
+            font: "32px Arco",
         });
     }
 
@@ -55,37 +72,39 @@ export class MainMenu extends PageBase {
         this.level.floorY = canvas.height - 200;
         this.level.background.resetPosition();
         this.level.floor.resetPosition();
-
-        // Prepare buttons
-        
     }
 
     update(d) {
-        // Hue shift
-        this.backgroundHue += COLOR_CYCLE_SPEED;
-        if(this.backgroundHue >= 360) this.backgroundHue = 0;
+        this.level.floorY = canvas.height - 200;
 
         this.camera.x += BG_DX;
         this.level.background.update(this.camera.getX(), BG_DX);
         this.level.floor.update(this.camera.getX(), BG_DX);
 
-        let cx = this.camera.getCenterX();
-        let cy = this.camera.getCenterY();
-
+        this.mainContent.update();
         this.buttons.TO_ICON_MENU.update();
         this.buttons.TO_MAIN_LEVELS.update();
         this.buttons.TO_EDITOR.update();
+        this.titleText.update();
+        this.subTitleText.update();
     }
 
-    render() {
-        this.level.colors.getChannel("bg").setColor(this.backgroundHue, BG_SATURATION, BG_LIGHTNESS);
-        this.level.colors.getChannel("g").setColor(this.backgroundHue, BG_SATURATION, BG_LIGHTNESS - 10);
+    renderBackground() {
+        this.level.colors.getChannel("bg").setColor(this.menu.backgroundHue, BG_SATURATION, BG_LIGHTNESS);
+        this.level.colors.getChannel("g").setColor(this.menu.backgroundHue, BG_SATURATION, BG_LIGHTNESS - 10);
 
         GameRenderer.renderGameBackground(this.level.background, this.level.colors);
         GameRenderer.renderGameFloor(this.level.floor, this.camera, this.level.colors, ctx);
+    }
 
+    render() {
+        this.renderBackground();        
+
+        this.mainContent.render();
         this.buttons.TO_ICON_MENU.render();
         this.buttons.TO_MAIN_LEVELS.render();
         this.buttons.TO_EDITOR.render();
+        this.titleText.render();
+        this.subTitleText.render();
     }
 }

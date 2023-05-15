@@ -24,6 +24,9 @@ export default class ParallaxElement {
         if(this.x + this.element.getWidth() < cameraX) {
             this.x += this.element.getWidth();
         }
+
+        this.y = this.level.floorY;
+        if(this.type == "background") this.y -= this.element.getHeight();
     }
 
     setVariant(id = 0) {

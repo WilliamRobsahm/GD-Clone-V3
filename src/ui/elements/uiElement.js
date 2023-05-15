@@ -1,37 +1,47 @@
 import InputHandler from "../../game/InputHandler.js";
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
+import RenderHelper from "../../helpers/RenderHelper.js";
 import { ctx } from "../../misc/global.js";
 import Rect from "../../misc/Rect.js";
 import Camera from "../../player/Camera.js";
 import { PropertyClasses } from "./propertyClasses.js";
 
 export default class UIElement extends Rect {
-    constructor(page, props) {
+    constructor(page, parent, props) {
         super();
         this.page = page;
 
         // General
         this.id = null;
-        this.parent = null;
-        this.model;
+        this.parent = parent ?? null;
 
         // Size
-        this.width; this.height;
+        this.width; this.height; // ..px, ..%, or STRETCH
         this.widthPx = 0; this.heightPx = 0;
-
+        
         // Alignment / Placement
-        this.position = "RELATIVE";
-        this.selfAlignX = "LEFT";
-        this.selfAlignY = "TOP";
+        this.position = "RELATIVE"; // RELATIVE or ABSOLUTE
+        this.selfAlignX = "LEFT"; // LEFT, CENTER, or RIGHT
+        this.selfAlignY = "TOP"; // TOP, CENTER, or BOTTOM :3
         this.centerX = false;
         this.centerY = false;
-        this.floatX = "LEFT";
-        this.floatY = "TOP";
-        this.offsetX = 0;
-        this.offsetY = 0;
+        this.floatX = "LEFT"; // LEFT or RIGHT
+        this.floatY = "TOP"; // TOP or BOTTOM :3
+        this.offsetX;
+        this.offsetY;
+
+        // Text
+        this.text = null;
+        this.textAttributes = {};
+        this.textAlignX = "CENTER"; // LEFT, CENTER, or RIGHT
+        this.textAlignY = "CENTER"; // TOP, CENTER, or BOTTOM :3
+        this.textOffsetX = 0; 
+        this.textOffsetY = 0;
 
         // Styling
-        this.backgroundColor = colors.black;
+        this.model = null;
+        this.backgroundColor = colors.transparent;
+        this.cornerRadius = null;
 
         // Interaction
         this.hoverable = false;
@@ -52,18 +62,24 @@ export default class UIElement extends Rect {
         applyProp("selfAlignX");
         applyProp("selfAlignY");
         applyProp("backgroundColor");
+        applyProp("textOffsetX");
+        applyProp("textOffsetY");
+        applyProp("textAlignX");
+        applyProp("textAlignY");
+        applyProp("cornerRadius");
+        applyProp("text");
 
         this.setCentering(props.centerX, props.centerY);
         this.setOffset(props.offsetX, props.offsetY);
         this.setFloat(props.floatX, props.floatY);
         this.setSize(props.width, props.height);
+        this.setFont(props.font);
     }
 
     applyClass(className) {
         let propClass = PropertyClasses[className];
         if(propClass !== undefined) {
             const properties = PropertyClasses[className];
-            console.log(properties);
             this.applyProperties(properties);
         }
     }
@@ -88,12 +104,17 @@ export default class UIElement extends Rect {
         this.updateSize();
     }
 
+    setFont(font) {
+        if(font) this.textAttributes.font = font;
+    }
+
     /**
      * Takes a number with a unit and return its equivalent pixel count.
      * Supported units: "px", "%"
      * @param {string} x Number w/ unit (ex. "100px", "20%")
      */
     sizeToPixels(size, parentSize) {
+        if(!size) return 0;
         if(size.includes("px")) {
             return parseInt(size.replace("px", ""));
         } else if(size.includes("%")) {
@@ -167,8 +188,7 @@ export default class UIElement extends Rect {
             else x = this.parent.getX2() - this.getWidth();
         }
 
-        x += this.offsetX;
-        
+        x += this.sizeToPixels(this.offsetX, this.parent.getWidth());
         this.x = x;
     }
 
@@ -181,7 +201,7 @@ export default class UIElement extends Rect {
             y = this.parent.getY();
         }
 
-        y += this.offsetY;
+        y += this.sizeToPixels(this.offsetY, this.parent.getHeight());
 
         this.y = y;
     }
@@ -189,6 +209,49 @@ export default class UIElement extends Rect {
     render() {
         if(this.model) this.model.render(this);
         ctx.fillStyle = ColorHelper.HSL(this.backgroundColor);
-        ctx.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+
+        if(this.cornerRadius) {
+            let r = this.sizeToPixels(this.cornerRadius, this.getWidth());
+            RenderHelper.fillRoundedRect(this, r, ctx);
+        } else {
+            RenderHelper.fillRect(this, ctx);
+        }
+
+        if(this.text !== null) {
+            ctx.fillStyle = ColorHelper.HSL(this.textAttributes.fillStyle ?? colors.white);
+            ctx.font = this.textAttributes.font ?? "20px Verdana";
+            let textX = 0, textY = 0;
+            switch(this.textAlignX) {
+                case "LEFT":
+                    textX = this.getX() + this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
+                    ctx.textAlign = "left";
+                    break;
+                case "CENTER":
+                    textX = this.getCenterX(); 
+                    ctx.textAlign = "center";
+                    break;
+                case "RIGHT":
+                    textX = this.getX2() - this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
+                    ctx.textAlign = "right";
+                    break;
+            }
+
+            switch(this.textAlignY) {
+                case "TOP":
+                    textY = this.getY() + this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
+                    ctx.textBaseline = "top";
+                    break;
+                case "CENTER":
+                    textY = this.getCenterY(); 
+                    ctx.textBaseline = "middle";
+                    break;
+                case "BOTTOM":
+                    textY = this.getY2() - this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
+                    ctx.textBaseline = "alphabetic";
+                    break;
+            }
+
+            ctx.fillText(this.text, textX, textY);
+        }
     }
 }

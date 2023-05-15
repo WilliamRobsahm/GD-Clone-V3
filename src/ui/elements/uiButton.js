@@ -1,8 +1,8 @@
 import UIElement from "./uiElement.js";
 
 export default class uiButton extends UIElement {
-    constructor(page, properties) {
-        super(page, properties);
+    constructor(page, parent, properties) {
+        super(page, parent, properties);
         
         this.hoverable = true;
         this.clickable = true;

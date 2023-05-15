@@ -1,14 +1,18 @@
-import Camera from '../player/Camera.js';
 import * as pages from './Pages.js';
+
+export const COLOR_CYCLE_SPEED = 0.5; // Hue shift per frame
+export const BG_SATURATION = 50;
+export const BG_LIGHTNESS = 50;
 
 export default class MenuManager {
     constructor(game) {
         this.game = game;
+        this.backgroundHue = 0;
 
         this.isActive = false;
         this.pageList = {
             MAIN: new pages.MainMenu(this),
-            MAIN_LEVELS: new pages.MainLevels(this),
+            MAIN_LEVELS: new pages.MainLevels(this, this.game.levelManager),
             CUSTOMIZE_ICON: new pages.CustomizeIcon(this),
             EDITOR_MENU: new pages.EditorMenu(this),
         }
@@ -33,6 +37,10 @@ export default class MenuManager {
     }
 
     update(d) {
+        // Hue shift
+        this.backgroundHue += COLOR_CYCLE_SPEED;
+        if(this.backgroundHue >= 360) this.backgroundHue = 0;
+
         this.activePage.update(d);
     }
 
