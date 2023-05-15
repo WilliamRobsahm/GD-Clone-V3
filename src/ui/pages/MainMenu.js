@@ -20,6 +20,7 @@ export class MainMenu extends PageBase {
             offsetX: "-300px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
             centerX: true, centerY: true,
+            scaleOnHover: true,
             model: new MainMenuButtonModel(null),
         }, () => {
             this.menu.loadPage("CUSTOMIZE_ICON");
@@ -30,6 +31,7 @@ export class MainMenu extends PageBase {
             height: "240px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
             centerX: true, centerY: true,
+            scaleOnHover: true,
             model: new MainMenuButtonModel(null),
         }, () => {
             this.menu.loadPage("MAIN_LEVELS");
@@ -41,6 +43,7 @@ export class MainMenu extends PageBase {
             offsetX: "300px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
             centerX: true, centerY: true,
+            scaleOnHover: true,
             model: new MainMenuButtonModel(null),
         }, () => {
             this.menu.loadPage("EDITOR_MENU");

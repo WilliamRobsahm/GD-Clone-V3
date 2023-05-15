@@ -51,7 +51,12 @@ export default class UIElement extends Rect {
         // Interaction
         this.hoverable = false;
         this.clickable = false;
+        this.scaleOnHover = false;
         this.onClick = null;
+
+        this.scale = 1;
+        this.hoverScaleMax;
+        this.hoverScaleDelta;
 
         this.applyProperties(props);
     }
@@ -179,12 +184,26 @@ export default class UIElement extends Rect {
      */
     isHovering(input, camera) {
         if(!this.hoverable) return false;
-        return(input.mouseOn(this, camera));
+        let hovering = input.mouseOn(this, camera);
+
+        if(this.scaleOnHover) {
+            if(hovering && this.scale < this.hoverScaleMax) {
+                this.scale += this.hoverScaleDelta;
+            } else if (!hovering && this.scale > 1) {
+                this.scale -= this.hoverScaleDelta;
+            }
+        }
+        return hovering;
     }
 
     updateSize() {
         this.widthPx = this.sizeToPixels(this.width, this.parent?.getWidth() ?? 0);
         this.heightPx = this.sizeToPixels(this.height, this.parent?.getHeight() ?? 0);
+
+        if(this.scaleOnHover) {
+            this.widthPx *= this.scale;
+            this.heightPx *= this.scale;
+        }
     }
 
     update() {

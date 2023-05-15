@@ -40,6 +40,7 @@ export class MainLevels extends PageBase {
             width: "80px",
             height: "120px",
             centerX: true, centerY: true,
+            scaleOnHover: true,
             offsetX: "-520px",
             model: new ButtonArrowModel("LEFT", true),
         }, () => {
@@ -50,6 +51,7 @@ export class MainLevels extends PageBase {
             width: "80px",
             height: "120px",
             centerX: true, centerY: true,
+            scaleOnHover: true,
             offsetX: "520px",
             model: new ButtonArrowModel("RIGHT", true),
         }, () => {

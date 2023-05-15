@@ -48,12 +48,13 @@ export default class PageBase {
     }
 
     findHoveredElement(input) {
+        let hoveringID = null;
         for(const b in this.buttons) {
             if(this.buttons[b].isHovering(input, this.camera)) {
-                return this.buttons[b].id;
+                hoveringID = this.buttons[b].id;
             }
         }
-        return null;
+        return hoveringID;
     }
 
     renderBackground(hsl) {
