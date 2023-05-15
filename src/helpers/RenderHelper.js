@@ -1,3 +1,5 @@
+import ColorHelper from "./ColorHelper.js";
+import { applyProperties } from "./helper.js";
 
 export default class RenderHelper {
 
@@ -59,5 +61,35 @@ export default class RenderHelper {
                 ctx.restore();
                 break;
         }
+    }
+
+    static setShadowProperties(ctx, opacity, blur, offsetX, offsetY) {
+        applyProperties(ctx, {
+            shadowColor: `rgba(0,0,0,${opacity ?? 0})`,
+            shadowBlur: blur ?? 0,
+            shadowOffsetX: offsetX ?? 0,
+            shadowOffsetY: offsetY ?? 0
+        });
+    }
+
+    /**
+     * Apply shadow properties, run the rendering function, and then clear shadow properties.
+     * @param {CanvasRenderingContext2D} ctx 
+     * @param {number} opacity
+     * @param {number} blur
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {function} renderFunction 
+     */
+    static renderWithShadow(ctx, opacity, blur, offsetX, offsetY, renderFunction) {
+        ctx.save();
+        applyProperties(ctx, {
+            shadowColor: `rgba(0,0,0,${opacity ?? 0})`,
+            shadowBlur: blur ?? 0,
+            shadowOffsetX: offsetX ?? 0,
+            shadowOffsetY: offsetY ?? 0
+        });
+        renderFunction();
+        ctx.restore();
     }
 }

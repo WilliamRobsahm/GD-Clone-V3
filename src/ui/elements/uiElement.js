@@ -63,6 +63,7 @@ export default class UIElement extends Rect {
         }
         
         applyProp("id");
+        applyProp("model");
         applyProp("position");
         applyProp("selfAlignX");
         applyProp("selfAlignY");
@@ -73,6 +74,7 @@ export default class UIElement extends Rect {
         applyProp("textAlignY");
         applyProp("cornerRadius");
         applyProp("text");
+        applyProp("visible");
 
         this.setCentering(props.centerX, props.centerY);
         this.setOffset(props.offsetX, props.offsetY);
@@ -221,7 +223,6 @@ export default class UIElement extends Rect {
     }
 
     render() {
-        if(this.model) this.model.render(this);
         ctx.fillStyle = ColorHelper.HSL(this.backgroundColor);
 
         if(this.cornerRadius) {
@@ -267,6 +268,8 @@ export default class UIElement extends Rect {
 
             ctx.fillText(this.text, textX, textY);
         }
+
+        if(this.model) this.model.render(this);
     }
 
     // Update this element and all its children
@@ -284,5 +287,9 @@ export default class UIElement extends Rect {
         this.children.forEach(child => {
             child.recursiveRender();
         });
+    }
+
+    clearChildren() {
+        this.children = [];
     }
 }

@@ -41,6 +41,7 @@ export default class PageBase {
         if(this.hoveredID !== null) {
             document.body.style.cursor = "pointer";
             if(input.click) {
+                input.click = false;
                 this.buttons[this.hoveredID].onClick();
             }
         }
