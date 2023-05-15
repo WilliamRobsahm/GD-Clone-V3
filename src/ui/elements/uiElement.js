@@ -13,8 +13,12 @@ export default class UIElement extends Rect {
 
         // General
         this.id = null;
-        this.parent = parent ?? null;
 
+        this.parent = null;
+        this.children = [];
+
+        this.setParent(parent);
+        
         // Size
         this.width; this.height; // ..px, ..%, or STRETCH
         this.widthPx = 0; this.heightPx = 0;
@@ -40,6 +44,7 @@ export default class UIElement extends Rect {
 
         // Styling
         this.model = null;
+        this.visible = true;
         this.backgroundColor = colors.transparent;
         this.cornerRadius = null;
 
@@ -106,6 +111,15 @@ export default class UIElement extends Rect {
 
     setFont(font) {
         if(font) this.textAttributes.font = font;
+    }
+
+    setParent(parent) {
+        if(!parent) return;
+
+        if(parent.children)
+            parent.children.push(this);
+
+        this.parent = parent;
     }
 
     /**
@@ -253,5 +267,22 @@ export default class UIElement extends Rect {
 
             ctx.fillText(this.text, textX, textY);
         }
+    }
+
+    // Update this element and all its children
+    recursiveUpdate() {
+        this.update();
+        this.children.forEach(child => {
+            child.recursiveUpdate();
+        });
+    }
+
+    // Render this element and all its (visible) children
+    recursiveRender() {
+        if(!this.visible) return;
+        this.render();
+        this.children.forEach(child => {
+            child.recursiveRender();
+        });
     }
 }

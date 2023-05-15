@@ -1,7 +1,7 @@
 import GameRenderer from "../../game/GameRenderer.js";
 import { colors } from "../../helpers/ColorHelper.js";
 import { canvas, ctx } from "../../misc/global.js";
-import uiText from "../elements/uiText.js";
+import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
@@ -46,14 +46,14 @@ export class MainMenu extends PageBase {
             this.menu.loadPage("EDITOR_MENU");
         });
 
-        this.titleText = new uiText(this, this.mainContent, {
+        this.titleText = new UIText(this, this.mainContent, {
             text: "Zheometry Jash",
             centerY: false,
             textAlignY: "TOP",
             textOffsetY: "40px",
             font: "96px Arco",
         });
-        this.subTitleText = new uiText(this, this.mainContent, {
+        this.subTitleText = new UIText(this, this.mainContent, {
             text: "A somewhat scuffed GD clone. By Salad",
             centerY: false,
             textAlignY: "TOP",
@@ -81,12 +81,7 @@ export class MainMenu extends PageBase {
         this.level.background.update(this.camera.getX(), BG_DX);
         this.level.floor.update(this.camera.getX(), BG_DX);
 
-        this.mainContent.update();
-        this.buttons.TO_ICON_MENU.update();
-        this.buttons.TO_MAIN_LEVELS.update();
-        this.buttons.TO_EDITOR.update();
-        this.titleText.update();
-        this.subTitleText.update();
+        this.mainContent.recursiveUpdate();
     }
 
     renderBackground() {
@@ -100,11 +95,6 @@ export class MainMenu extends PageBase {
     render() {
         this.renderBackground();        
 
-        this.mainContent.render();
-        this.buttons.TO_ICON_MENU.render();
-        this.buttons.TO_MAIN_LEVELS.render();
-        this.buttons.TO_EDITOR.render();
-        this.titleText.render();
-        this.subTitleText.render();
+        this.mainContent.recursiveRender();
     }
 }

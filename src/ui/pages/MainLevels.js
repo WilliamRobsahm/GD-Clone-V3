@@ -1,3 +1,4 @@
+import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
@@ -30,9 +31,7 @@ export class MainLevels extends PageBase {
     }
 
     update() {
-        this.mainContent.update();
-        this.buttons.BACK.update();
-        this.levelContainer.update();
+        this.mainContent.recursiveUpdate();
     }
 
     render() {
@@ -40,9 +39,8 @@ export class MainLevels extends PageBase {
 
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
         this.buttons.BACK.backgroundColor = col;
-        this.buttons.BACK.render();
-        
         this.levelContainer.backgroundColor = col;
-        this.levelContainer.render();
+
+        this.mainContent.recursiveRender();
     }
 }

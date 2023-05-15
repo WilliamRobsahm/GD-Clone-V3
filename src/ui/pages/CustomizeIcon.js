@@ -20,6 +20,7 @@ export class CustomizeIcon extends PageBase {
 
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
         this.buttons.BACK.backgroundColor = col;
-        this.buttons.BACK.render();
+        
+        this.mainContent.recursiveRender();
     }
 }

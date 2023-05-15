@@ -1,6 +1,6 @@
 import UIElement from "./uiElement.js";
 
-export default class uiText extends UIElement {
+export default class UIText extends UIElement {
     constructor(page, parent, props) {
         super(page, parent, props);
         this.centerX = props.centerX ?? true;

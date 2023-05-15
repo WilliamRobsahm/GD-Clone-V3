@@ -1,6 +1,6 @@
 import UIElement from "./uiElement.js";
 
-export default class uiButton extends UIElement {
+export default class UIButton extends UIElement {
     constructor(page, parent, properties) {
         super(page, parent, properties);
         

@@ -1,7 +1,7 @@
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import { ctx } from "../../misc/global.js";
 import Camera from "../../player/Camera.js";
-import uiButton from "../elements/uiButton.js";
+import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
 
 export default class PageBase {
@@ -26,7 +26,7 @@ export default class PageBase {
 
     addButton(buttonId, parent, params = {}, onClick = () => {}) {
         params.id = buttonId;
-        let btn = new uiButton(this, parent, params);
+        let btn = new UIButton(this, parent, params);
         btn.onClick = onClick;
         this.buttons[buttonId] = btn;
     }

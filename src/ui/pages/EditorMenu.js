@@ -14,7 +14,7 @@ export class EditorMenu extends PageBase {
     }
 
     update() {
-        this.buttons.BACK.update();
+        this.mainContent.recursiveUpdate();
     }
 
     render() {
@@ -22,6 +22,7 @@ export class EditorMenu extends PageBase {
 
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
         this.buttons.BACK.backgroundColor = col;
-        this.buttons.BACK.render();
+        
+        this.mainContent.recursiveRender();
     }
 }
