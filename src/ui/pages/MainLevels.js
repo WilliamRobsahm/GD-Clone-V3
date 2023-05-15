@@ -1,3 +1,4 @@
+import { colors } from "../../helpers/ColorHelper.js";
 import { ButtonArrowModel } from "../elements/buttonmodels/ButtonArrow.js";
 import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
@@ -72,6 +73,7 @@ export class MainLevels extends PageBase {
                 text: lvl.title,
                 visible: false,
                 font: "48px Arco",
+                textOutlineSize: 3,
             })
 
             this.pages.push(pageElements);
@@ -86,6 +88,7 @@ export class MainLevels extends PageBase {
                 text: "More coming soon!",
                 visible: false,
                 font: "52px Arco",
+                textOutlineSize: 3,
             })
         }
 

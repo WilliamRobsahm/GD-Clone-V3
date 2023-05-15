@@ -55,13 +55,16 @@ export class MainMenu extends PageBase {
             textAlignY: "TOP",
             textOffsetY: "40px",
             font: "96px Arco",
+            textOutlineSize: 3,
         });
+        
         this.subTitleText = new UIText(this, this.mainContent, {
             text: "A somewhat scuffed GD clone. By Salad",
             centerY: false,
             textAlignY: "TOP",
             textOffsetY: "136px",
             font: "32px Arco",
+            textOutlineSize: 3,
         });
     }
 

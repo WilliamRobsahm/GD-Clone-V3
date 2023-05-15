@@ -41,6 +41,8 @@ export default class UIElement extends Rect {
         this.textAlignY = "CENTER"; // TOP, CENTER, or BOTTOM :3
         this.textOffsetX = 0; 
         this.textOffsetY = 0;
+        this.textOutlineSize = 0;
+        this.textOutlineColor = colors.black;
 
         // Styling
         this.model = null;
@@ -78,9 +80,9 @@ export default class UIElement extends Rect {
         applyProp("textAlignX");
         applyProp("textAlignY");
         applyProp("cornerRadius");
-        applyProp("text");
         applyProp("visible");
 
+        this.setText(props.text, props.textColor, props.textOutlineSize, props.textOutlineColor)
         this.setCentering(props.centerX, props.centerY);
         this.setOffset(props.offsetX, props.offsetY);
         this.setFloat(props.floatX, props.floatY);
@@ -118,6 +120,13 @@ export default class UIElement extends Rect {
 
     setFont(font) {
         if(font) this.textAttributes.font = font;
+    }
+
+    setText(text, color, outlineSize, outlineColor) {
+        if(text) this.text = text;
+        if(color) this.textAttributes.fillStyle = color;
+        if(outlineSize) this.textOutlineSize = outlineSize;
+        if(outlineColor) this.textAttributes.strokeStyle = outlineColor;
     }
 
     setParent(parent) {
@@ -254,6 +263,8 @@ export default class UIElement extends Rect {
         if(this.text !== null) {
             ctx.fillStyle = ColorHelper.HSL(this.textAttributes.fillStyle ?? colors.white);
             ctx.font = this.textAttributes.font ?? "20px Verdana";
+            ctx.strokeStyle = ColorHelper.HSL(this.textAttributes.strokeStyle);
+            ctx.lineWidth = this.textOutlineSize * 2;
             let textX = 0, textY = 0;
             switch(this.textAlignX) {
                 case "LEFT":
@@ -285,6 +296,9 @@ export default class UIElement extends Rect {
                     break;
             }
 
+            if(this.textOutlineSize) {
+                ctx.strokeText(this.text, textX, textY);
+            }
             ctx.fillText(this.text, textX, textY);
         }
 
