@@ -2,6 +2,7 @@ import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import { ctx } from "../../misc/global.js";
 import { applyProperties } from "../../helpers/helper.js";
 import ObjectModel from "./ObjectModel.js";
+import RenderHelper from "../../helpers/RenderHelper.js";
 
 export class DefaultBlock extends ObjectModel {
     constructor(game) {
@@ -11,9 +12,8 @@ export class DefaultBlock extends ObjectModel {
     renderModel(object, channels) {
 
         // Create gradient
-        let gradient = ctx.createLinearGradient(0, object.getY(), 0, object.getY() + 64);
-        gradient.addColorStop(0, ColorHelper.HSL(colors.black));
-        gradient.addColorStop(1, ColorHelper.HSL(colors.black, 0.2));
+        let gradient = RenderHelper.getVerticalGradient(ctx, object.getY(), 64, ["rgb(0,0,0)", "rgba(0,0,0,0.2)"]);
+        
         applyProperties(ctx, {fillStyle: gradient, strokeStyle: channels.getColor("obj"), lineWidth: 3});
         
         // Render block

@@ -4,10 +4,10 @@ import { ctx } from "../../../misc/global.js";
 
 
 const GREEN_THICKNESS = 0.35;
-const OUTLINE_SIZE = 4;
+const OUTLINE_SIZE = 5;
 const BLUE_OFFSET = 0.08;
 const BLUE_SIZE = (1 - GREEN_THICKNESS - (BLUE_OFFSET * 2)) / 2;
-const SHADOW_HEIGHT = 0.05;
+const SHADOW_HEIGHT = 0.04;
 
 export class MainMenuButtonModel {
     constructor(icon) {
@@ -49,11 +49,7 @@ export class MainMenuButtonModel {
         ctx.rect(x, y + GREEN_OFFSET, w, h * GREEN_THICKNESS / 2 - OUTLINE_SIZE / 2 + 1);
         ctx.closePath();
 
-        let gradient = ctx.createLinearGradient(x, 0, x + w, 0);
-        gradient.addColorStop(0, "#C9FF61");
-        gradient.addColorStop(1, "#69CD14");
-        
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = RenderHelper.getHorizontalGradient(ctx, x, w, ["#C9FF61", "#69CD14"]);
         ctx.fill();
 
         // Green, bottom half
@@ -62,11 +58,7 @@ export class MainMenuButtonModel {
         ctx.rect(x, y + h / 2 - OUTLINE_SIZE / 2, w, h * GREEN_THICKNESS / 2 + OUTLINE_SIZE / 2);
         ctx.closePath();
 
-        gradient = ctx.createLinearGradient(x, 0, x + w, 0);
-        gradient.addColorStop(0, "#95FB3F");
-        gradient.addColorStop(1, "#45A00D");
-
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = RenderHelper.getHorizontalGradient(ctx, x, w, ["#95FB3F", "#45A00D"]);
         ctx.fill();
 
         // Blue
@@ -84,11 +76,7 @@ export class MainMenuButtonModel {
         ctx.rect(bx2, by, bw, bh);
         ctx.rect(bx2, by2, bw, bh);
         ctx.closePath();
-
-        gradient = ctx.createLinearGradient(x, 0, x + w, 0);
-        gradient.addColorStop(0, "#30FBFA");
-        gradient.addColorStop(1, "#0CA9B0");
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = RenderHelper.getHorizontalGradient(ctx, x, w, ["#30FBFA", "#0CA9B0"]);
         ctx.fill();
 
         // Shadows
@@ -108,7 +96,7 @@ export class MainMenuButtonModel {
         ctx.rect(bx2, by2, bw, h * SHADOW_HEIGHT);
         ctx.closePath();
 
-        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
         ctx.fill();
 
 

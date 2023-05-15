@@ -1,4 +1,5 @@
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
+import RenderHelper from "../../helpers/RenderHelper.js";
 import { ctx } from "../../misc/global.js";
 import ParallaxBase from "../ParallaxBase.js";
 
@@ -8,17 +9,9 @@ export default class FloorClassic extends ParallaxBase {
     }
 
     renderInit(x, y, hsl) {
-        this.mainGradient = ctx.createLinearGradient(0, y, 0, y + 300);
-        this.mainGradient.addColorStop(0, ColorHelper.HSL(hsl));
-        this.mainGradient.addColorStop(1, ColorHelper.HSL(colors.black));
-
-        this.squareGradient = ctx.createLinearGradient(0, y, 0, y + 300);
-        this.squareGradient.addColorStop(0, ColorHelper.HSL(hsl, 1, 0, 0.8));
-        this.squareGradient.addColorStop(1, ColorHelper.HSL(colors.black));
-
-        this.outlineGradient = ctx.createLinearGradient(0, y, 0, y + 300);
-        this.outlineGradient.addColorStop(0, ColorHelper.HSL(hsl, 1, 0, 0.6));
-        this.outlineGradient.addColorStop(1, ColorHelper.HSL(colors.black));
+        this.mainGradient = RenderHelper.getVerticalGradient(ctx, y, 300, [ColorHelper.HSL(hsl), "#000000"]);
+        this.squareGradient = RenderHelper.getVerticalGradient(ctx, y, 300, [ColorHelper.HSL(hsl, 1, 0, 0.8), "#000000"]);
+        this.outlineGradient = RenderHelper.getVerticalGradient(ctx, y, 300, [ColorHelper.HSL(hsl, 1, 0, 0.6), "#000000"]);
     }
 
     renderSegment(x, y, segmentNo) {

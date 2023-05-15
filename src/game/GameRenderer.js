@@ -1,5 +1,6 @@
 import ColorHelper from "../helpers/ColorHelper.js";
 import { applyProperties } from "../helpers/helper.js";
+import RenderHelper from "../helpers/RenderHelper.js";
 import { ctx } from "../misc/global.js";
 import PlayerCamera from "../player/Camera.js";
 
@@ -40,10 +41,9 @@ export default class GameRenderer {
         const LINE_VALUES = channels.getValues("line");
         let lineColor;
         if(LINE_VALUES.blending) {
-            lineColor = ctx.createLinearGradient(camera.getX(), 0, camera.getX2(), 0);
-            lineColor.addColorStop(0, "rgba(0,0,0,0)");
-            lineColor.addColorStop(0.5, ColorHelper.HSL(LINE_VALUES));
-            lineColor.addColorStop(1, "rgba(0,0,0,0)");
+            lineColor = RenderHelper.getHorizontalGradient(
+                ctx, camera.getX(), camera.getWidth(), ["rgba(0,0,0,0)", ColorHelper.HSL(LINE_VALUES), "rgba(0,0,0,0)"]
+            );
         } else {
             lineColor = ColorHelper.HSL(LINE_VALUES);
         }

@@ -1,4 +1,4 @@
-import ColorHelper from "./ColorHelper.js";
+import ColorHelper, { colors } from "./ColorHelper.js";
 import { applyProperties } from "./helper.js";
 
 export default class RenderHelper {
@@ -91,5 +91,27 @@ export default class RenderHelper {
         });
         renderFunction();
         ctx.restore();
+    }
+
+    static getHorizontalGradient(ctx, x, width, colorList) {
+        let dist = 1 / (colorList.length - 1);
+
+        const gradient = ctx.createLinearGradient(x, 0, x + width, 0);
+        for(let i = 0; i < colorList.length; i++) {
+            gradient.addColorStop(0 + i * dist, colorList[i]);
+        }
+
+        return gradient;
+    }
+
+    static getVerticalGradient(ctx, y, height, colorList) { 
+        let dist = 1 / (colorList.length - 1);
+
+        const gradient = ctx.createLinearGradient(0, y, 0, y + height);
+        for(let i = 0; i < colorList.length; i++) {
+            gradient.addColorStop(0 + i * dist, colorList[i]);
+        }
+
+        return gradient;
     }
 }
