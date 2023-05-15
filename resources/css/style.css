@@ -6,7 +6,7 @@
 
 @font-face{
     font-family:"Arco";
-    src:url("assets/font/ARCO.ttf") format("truetype");
+    src:url("../fonts/ARCO.ttf") format("truetype");
 }
 
 canvas{
