@@ -52,6 +52,9 @@ export default class ColorChannelManager {
         this.numbered.forEach(channel => {
             channel.reset();
         })
+
+        // Line is blending by default
+        this.getChannel("line").blending = true;
     }
     
     /**
