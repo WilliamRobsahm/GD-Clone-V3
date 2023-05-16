@@ -1,3 +1,4 @@
+import { fadeOverlay } from './FadeOverlay.js';
 import * as pages from './Pages.js';
 
 export const COLOR_CYCLE_SPEED = 0.5; // Hue shift per frame
@@ -31,9 +32,14 @@ export default class MenuManager {
 
     loadPage(pageName) {
         if(!this.pageList.hasOwnProperty(pageName)) return;
-        this.activePage = this.pageList[pageName];
-        this.activePage.init();
-        this.activePage.update();
+
+        // Fade out, switch page, and fade back in.
+        fadeOverlay.beginFadeOut(() => {
+            this.activePage = this.pageList[pageName];
+            this.activePage.init();
+            this.activePage.update();
+            fadeOverlay.beginFadeIn();
+        });
     }
 
     update(d) {

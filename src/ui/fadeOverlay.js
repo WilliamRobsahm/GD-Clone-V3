@@ -2,7 +2,7 @@ import RenderHelper from "../helpers/RenderHelper.js";
 import { ctx } from "../misc/global.js";
 
 
-const FADE_DELTA = 0.2;
+const FADE_DELTA = 0.15;
 
 class FadeOverlay {
     #fading;
@@ -11,13 +11,13 @@ class FadeOverlay {
     constructor() {
         this.#fading = false;
         this.#onFadeFinish = null;
-        this.#opacity = 0;
+        this.#opacity = 1;
     }
 
     update(d) {
         switch(this.#fading) {
             case "IN":
-                this.#opacity -= FADE_DELTA * d;
+                this.#opacity -= FADE_DELTA / 2 * d;
                 if(this.#opacity <= 0) {
                     this.#opacity = 0;
                     this.#fading = false;

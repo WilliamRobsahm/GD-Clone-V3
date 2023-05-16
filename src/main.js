@@ -1,5 +1,6 @@
 import { GameManager } from "./game/GameManager.js";
 import { canvas } from "./misc/global.js";
+import { fadeOverlay } from "./ui/FadeOverlay.js";
 
 window.onload = () => init();
 
@@ -13,6 +14,9 @@ function init() {
     }
 
     game.initialize();
+
+    setTimeout(() => {fadeOverlay.beginFadeIn()}, 200);
+
     window.requestAnimationFrame(gameLoop);
 }
 
