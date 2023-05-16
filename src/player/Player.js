@@ -41,6 +41,8 @@ export default class Player {
         this.gravityMode = 1;
         this.gravity = 0;
 
+        this.attempts = 0;
+
         this.rotationDeg = 0;
 
         this.size = PLAYER_SIZE;
@@ -219,10 +221,20 @@ export default class Player {
         this.x = 0;
         this.y = 0 - this.game.defaultSize;
         this.rotationDeg = 0;
-        this.setGamemode("CUBE");
-        this.setSpeed("NORMAL");
         this.camera.reset();
+        this.setGamemode("CUBE");
         level.reset();
+        
+        this.attempts += 1;
+        if(this.attempts === 1) {
+            this.camera.minX = this.getX2();
+            setTimeout(() => {
+                this.setSpeed("NORMAL");
+            }, 1000);
+        } else {
+            this.camera.minX = 0;
+            this.setSpeed("NORMAL");
+        }
     }
 
     floorCollision(lowerFloorY, upperFloorY) {

@@ -59,8 +59,8 @@ export class GameManager {
             this.player.update(physicsMultiplier, this.input, this.level);
         
             let dx = this.player.getDX() * physicsMultiplier;
-            this.level.background.update(this.player.camera.getX(), dx);
-            this.level.floor.update(this.player.camera.getX(), dx);
+            this.level.background.update(this.player.camera.getX(), this.player.camera.getDX());
+            this.level.floor.update(this.player.camera.getX(), this.player.camera.getDX());
         }
     }
 

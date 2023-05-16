@@ -1,3 +1,4 @@
+import { clamp } from "../helpers/helper.js";
 import { canvas, FLOOR_HEIGHT } from "../misc/global.js";
 import Rect from "../misc/Rect.js";
 
@@ -6,11 +7,27 @@ const ICON_SCREEN_POSITION = 0.24;
 export default class Camera extends Rect {
     constructor() {
         super();
+        this.minX = false;
+        this.previousX = 0;
     }
 
     reset() {
         this.alignWithPlayerX();
         this.realign();
+    }
+
+    getDX() {
+        let dx = this.getX() - this.previousX;
+        this.previousX = this.getX();
+        return dx;
+    }
+
+    getX() {
+        if(this.minX && this.x < this.minX) {
+            return this.minX;
+        } else {
+            return this.x;
+        }
     }
 
     getWidth() { return canvas.width }
