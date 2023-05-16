@@ -138,7 +138,6 @@ export class MainLevels extends PageBase {
     loadLevel(levelId) {
         this.levelManager.loadMainLevelData(levelId, (data, info) => {
             fadeOverlay.beginFadeOut(() => {
-                this.menu.exit();
                 this.menu.game.loadLevel(data, info)
             });
         });

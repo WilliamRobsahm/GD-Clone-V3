@@ -125,7 +125,7 @@ export default class Player {
             this.updatePhysics(d);
             this.move(d);
             this.updateCollision(level);
-            this.camera.updateX(this.getX());
+            this.camera.alignWithPlayerX(this.getX());
             this.gamemode.updateRotation(d);
         } else {
             this.updateRespawnTimer(d);

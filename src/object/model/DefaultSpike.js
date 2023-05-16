@@ -1,7 +1,7 @@
 import { ctx } from "../../misc/global.js";
-import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import { applyProperties } from "../../helpers/helper.js";
 import ObjectModel from "./ObjectModel.js";
+import RenderHelper from "../../helpers/RenderHelper.js";
 
 export class DefaultSpike extends ObjectModel {
     constructor(game) {

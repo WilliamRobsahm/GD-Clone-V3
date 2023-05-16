@@ -2,7 +2,7 @@ import RenderHelper from "../helpers/RenderHelper.js";
 import { ctx } from "../misc/global.js";
 
 
-const FADE_DELTA = 0.1;
+const FADE_DELTA = 0.2;
 
 class FadeOverlay {
     #fading;
@@ -31,6 +31,7 @@ class FadeOverlay {
                     this.#fading = false;
                     if(this.#onFadeFinish) {
                         this.#onFadeFinish();
+                        this.#onFadeFinish = null;
                     }
                 }
                 break;

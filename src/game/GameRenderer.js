@@ -23,7 +23,7 @@ export default class GameRenderer {
         ctx.fillStyle = "white";
         ctx.textAlign = "right";
         ctx.font = "16px Arial"
-        ctx.fillText(`${fps} FPS`, camera.getRightX() - 20, camera.getY() + 30);
+        ctx.fillText(`${fps} FPS`, camera.getX2() - 20, camera.getY() + 30);
     }
 
     static renderGameBackground(background, channels) {

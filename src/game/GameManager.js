@@ -33,13 +33,6 @@ export class GameManager {
 
         this.levelManager.getMainLevels((mainLevels) => {
             this.levelManager.mainLevelInfo = mainLevels;
-
-            /*
-            this.levelManager.loadMainLevelData(0, (leveldata, levelinfo) => {
-                this.level.loadLevel(leveldata, levelinfo, this.objectBuilder);
-                this.player.respawn(this.level);
-            });
-            */
         });
     }
 
@@ -65,7 +58,7 @@ export class GameManager {
 
             this.player.update(physicsMultiplier, this.input, this.level);
         
-            let dx = this.player.getDX() * physicsMultiplier
+            let dx = this.player.getDX() * physicsMultiplier;
             this.level.background.update(this.player.camera.getX(), dx);
             this.level.floor.update(this.player.camera.getX(), dx);
         }
@@ -73,7 +66,11 @@ export class GameManager {
 
     loadLevel(levelData, levelInfo) {
         this.gameState = "IN_GAME";
+        this.menu.exit();
+        this.level.floorY = 0;
         this.level.loadLevel(levelData, levelInfo, this.objectBuilder);
+        this.player.respawn(this.level);
+        fadeOverlay.beginFadeIn();
     }
 
     render() {

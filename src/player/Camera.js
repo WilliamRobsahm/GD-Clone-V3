@@ -9,25 +9,25 @@ export default class Camera extends Rect {
     }
 
     reset() {
-        this.updateX();
+        this.alignWithPlayerX();
         this.realign();
     }
 
     getWidth() { return canvas.width }
     getHeight() { return canvas.height }
 
-    // Update the camera to follow the player horizontally
-    updateX(x = 0) {
+    updateSize() {
         this.width = canvas.width;
         this.height = canvas.height;
-        
-        let playerScreenPosition = this.w * ICON_SCREEN_POSITION;
+    }
+
+    // Update the camera to follow the player horizontally
+    alignWithPlayerX(x = 0) {
+        let playerScreenPosition = this.getWidth() * ICON_SCREEN_POSITION;
         this.x = x - playerScreenPosition;
     }
 
     realign() {
-        this.width = canvas.width;
-        this.height = canvas.height;
         this.y = -canvas.height + FLOOR_HEIGHT;
     }
 }
