@@ -3,6 +3,7 @@ import { ButtonArrowModel } from "../elements/buttonmodels/ButtonArrow.js";
 import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
 import UIText from "../elements/uiText.js";
+import { fadeOverlay } from "../FadeOverlay.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
@@ -28,16 +29,22 @@ export class MainLevels extends PageBase {
             this.menu.loadPage("MAIN");
         });
         this.buttons.BACK.applyClass("btnBack");
-
-        this.levelContainer = new UIElement(this, this.mainContent, {
+        
+        this.addButton("LEVEL_CONTAINER", this.mainContent, {
             offsetY: "20%",
-            width: "900px", height: "240px",
+            width: "900px",
+            height: "600px",
+            centerX: true,
+        }, () => {});
+
+        this.levelBox = new UIElement(this, this.buttons.LEVEL_CONTAINER, {
+            width: "100%", height: "240px",
             centerX: true,
             selfAlignX: "CENTER", selfAlignY: "CENTER",
             cornerRadius: "16px",
         });
 
-        this.addButton("ArrowLeft", this.mainContent, {
+        this.addButton("ARROW_LEFT", this.mainContent, {
             width: "80px",
             height: "120px",
             centerX: true, centerY: true,
@@ -48,7 +55,7 @@ export class MainLevels extends PageBase {
             this.switchPages(-1);
         });
 
-        this.addButton("ArrowRight", this.mainContent, {
+        this.addButton("ARROW_RIGHT", this.mainContent, {
             width: "80px",
             height: "120px",
             centerX: true, centerY: true,
@@ -64,12 +71,12 @@ export class MainLevels extends PageBase {
         //      LEVEL PAGE ELEMENTS
         // =============================
 
-        const levelInfo = this.levelManager.mainLevelInfo;
+        this.levelInfo = this.levelManager.mainLevelInfo;
 
-        levelInfo.forEach(lvl => {
+        this.levelInfo.forEach(lvl => {
             const pageElements = {};
 
-            pageElements.title = new UIText(this, this.levelContainer, {
+            pageElements.title = new UIText(this, this.levelBox, {
                 text: lvl.title,
                 visible: false,
                 font: "48px Arco",
@@ -93,6 +100,7 @@ export class MainLevels extends PageBase {
         }
 
         this.pages.push(lastPageElements);
+        this.switchPages(0);
         this.setPageVisibility(true);
     }
 
@@ -101,7 +109,7 @@ export class MainLevels extends PageBase {
     }
     
     /**
-     * 
+     * Scroll left or right on the main levels page, and load the new page.
      * @param {number} pageScroll Either 1 (right) or -1 (left) 
      */
     switchPages(pageScroll) {
@@ -113,9 +121,27 @@ export class MainLevels extends PageBase {
         this.activePage += pageScroll ?? 0;
         if(this.activePage < 0) this.activePage += this.pages.length;
         if(this.activePage >= this.pages.length) this.activePage -= this.pages.length ?? 1;
+        console.log(this.activePage);
 
         // Load elements on new page
         this.setPageVisibility(true);
+        
+        // Set level container onclick
+        if(!this.onLastPage()) {
+            this.buttons.LEVEL_CONTAINER.onClick = () => {
+                let id = this.levelInfo[this.activePage].id;
+                this.loadLevel(id);
+            }
+        }
+    }
+
+    loadLevel(levelId) {
+        this.levelManager.loadMainLevelData(levelId, (data, info) => {
+            fadeOverlay.beginFadeOut(() => {
+                this.menu.exit();
+                this.menu.game.loadLevel(data, info)
+            });
+        });
     }
 
     /**
@@ -128,6 +154,13 @@ export class MainLevels extends PageBase {
         }
     }
 
+    /**
+     * Return true if currently active page is the "coming soon" page
+     */
+    onLastPage() {
+        return (this.activePage == this.pages.length - 1)
+    }
+
     update() {
         this.mainContent.recursiveUpdate();
     }
@@ -137,9 +170,9 @@ export class MainLevels extends PageBase {
 
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
         this.buttons.BACK.backgroundColor = col;
-        this.levelContainer.backgroundColor = col;
+        this.levelBox.backgroundColor = col;
 
-        this.levelContainer.visible = (this.activePage !== this.pages.length - 1);
+        this.buttons.LEVEL_CONTAINER.visible = !this.onLastPage();
 
         this.mainContent.recursiveRender();
     }

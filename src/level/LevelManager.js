@@ -98,11 +98,5 @@ export class LevelManager {
             }
         };
         xml.send();
-
-        
-    }
-
-    getLevel(levelID) {
-        return this.levels[levelID]
     }
 }

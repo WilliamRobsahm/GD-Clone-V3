@@ -8,6 +8,7 @@ import Player from "../player/Player.js";
 import config from "./config.js";
 import GameRenderer from "./GameRenderer.js";
 import InputHandler from "./InputHandler.js";
+import { fadeOverlay } from "../ui/FadeOverlay.js";
 
 export class GameManager {
     // Declare game constants
@@ -45,16 +46,17 @@ export class GameManager {
     update(deltaTime) {
         this.FPSCounter.increment();
         if(deltaTime > 200) return;
-        
 
         // All physics are designed for 60 FPS, but 'physicsMultiplier' determines how much of that will be done each frame.
         // On 60 fps, 'physicsMultiplier' will be around 1 (with slight fluxuation). On higher hz, it will be lower.
         // This also means that performance issues won't slow down the game.
         let physicsMultiplier = deltaTime / (1000 / 60);
 
+        fadeOverlay.update(physicsMultiplier);
+
         if(this.gameState == "MENU") {
             document.body.style.cursor = "default";
-            this.menu.update(this.level, physicsMultiplier);
+            this.menu.update(physicsMultiplier);
             this.menu.handleInput(this.input);
         } 
         
@@ -67,6 +69,11 @@ export class GameManager {
             this.level.background.update(this.player.camera.getX(), dx);
             this.level.floor.update(this.player.camera.getX(), dx);
         }
+    }
+
+    loadLevel(levelData, levelInfo) {
+        this.gameState = "IN_GAME";
+        this.level.loadLevel(levelData, levelInfo, this.objectBuilder);
     }
 
     render() {
@@ -104,6 +111,8 @@ export class GameManager {
             if(config.showFPS)
                 GameRenderer.renderFPS(this.FPSCounter.getFPS(), camera, ctx);
         }
+
+        fadeOverlay.render(camera);
 
         ctx.restore();
     }

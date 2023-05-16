@@ -192,7 +192,7 @@ export default class UIElement extends Rect {
      * @param {Camera} camera Currently active Camera object
      */
     isHovering(input, camera) {
-        if(!this.hoverable) return false;
+        if(!this.hoverable || !this.visible) return false;
         let hovering = input.mouseOn(this, camera);
 
         if(this.scaleOnHover) {
