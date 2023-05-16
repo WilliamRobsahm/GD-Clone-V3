@@ -6,7 +6,7 @@ if(!isset($_GET["id"])) {
 }
 $id = $_GET["id"];
 
-$path = "../data/levels/" . $id . "/data.json";
+$path = "../data/main_levels/" . $id . "/data.json";
 
 if(file_exists($path)) {
     $file = fopen($path, "r");

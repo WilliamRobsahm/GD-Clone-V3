@@ -1,6 +1,6 @@
 
 <?php
-$main_path = "../data/levels";
+$main_path = "../data/main_levels";
 
 $level_data = array();
 
