@@ -33,8 +33,10 @@ export default class Player {
             FASTER: 15.6,
         }
 
+        this.startX = 0;
+        this.startY = 0 - PLAYER_SIZE;
         this.x = 0;
-        this.y = 0 - PLAYER_SIZE;
+        this.y = 0;
         this.dx = 0;
         this.dy = 0;
         this.grounded = false;
@@ -218,8 +220,8 @@ export default class Player {
      */
     respawn(level) {
         this.isAlive = true;
-        this.x = 0;
-        this.y = 0 - this.game.defaultSize;
+        this.x = this.startX;
+        this.y = this.startY;
         this.rotationDeg = 0;
         this.camera.reset();
         this.setGamemode("CUBE");

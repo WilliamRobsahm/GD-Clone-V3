@@ -107,6 +107,8 @@ export class GameManager {
             // Render FPS Counter
             if(config.showFPS)
                 GameRenderer.renderFPS(this.FPSCounter.getFPS(), camera, ctx);
+
+            GameRenderer.renderAttemptsText(this.player);
         }
 
         fadeOverlay.render(camera);

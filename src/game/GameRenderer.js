@@ -68,4 +68,24 @@ export default class GameRenderer {
     static renderObject(object) {
         object.render();
     }
+
+    static renderAttemptsText(player) {
+
+        // Should also work with start positions and checkpoints later on.
+        const tX = player.startX + 580;
+        const tY = player.startY - 200;
+
+        
+        const attemptsText = "Attempt " + player.attempts;
+
+        applyProperties(ctx, {
+            font: "60px Arco",
+            fillStyle: "white",
+            strokeStyle: "black",
+            lineWidth: 5,
+        })
+
+        ctx.strokeText(attemptsText, tX, tY);
+        ctx.fillText(attemptsText, tX, tY);
+    }
 }
