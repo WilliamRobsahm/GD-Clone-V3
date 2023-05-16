@@ -77,6 +77,8 @@ export class GameManager {
         
         const camera = this.gameState == "MENU" ? this.menu.getCamera() : 
                        this.gameState == "IN_GAME" ? this.player.camera : null;
+                       
+        if(!camera) return;
 
         // Set canvas position
         ctx.save();
