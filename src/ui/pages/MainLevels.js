@@ -1,7 +1,7 @@
 import { colors } from "../../helpers/ColorHelper.js";
 import { ButtonArrowModel } from "../elements/buttonmodels/ButtonArrow.js";
-import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
+import UIProgressBar from "../elements/uiProgressBar.js";
 import UIText from "../elements/uiText.js";
 import { fadeOverlay } from "../FadeOverlay.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
@@ -81,6 +81,52 @@ export class MainLevels extends PageBase {
                 visible: false,
                 font: "48px Arco",
                 textOutlineSize: 3,
+            });
+
+            pageElements.normalModeText = new UIText(this, this.levelBox, {
+                textAlignY: "TOP",
+                offsetY: "300px",
+                text: "Normal Mode",
+                centerY: false,
+                visible: false,
+                font: "24px Arco",
+                textOutlineSize: 3,
+            })
+
+            pageElements.normalModeBar = new UIProgressBar(this, this.levelBox, {
+                width: "100%",
+                height: "40px",
+                offsetY: "340px",
+                visible: false,
+                progressPercentage: 10,
+                text: true,
+                font: "20px Arco",
+                textOutlineSize: 3,
+                backgroundColor: colors.black,
+                barColor: { h: 120, s: 80, l: 45 },
+            })
+
+            pageElements.practiceModeText = new UIText(this, this.levelBox, {
+                textAlignY: "TOP",
+                offsetY: "420px",
+                text: "Practice Mode",
+                centerY: false,
+                visible: false,
+                font: "24px Arco",
+                textOutlineSize: 3,
+            })
+
+            pageElements.practiceModeBar = new UIProgressBar(this, this.levelBox, {
+                width: "100%",
+                height: "40px",
+                offsetY: "460px",
+                visible: false,
+                progressPercentage: 10,
+                text: true,
+                font: "20px Arco",
+                textOutlineSize: 3,
+                backgroundColor: colors.black,
+                barColor: { h: 200, s: 100, l: 50 },
             })
 
             this.pages.push(pageElements);
@@ -101,7 +147,6 @@ export class MainLevels extends PageBase {
 
         this.pages.push(lastPageElements);
         this.switchPages(0);
-        this.setPageVisibility(true);
     }
 
     getActivePage() {
@@ -170,7 +215,10 @@ export class MainLevels extends PageBase {
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
         this.buttons.BACK.backgroundColor = col;
         this.levelBox.backgroundColor = col;
-
+        if(!this.onLastPage()) {
+            this.getActivePage().normalModeBar.backgroundColor = col;
+            this.getActivePage().practiceModeBar.backgroundColor = col;
+        }
         this.buttons.LEVEL_CONTAINER.visible = !this.onLastPage();
 
         this.mainContent.recursiveRender();

@@ -183,6 +183,32 @@ export default class UIElement extends Rect {
         }
     }
 
+    textX() {
+        ctx.textAlign = this.textAlignX.toLowerCase();
+        switch(this.textAlignX) {
+            case "LEFT":
+                return this.getX() + this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
+            case "CENTER":
+                return this.getCenterX(); 
+            case "RIGHT":
+                return this.getX2() - this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
+        }
+    }
+
+    textY() {
+        switch(this.textAlignY) {
+            case "TOP":
+                ctx.textBaseline = "top";
+                return this.getY() + this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
+            case "CENTER":
+                ctx.textBaseline = "middle";
+                return this.getCenterY(); 
+            case "BOTTOM":
+                ctx.textBaseline = "alphabetic";
+                return this.getY2() - this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
+        }
+    }
+
     getHeight() { return this.heightPx }
     getWidth() { return this.widthPx }
 
@@ -250,6 +276,13 @@ export default class UIElement extends Rect {
         this.y = y;
     }
 
+    applyTextStyle() {
+        ctx.fillStyle = ColorHelper.HSL(this.textAttributes.fillStyle ?? colors.white);
+        ctx.font = this.textAttributes.font ?? "20px Verdana";
+        ctx.strokeStyle = ColorHelper.HSL(this.textAttributes.strokeStyle);
+        ctx.lineWidth = this.textOutlineSize * 2;
+    }
+
     render() {
         ctx.fillStyle = ColorHelper.HSL(this.backgroundColor);
 
@@ -261,48 +294,23 @@ export default class UIElement extends Rect {
         }
 
         if(this.text !== null) {
-            ctx.fillStyle = ColorHelper.HSL(this.textAttributes.fillStyle ?? colors.white);
-            ctx.font = this.textAttributes.font ?? "20px Verdana";
-            ctx.strokeStyle = ColorHelper.HSL(this.textAttributes.strokeStyle);
-            ctx.lineWidth = this.textOutlineSize * 2;
-            let textX = 0, textY = 0;
-            switch(this.textAlignX) {
-                case "LEFT":
-                    textX = this.getX() + this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
-                    ctx.textAlign = "left";
-                    break;
-                case "CENTER":
-                    textX = this.getCenterX(); 
-                    ctx.textAlign = "center";
-                    break;
-                case "RIGHT":
-                    textX = this.getX2() - this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
-                    ctx.textAlign = "right";
-                    break;
-            }
-
-            switch(this.textAlignY) {
-                case "TOP":
-                    textY = this.getY() + this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
-                    ctx.textBaseline = "top";
-                    break;
-                case "CENTER":
-                    textY = this.getCenterY(); 
-                    ctx.textBaseline = "middle";
-                    break;
-                case "BOTTOM":
-                    textY = this.getY2() - this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
-                    ctx.textBaseline = "alphabetic";
-                    break;
-            }
-
-            if(this.textOutlineSize) {
-                ctx.strokeText(this.text, textX, textY);
-            }
-            ctx.fillText(this.text, textX, textY);
+            this.renderText();
         }
 
         if(this.model) this.model.render(this);
+    }
+
+    renderText() {
+        this.applyTextStyle();
+
+        let textX = this.textX();
+        let textY = this.textY();
+
+        if(this.textOutlineSize) {
+            ctx.strokeText(this.text, textX, textY);
+        }
+
+        ctx.fillText(this.text, textX, textY);
     }
 
     // Update this element and all its children
