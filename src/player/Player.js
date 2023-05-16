@@ -100,7 +100,7 @@ export default class Player {
 
     handleInput(input) {
 
-        if(this.isAlive)
+        if(this.isAlive && this.dx !== 0)
             this.gamemode.handleInput(input);
 
         // Show Hitboxes
@@ -227,11 +227,17 @@ export default class Player {
         
         this.attempts += 1;
         if(this.attempts === 1) {
-            this.camera.minX = this.getX2();
+
+            // Spawn offscreen
+            this.camera.minX = this.getX2() + 2; // the +2 ensures we don't see the edge of the player's outline
+
+            // 1 second movement delay
             setTimeout(() => {
                 this.setSpeed("NORMAL");
             }, 1000);
-        } else {
+        } 
+        
+        else {
             this.camera.minX = 0;
             this.setSpeed("NORMAL");
         }
