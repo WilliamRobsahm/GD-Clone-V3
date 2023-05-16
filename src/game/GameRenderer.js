@@ -20,10 +20,17 @@ export default class GameRenderer {
     }
 
     static renderFPS(fps, camera, ctx) {
-        ctx.fillStyle = "white";
-        ctx.textAlign = "right";
-        ctx.font = "16px Arial"
-        ctx.fillText(`${fps} FPS`, camera.getX2() - 20, camera.getY() + 30);
+        applyProperties(ctx, {
+            fillStyle: "rgba(255,255,255,0.5)",
+            strokeStyle: "rgba(0,0,0,0.5)",
+            lineWidth: 5,
+            textAlign: "right",
+            font: "24px Arco",
+        })
+        let x = camera.getX2() - 20;
+        let y = camera.getY() + 30;
+        ctx.strokeText(`${fps} FPS`, x, y);
+        ctx.fillText(`${fps} FPS`, x, y);
     }
 
     static renderGameBackground(background, channels) {
@@ -80,8 +87,8 @@ export default class GameRenderer {
 
         applyProperties(ctx, {
             font: "60px Arco",
-            fillStyle: "white",
-            strokeStyle: "black",
+            fillStyle: "rgba(255,255,255,0.5)",
+            strokeStyle: "rgba(0,0,0,0.5)",
             lineWidth: 5,
         })
 
