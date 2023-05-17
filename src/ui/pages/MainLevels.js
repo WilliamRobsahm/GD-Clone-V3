@@ -1,5 +1,7 @@
 import { colors } from "../../helpers/ColorHelper.js";
+import { applyProperties } from "../../helpers/helper.js";
 import { ButtonArrowModel } from "../elements/buttonmodels/ButtonArrow.js";
+import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
 import UIProgressBar from "../elements/uiProgressBar.js";
 import UIText from "../elements/uiText.js";
@@ -25,109 +27,87 @@ export class MainLevels extends PageBase {
         //      DEFAULT ELEMENTS
         // ==========================
 
-        this.addButton("BACK", this.mainContent, {}, () => {
-            this.menu.loadPage("MAIN");
-        });
-        this.buttons.BACK.applyClass("btnBack");
-        
-        this.addButton("LEVEL_CONTAINER", this.mainContent, {
-            offsetY: "20%",
-            width: "900px",
-            height: "600px",
-            centerX: true,
-        }, () => {});
-
-        this.levelBox = new UIElement(this, this.buttons.LEVEL_CONTAINER, {
-            width: "100%", height: "240px",
-            centerX: true,
-            selfAlignX: "CENTER", selfAlignY: "CENTER",
-            cornerRadius: "16px",
+        this.backButton = new UIButton(this, this.mainContent, {
+            onClick: () => { this.menu.loadPage("MAIN") },
+            classList: ["btnBack"]
         });
 
-        this.addButton("ARROW_LEFT", this.mainContent, {
+        this.arrowLeft = new UIButton(this, this.mainContent, {
             width: "80px",
             height: "120px",
             centerX: true, centerY: true,
             scaleOnHover: true,
             offsetX: "-520px",
             model: new ButtonArrowModel("LEFT", true),
-        }, () => {
-            this.switchPages(-1);
+            onClick: () => { this.switchPages(-1) },
         });
 
-        this.addButton("ARROW_RIGHT", this.mainContent, {
+        this.arrowRight = new UIButton(this, this.mainContent, {
             width: "80px",
             height: "120px",
             centerX: true, centerY: true,
             scaleOnHover: true,
             offsetX: "520px",
             model: new ButtonArrowModel("RIGHT", true),
-        }, () => {
-            this.switchPages(1);
+            onClick: () => { this.switchPages(1) },
         });
-
 
         // =============================
         //      LEVEL PAGE ELEMENTS
         // =============================
+
+        let progressTextProps = {
+            textAlignY: "TOP",
+            centerY: false,
+            offsetY: "24px",
+            font: "24px Arco",
+            textOutlineSize: 3,
+        }
+
+        let progressBarProps = {
+            width: "100%",
+            height: "40px",
+            offsetY: "8px",
+            text: true,
+            font: "20px Arco",
+            textOutlineSize: 3,
+            backgroundColor: colors.black,
+        }
 
         this.levelInfo = this.levelManager.mainLevelInfo;
 
         this.levelInfo.forEach(lvl => {
             const pageElements = {};
 
-            pageElements.title = new UIText(this, this.levelBox, {
-                text: lvl.title,
+            pageElements.container = new UIButton(this, this.mainContent, {
+                offsetY: "20%",
+                width: "900px",
+                height: "600px",
+                centerX: true,
+                childAlign: "COLUMN",
                 visible: false,
+                onClick: () => { this.loadLevel(lvl.id) },
+            });
+
+            pageElements.levelBox = new UIElement(this, pageElements.container, {
+                width: "100%", height: "240px",
+                cornerRadius: "16px",
+                text: lvl.title,
                 font: "48px Arco",
                 textOutlineSize: 3,
             });
 
-            pageElements.normalModeText = new UIText(this, this.levelBox, {
-                textAlignY: "TOP",
-                offsetY: "300px",
-                text: "Normal Mode",
-                centerY: false,
-                visible: false,
-                font: "24px Arco",
-                textOutlineSize: 3,
-            })
+            let props = this.getMergedProps({ text: "Normal Mode" }, progressTextProps);
+            pageElements.normalModeText = new UIText(this, pageElements.container, props);
 
-            pageElements.normalModeBar = new UIProgressBar(this, this.levelBox, {
-                width: "100%",
-                height: "40px",
-                offsetY: "340px",
-                visible: false,
-                progressPercentage: 10,
-                text: true,
-                font: "20px Arco",
-                textOutlineSize: 3,
-                backgroundColor: colors.black,
-                barColor: { h: 120, s: 80, l: 45 },
-            })
+            props = this.getMergedProps({ progressPercentage: 10, barColor: { h: 120, s: 80, l: 45 } }, progressBarProps);
+            pageElements.normalModeBar = new UIProgressBar(this, pageElements.container, props);
 
-            pageElements.practiceModeText = new UIText(this, this.levelBox, {
-                textAlignY: "TOP",
-                offsetY: "420px",
-                text: "Practice Mode",
-                centerY: false,
-                visible: false,
-                font: "24px Arco",
-                textOutlineSize: 3,
-            })
+            props = this.getMergedProps({ text: "Practice Mode" }, progressTextProps);
+            pageElements.practiceModeText = new UIText(this, pageElements.container, props);
 
-            pageElements.practiceModeBar = new UIProgressBar(this, this.levelBox, {
-                width: "100%",
-                height: "40px",
-                offsetY: "460px",
-                visible: false,
-                progressPercentage: 10,
-                text: true,
-                font: "20px Arco",
-                textOutlineSize: 3,
-                backgroundColor: colors.black,
-                barColor: { h: 200, s: 100, l: 50 },
-            })
+            props = this.getMergedProps({ progressPercentage: 10, barColor: { h: 200, s: 100, l: 50 } }, progressBarProps);
+            pageElements.practiceModeBar = new UIProgressBar(this, pageElements.container, props);
 
             this.pages.push(pageElements);
         });
@@ -166,18 +146,9 @@ export class MainLevels extends PageBase {
         this.activePage += pageScroll ?? 0;
         if(this.activePage < 0) this.activePage += this.pages.length;
         if(this.activePage >= this.pages.length) this.activePage -= this.pages.length ?? 1;
-        console.log(this.activePage);
 
         // Load elements on new page
         this.setPageVisibility(true);
-        
-        // Set level container onclick
-        if(!this.onLastPage()) {
-            this.buttons.LEVEL_CONTAINER.onClick = () => {
-                let id = this.levelInfo[this.activePage].id;
-                this.loadLevel(id);
-            }
-        }
     }
 
     loadLevel(levelId) {
@@ -193,9 +164,9 @@ export class MainLevels extends PageBase {
      * @param {boolean} v Element visibility on page
      */
     setPageVisibility(v) {
-        for(const elem in this.getActivePage()) {
-            this.getActivePage()[elem].visible = v;
-        }
+        let page = this.getActivePage();
+        if(this.onLastPage()) page.text.visible = v;
+        else page.container.visible = v;
     }
 
     /**
@@ -205,21 +176,16 @@ export class MainLevels extends PageBase {
         return (this.activePage == this.pages.length - 1)
     }
 
-    update() {
-        this.mainContent.recursiveUpdate();
-    }
-
     render() {
         this.renderBackground({ h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS });
 
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
-        this.buttons.BACK.backgroundColor = col;
-        this.levelBox.backgroundColor = col;
+        this.backButton.backgroundColor = col;
         if(!this.onLastPage()) {
+            this.getActivePage().levelBox.backgroundColor = col;
             this.getActivePage().normalModeBar.backgroundColor = col;
             this.getActivePage().practiceModeBar.backgroundColor = col;
         }
-        this.buttons.LEVEL_CONTAINER.visible = !this.onLastPage();
 
         this.mainContent.recursiveRender();
     }

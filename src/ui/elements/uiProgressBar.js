@@ -4,13 +4,17 @@ import { ctx } from "../../misc/global.js";
 import UIElement from "./uiElement.js";
 
 export default class UIProgressBar extends UIElement {
-    constructor(page, parent, properties) {
-        super(page, parent, properties);
+    constructor(page, parent, props = {}) {
+        super(page, parent, props);
         
-        this.progressPercentage = properties.progressPercentage ?? 0;
-        this.text = properties.text ? this.progressPercentage + "%" : null;
-        this.barColor = properties.barColor ?? colors.white;
-        this.onClick = () => {};
+        this.progressPercentage = props.progressPercentage ?? 0;
+        this.barColor = props.barColor ?? colors.white;
+    }
+
+    // Override
+    setText(text, color, outlineSize, outlineColor) {
+        super.setText(text, color, outlineSize, outlineColor);
+        this.text = text ? this.progressPercentage + "%" : null;
     }
 
     // Override
@@ -24,7 +28,8 @@ export default class UIProgressBar extends UIElement {
         ctx.fillRect(this.getX(), this.getY(), this.getWidth() * (this.progressPercentage / 100), this.getHeight());
         ctx.restore();
         ctx.stroke();
-        this.renderText();
+
+        this.renderText(this.text ? this.progressPercentage + "%" : "");
     }
 
 }

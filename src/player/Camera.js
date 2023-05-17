@@ -30,6 +30,13 @@ export default class Camera extends Rect {
         }
     }
 
+    getCenterY() {
+        let y = this.getY();
+        let h = this.getHeight();
+        console.log(y, h);
+        return y + h / 2;
+    }
+
     getWidth() { return canvas.width }
     getHeight() { return canvas.height }
 

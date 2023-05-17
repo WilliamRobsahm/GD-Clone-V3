@@ -1,4 +1,5 @@
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
+import { applyProperties } from "../../helpers/helper.js";
 import { ctx } from "../../misc/global.js";
 import Camera from "../../player/Camera.js";
 import UIButton from "../elements/uiButton.js";
@@ -32,29 +33,29 @@ export default class PageBase {
     }
 
     update(d) {
-        
+        this.mainContent.recursiveUpdate();
     }
 
     handleInput(input) {
-        this.hoveredID = this.findHoveredElement(input);
+        this.hoveredElement = this.findHoveredElement(input);
+        if(this.hoveredElement === null) return;
 
-        if(this.hoveredID !== null) {
-            document.body.style.cursor = "pointer";
-            if(input.click) {
-                input.click = false;
-                this.buttons[this.hoveredID].onClick();
+        document.body.style.cursor = "pointer";
+        if(input.click) {
+            input.click = false;
+            if(this.hoveredElement.onClick) {
+                this.hoveredElement.onClick();
             }
         }
     }
 
     findHoveredElement(input) {
-        let hoveringID = null;
-        for(const b in this.buttons) {
-            if(this.buttons[b].isHovering(input, this.camera)) {
-                hoveringID = this.buttons[b].id;
-            }
-        }
-        return hoveringID;
+        return this.mainContent.getHoveredElement(input, this.camera);
+    }
+
+    getMergedProps(props1, props2) {
+        applyProperties(props1, props2);
+        return props1;
     }
 
     renderBackground(hsl) {

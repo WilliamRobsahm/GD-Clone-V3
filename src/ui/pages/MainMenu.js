@@ -15,6 +15,7 @@ export class MainMenu extends PageBase {
         // Create buttons
 
         this.addButton("TO_ICON_MENU", this.mainContent, {
+            position: "ABSOLUTE",
             width: "180px",
             height: "180px",
             offsetX: "-300px",
@@ -27,6 +28,7 @@ export class MainMenu extends PageBase {
         });
         
         this.addButton("TO_MAIN_LEVELS", this.mainContent, {
+            position: "ABSOLUTE",
             width: "240px",
             height: "240px",
             selfAlignX: "CENTER", selfAlignY: "CENTER",
@@ -38,6 +40,7 @@ export class MainMenu extends PageBase {
         });
 
         this.addButton("TO_EDITOR", this.mainContent, {
+            position: "ABSOLUTE",
             width: "180px",
             height: "180px",
             offsetX: "300px",

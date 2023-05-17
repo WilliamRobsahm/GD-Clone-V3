@@ -7,54 +7,98 @@ import Camera from "../../player/Camera.js";
 import { PropertyClasses } from "./propertyClasses.js";
 
 export default class UIElement extends Rect {
-    constructor(page, parent, props) {
+    constructor(page, parent, props = {}) {
         super();
         this.page = page;
 
-        // General
-        this.id = null;
+        // =================
+        //      General
+        // =================
 
-        this.parent = null;
+        this.id = null;
+        this.index;
         this.children = [];
 
+        this.parent = null;
         this.setParent(parent);
         
-        // Size
         this.width; this.height; // ..px, ..%, or STRETCH
-        this.widthPx = 0; this.heightPx = 0;
+        this.widthPx = 0; this.heightPx = 0; // The height/width attributes are converted to a numeric value each frame
         
-        // Alignment / Placement
-        this.position = "RELATIVE"; // RELATIVE or ABSOLUTE
-        this.selfAlignX = "LEFT"; // LEFT, CENTER, or RIGHT
-        this.selfAlignY = "TOP"; // TOP, CENTER, or BOTTOM :3
-        this.centerX = false;
-        this.centerY = false;
-        this.floatX = "LEFT"; // LEFT or RIGHT
-        this.floatY = "TOP"; // TOP or BOTTOM :3
-        this.offsetX;
-        this.offsetY;
+        // ===============================
+        //      Alignment / Placement
+        // ===============================
 
-        // Text
-        this.text = null;
+        // Relatively positioned elements place themselves in relation to other child elements. (Next to each other, or in a list)
+        // Absolute elements only take float, offset, and centering into account, and won't stretch their parent.
+        this.position = "RELATIVE"; // "RELATIVE" or "ABSOLUTE"
+
+        // Determines how the element aligns itself based on its position.
+        // EXAMPLE: selfAlignX is "RIGHT", X position is 500, and width is 100. the left side of the element will be at x 400 and the right side at x 500.
+        this.selfAlignX = "LEFT"; // "LEFT", "CENTER", or "RIGHT"
+        this.selfAlignY = "TOP"; // "TOP", "CENTER", or "BOTTOM" :3
+
+        // Whether or not this element centers itself in the parent.
+        // NOTE: This does not properly work with multiple elements! 
+        // If you want multiple elements centered, you have to manually assign offsets to them, or put them in a container which is centered.
+        this.centerX = false; // true or false
+        this.centerY = false; // true or false
+        // (See, CSS? It ain't that hard!)
+
+        // Float determines which sides of the parent element this element tries to place itself on.
+        this.floatX = "LEFT"; // "LEFT" or "RIGHT". 
+        this.floatY = "TOP"; // "TOP" or "BOTTOM".
+
+        // Offset is added flatly to the position after it's calculated. Think CSS margin.
+        this.offsetX; // ..px, or ..%
+        this.offsetY; // ..px, or ..%
+
+        // Determines which direction the relatively positioned children puts itself in. Think CSS flow-direction.
+        this.childAlign = "ROW", // ROW or COLUMN
+
+        // Determines what happens when child elements exceed the size of this element.
+        this.overflow = "STRETCH", // STRETCH, HIDDEN, WRAP or SCROLL
+
+        // A hard-coded spacing between relative children.
+        this.childSpacing = null; // ..px, or ..%
+
+        // ==============
+        //      TEXT
+        // ==============
+
+        // The text displayed inside this element.
+        this.text = null; // Any string
+
         this.textAttributes = {};
-        this.textAlignX = "CENTER"; // LEFT, CENTER, or RIGHT
-        this.textAlignY = "CENTER"; // TOP, CENTER, or BOTTOM :3
+
+        // Determines how the text inside this element aligns itself.
+        this.textAlignX = "CENTER"; // LEFT, CENTER, or RIGHT.
+        this.textAlignY = "CENTER"; // TOP, CENTER, or BOTTOM.
+
         this.textOffsetX = 0; 
         this.textOffsetY = 0;
         this.textOutlineSize = 0;
-        this.textOutlineColor = colors.black;
+        this.textOutlineColor = colors.black; // HSL object
 
-        // Styling
-        this.model = null;
-        this.visible = true;
-        this.backgroundColor = colors.transparent;
+        // =================
+        //      Styling
+        // =================
+
+        this.model = null; // A separate renderable object, used when the element is more complex than a rectangle and outline.
+
+        // Determines whether or not this object is rendered. 'false' also stops all children from being rendered.
+        this.visible = true; // true or false. 
+        this.backgroundColor = colors.transparent; // HSL object
         this.cornerRadius = null;
 
-        // Interaction
+        // =====================
+        //      Interaction
+        // =====================
+
         this.hoverable = false;
         this.clickable = false;
         this.scaleOnHover = false;
-        this.onClick = null;
+        this.onClick = null; // Function
 
         this.scale = 1;
         this.hoverScaleMax;
@@ -64,7 +108,6 @@ export default class UIElement extends Rect {
     }
 
     applyProperties(props) {
-
         const applyProp = (propName) => {
             if(props[propName] !== undefined) this[propName] = props[propName];
         }
@@ -79,6 +122,9 @@ export default class UIElement extends Rect {
         applyProp("textOffsetY");
         applyProp("textAlignX");
         applyProp("textAlignY");
+        applyProp("childAlign");
+        applyProp("overflow");
+        applyProp("childSpacing");
         applyProp("cornerRadius");
         applyProp("visible");
 
@@ -88,6 +134,14 @@ export default class UIElement extends Rect {
         this.setFloat(props.floatX, props.floatY);
         this.setSize(props.width, props.height);
         this.setFont(props.font);
+        this.applyClassList(props.classList);
+    }
+
+    applyClassList(classList) {
+        if(typeof classList != "object") return;
+        classList.forEach(className => {
+            this.applyClass(className);
+        }) 
     }
 
     applyClass(className) {
@@ -99,17 +153,17 @@ export default class UIElement extends Rect {
     }
 
     setOffset(offsetX, offsetY) {
-        if(offsetX) this.offsetX = offsetX;
-        if(offsetY) this.offsetY = offsetY;
+        if(offsetX !== undefined) this.offsetX = offsetX;
+        if(offsetY !== undefined) this.offsetY = offsetY;
     }
     setFloat(floatX, floatY) {
-        if(floatX) this.floatX = floatX;
-        if(floatY) this.floatY = floatY;
+        if(floatX !== undefined) this.floatX = floatX;
+        if(floatY !== undefined) this.floatY = floatY;
     }
 
     setCentering(centerX, centerY) {
-        if(centerX) this.centerX = centerX;
-        if(centerY) this.centerY = centerY;
+        if(centerX !== undefined) this.centerX = centerX;
+        if(centerY !== undefined) this.centerY = centerY;
     }
 
     setSize(width, height) {
@@ -132,8 +186,11 @@ export default class UIElement extends Rect {
     setParent(parent) {
         if(!parent) return;
 
-        if(parent.children)
+        // 'Camera' can be a parent, and it does not have a children array.
+        if(parent.children) {
+            this.index = parent.children.length;
             parent.children.push(this);
+        }
 
         this.parent = parent;
     }
@@ -162,6 +219,7 @@ export default class UIElement extends Rect {
     }
 
     yFromAlignment(y, alignY = this.selfAlignY) {
+        if(!y) y = 0;
         switch(alignY) {
             case "TOP": return y; 
             case "CENTER": return y - this.getHeight() / 2; 
@@ -177,9 +235,9 @@ export default class UIElement extends Rect {
     }
 
     yFromParent() {
-        switch(this.floatT) {
-            case "LEFT": return this.parent.getY();
-            case "RIGHT": return this.parent.getY2() - this.getHeight();
+        switch(this.floatY) {
+            case "TOP": return this.parent.getY();
+            case "BOTTOM": return this.parent.getY2() - this.getHeight();
         }
     }
 
@@ -209,8 +267,30 @@ export default class UIElement extends Rect {
         }
     }
 
+    /**
+     * Measure the text in the component
+     * @returns {number} Width of text in pixels
+     */
+    getTextWidth() {
+        ctx.font = this.textAttributes.font;
+        return ctx.measureText(this.text).width ?? 0;
+    }
+
+    /**
+     * Measure the text in the component
+     * @returns {number} Height of text in pixels
+     */
+    getTextHeight() {
+        ctx.font = this.textAttributes.font;
+        let metrics = ctx.measureText(this.text);
+        return metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+    }
+
     getHeight() { return this.heightPx }
     getWidth() { return this.widthPx }
+
+    getOffsetX() { return this.sizeToPixels(this.offsetX, this.parent.getWidth()) }
+    getOffsetY() { return this.sizeToPixels(this.offsetY, this.parent.getHeight()) }
 
     /**
      * Return true if element is currently being hovered
@@ -231,6 +311,24 @@ export default class UIElement extends Rect {
         return hovering;
     }
 
+    /** 
+     * If this element, or one of its children is being hovered, return it.
+     */
+    getHoveredElement(input, camera) {
+        let hoveredElement = null;
+        this.children.forEach(child => {
+            let h = child.getHoveredElement(input, camera);
+            if(h !== null) hoveredElement = h;
+        });
+        if(hoveredElement  === null) {
+            if(this.isHovering(input, camera)) {
+                hoveredElement = this;
+            }
+        }
+
+        return hoveredElement;
+    }
+
     updateSize() {
         this.widthPx = this.sizeToPixels(this.width, this.parent?.getWidth() ?? 0);
         this.heightPx = this.sizeToPixels(this.height, this.parent?.getHeight() ?? 0);
@@ -243,37 +341,103 @@ export default class UIElement extends Rect {
 
     update() {
         this.updateSize();
-
-        this.updateX();
-        this.updateY();
+        this.x = this.getUpdatedX();
+        this.y = this.getUpdatedY();
     }
 
-    updateX() {
-        let x;
+    getUpdatedX() {
+        let x = 0;
+        let offset = this.sizeToPixels(this.offsetX, this.parent.getWidth());
+
+        if(!this.parent) return 0;
 
         if(this.centerX) {
             x = this.xFromAlignment(this.parent.getCenterX(), "CENTER");
-        } else {
-            if(this.floatX == "LEFT") x = this.parent.getX();
-            else x = this.parent.getX2() - this.getWidth();
+            return x + offset;
         }
 
-        x += this.sizeToPixels(this.offsetX, this.parent.getWidth());
-        this.x = x;
+        x = this.xFromParent();
+
+        if(this.position == "ABSOLUTE" || this.parent.childAlign == "COLUMN") {
+            return x + offset;
+        }
+
+        if(this.position == "RELATIVE" && this.parent.childAlign == "ROW") {
+            return x + this.getRelativeX() + offset;
+        }
+
+        return x + offset;
     }
 
-    updateY() {
-        let y;
+    getUpdatedY() {
+        let y = 0;
+        let offset = this.getOffsetY();
+
+        if(!this.parent) return 0;
 
         if(this.centerY) {
             y = this.yFromAlignment(this.parent.getCenterY(), "CENTER");
-        } else {
-            y = this.parent.getY();
+            return y + offset;
         }
 
-        y += this.sizeToPixels(this.offsetY, this.parent.getHeight());
+        y = this.yFromParent();
 
-        this.y = y;
+        if(this.position == "ABSOLUTE" || this.parent.childAlign == "ROW") {
+            return y + offset;
+        }
+
+        if(this.position == "RELATIVE" && this.parent.childAlign == "COLUMN") {
+            return y + this.getRelativeY() + offset;
+        }
+
+        return y + offset;
+    }
+
+    // Get all siblings that exist 'before' this element. i.e. all siblings that matter when it comes to getting the relative position.
+    getPreviousSiblings() {
+        const siblings = [];
+        for(let i = 0; i < this.parent.children?.length; i++) {
+            if(this.parent.children[i].index === this.index) break;
+            siblings.push(this.parent.children[i]);
+        }
+        return siblings;
+    }
+
+    /**
+     * Get sum for all previous sibling elements sharing the same float value.
+     * @param {string} axis X or Y
+     * @param {number} index This element's index. Leave blank to get sum of all elements.
+     * @returns {number}
+     */
+    getRelativePosition(axis, index) {
+        axis = axis.toUpperCase();
+        if(axis !== "X" && axis !== "Y") return 0;
+        if(index) index = this.parent.children.length
+
+        let spacing = this.parent.childSpacing ?? 0;
+        let position = spacing;
+
+        const siblingList = this.getPreviousSiblings();
+        siblingList.forEach(sibling => {
+            if(sibling.position != "RELATIVE" || !sibling.visible) return;
+
+            
+            if(axis == "X" && sibling.floatX == this.floatX) {
+                position += sibling.getWidth() + sibling.getOffsetX() + spacing;
+            } else if(axis == "Y" && sibling.floatY == this.floatY) {
+                position += sibling.getHeight() + sibling.getOffsetY() + spacing;
+            }
+        });
+
+        return position;
+    }
+
+    getRelativeX() {
+        return this.getRelativePosition("X", this.index);
+    }
+
+    getRelativeY() {
+        return this.getRelativePosition("Y", this.index);
     }
 
     applyTextStyle() {
@@ -294,23 +458,24 @@ export default class UIElement extends Rect {
         }
 
         if(this.text !== null) {
-            this.renderText();
+            this.renderText(this.text);
         }
 
         if(this.model) this.model.render(this);
     }
 
-    renderText() {
+    renderText(text) {
+        if(!text) return;
         this.applyTextStyle();
 
         let textX = this.textX();
         let textY = this.textY();
 
         if(this.textOutlineSize) {
-            ctx.strokeText(this.text, textX, textY);
+            ctx.strokeText(text, textX, textY);
         }
 
-        ctx.fillText(this.text, textX, textY);
+        ctx.fillText(text, textX, textY);
     }
 
     // Update this element and all its children
