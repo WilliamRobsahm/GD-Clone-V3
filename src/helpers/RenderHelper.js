@@ -22,20 +22,31 @@ export default class RenderHelper {
         ctx.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
+    static rect(rect, ctx) {
+        ctx.rect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    }
+
     /**
      * 
      * @param {object} rect Rect object. Requires getX(), getY(), getWidth() and getHeight() functions
      * @param {number} cornerRadius 
      * @param {CanvasRenderingContext2D} ctx 
-     * @param {string?} strokeStyle "DEFAULT"/"INNER"/"OUTER" - Leave empty for no stroke
+     * @param {string?} outlineType "DEFAULT" / "INNER" / "OUTER" - Leave empty for no stroke
      */
-    static fillRoundedRect(rect, cornerRadius, ctx, strokeStyle = false) {
+    static fillRoundedRect(rect, cornerRadius, ctx, outlineType = false) {
         ctx.save();
-        this.clipRoundedRectangle(rect, cornerRadius, ctx);
+        if(cornerRadius > 0) {
+            this.clipRoundedRectangle(rect, cornerRadius, ctx);
+        } else {
+            ctx.beginPath();
+            this.rect(rect, ctx);
+            ctx.closePath();
+            ctx.clip();
+        }
         
         let lw = ctx.lineWidth;
 
-        switch(strokeStyle) {
+        switch(outlineType) {
             case "DEFAULT":
                 ctx.fill();
                 ctx.restore();

@@ -88,7 +88,13 @@ export default class UIElement extends Rect {
 
         // Determines whether or not this object is rendered. 'false' also stops all children from being rendered.
         this.visible = true; // true or false. 
+
         this.backgroundColor = colors.transparent; // HSL object
+
+        this.outlineColor = null;
+        this.outlineWidth = 0;
+        this.outlineType = false; // "DEFAULT", "INNER", or "OUTER"
+
         this.cornerRadius = null;
 
         // =====================
@@ -128,6 +134,7 @@ export default class UIElement extends Rect {
         applyProp("cornerRadius");
         applyProp("visible");
 
+        this.setOutline(props.outlineColor, props.outlineWidth, props.outlineType);
         this.setText(props.text, props.textColor, props.textOutlineSize, props.textOutlineColor)
         this.setCentering(props.centerX, props.centerY);
         this.setOffset(props.offsetX, props.offsetY);
@@ -181,6 +188,14 @@ export default class UIElement extends Rect {
         if(color) this.textAttributes.fillStyle = color;
         if(outlineSize) this.textOutlineSize = outlineSize;
         if(outlineColor) this.textAttributes.strokeStyle = outlineColor;
+    }
+
+    setOutline(color, width, type) {
+        if(color) this.outlineColor = color;
+        if(width) {
+            this.outlineWidth = width;
+            this.outlineType = type ?? "DEFAULT";
+        }
     }
 
     setParent(parent) {
@@ -440,6 +455,11 @@ export default class UIElement extends Rect {
         return this.getRelativePosition("Y", this.index);
     }
 
+    getCornerRadius() {
+        if(!this.cornerRadius) return 0;
+        return this.sizeToPixels(this.cornerRadius, this.getWidth());
+    }
+
     applyTextStyle() {
         ctx.fillStyle = ColorHelper.HSL(this.textAttributes.fillStyle ?? colors.white);
         ctx.font = this.textAttributes.font ?? "20px Verdana";
@@ -449,13 +469,14 @@ export default class UIElement extends Rect {
 
     render() {
         ctx.fillStyle = ColorHelper.HSL(this.backgroundColor);
-
-        if(this.cornerRadius) {
-            let r = this.sizeToPixels(this.cornerRadius, this.getWidth());
-            RenderHelper.fillRoundedRect(this, r, ctx);
-        } else {
-            RenderHelper.fillRect(this, ctx);
+        
+       
+        if(this.outlineColor) {
+            ctx.strokeStyle = ColorHelper.HSL(this.outlineColor);
+            ctx.lineWidth = this.outlineWidth;
         }
+
+        RenderHelper.fillRoundedRect(this, this.getCornerRadius(), ctx, this.outlineType);
 
         if(this.text !== null) {
             this.renderText(this.text);
