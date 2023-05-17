@@ -2,7 +2,7 @@ import Level from "../level/Level.js";
 import { LevelManager } from "../level/LevelManager.js";
 import MenuManager from "../ui/MenuManager.js";
 import FPSCounter from "../misc/FPSCounter.js";
-import { canvas, ctx, FLOOR_HEIGHT } from "../misc/global.js";
+import { canvas, ctx } from "../misc/global.js";
 import ObjectBuilder from "../object/ObjectBuilder.js";
 import Player from "../player/Player.js";
 import config from "./config.js";
@@ -31,9 +31,7 @@ export class GameManager {
         this.menu = new MenuManager(this);
         this.menu.enter();
 
-        this.levelManager.getMainLevels((mainLevels) => {
-            this.levelManager.mainLevelInfo = mainLevels;
-        });
+        this.levelManager.loadMainLevelInfo();
     }
 
     update(deltaTime) {

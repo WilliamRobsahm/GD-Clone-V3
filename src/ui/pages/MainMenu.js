@@ -1,3 +1,4 @@
+import API from "../../APIClient.js";
 import GameRenderer from "../../game/GameRenderer.js";
 import { canvas, ctx } from "../../misc/global.js";
 import { MainMenuButtonModel } from "../elements/buttonmodels/MainMenuButton.js";
@@ -49,7 +50,10 @@ export class MainMenu extends PageBase {
             scaleOnHover: true,
             model: new MainMenuButtonModel(null),
         }, () => {
-            this.menu.loadPage("EDITOR_MENU");
+            API.getCreatedLevelsInfo((data) => {
+                this.menu.pageList.EDITOR_MENU.levelData = data;
+                this.menu.loadPage("EDITOR_MENU");
+            });
         });
 
         this.titleText = new UIText(this, this.mainContent, {

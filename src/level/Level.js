@@ -93,8 +93,8 @@ export default class Level {
      * @param {ObjectBuilder} builder Object builder
      */
     loadLevel(levelData, levelInfo, builder) {
-        console.log(levelData);
-        console.log(levelInfo);
+        if(levelData) levelData = JSON.parse(levelData);
+        if(levelInfo) levelInfo = JSON.parse(levelInfo);
         this.id = levelInfo.id;
         this.title = levelInfo.title;
         this.difficulty = levelInfo.difficulty;

@@ -1,5 +1,7 @@
+import { colors } from "../../helpers/ColorHelper.js";
 import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
+import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
@@ -7,36 +9,47 @@ export class EditorMenu extends PageBase {
     constructor(menu) {
         super(menu, "EDITOR_MENU");
 
+        this.levelData = [];
+
         this.backButton = new UIButton(this, this.mainContent, {
             onClick: () => { this.menu.loadPage("MAIN") },
             classList: ["btnBack"]
         });
 
-        this.levelList = new UIElement(this, this.mainContent, {
-            width: "500px", height: "500px",
+        this.levelsContainer = new UIElement(this, this.mainContent, {
+            width: "900px", height: "80%",
             centerX: true,
             centerY: true,
             backgroundColor: { h: 0, s: 70, l: 40 },
             childAlign: "COLUMN",
-            childSpacing: 10,
         });
 
-        this.testElement1 = new UIElement(this, this.levelList, {
-            width: "80%", height: "100px",
-            centerX: true,
-            backgroundColor: { h: 240, s: 70, l: 40 },
+        this.title = new UIElement(this, this.levelsContainer, {
+            width: "100%", height: "10%",
+            text: "My Levels",
+            font: "40px Arco",
+            centerY: false,
         });
 
-        this.testElement2 = new UIElement(this, this.levelList, {
-            width: "80%", height: "100px",
+        this.levelsList = new UIElement(this, this.levelsContainer, {
+            width: "90%", height: "85%",
+            backgroundColor: colors.black,
             centerX: true,
-            backgroundColor: { h: 120, s: 70, l: 40 },
+            childAlign: "COLUMN",
         });
 
-        this.testElement3 = new UIElement(this, this.levelList, {
-            width: "80%", height: "100px",
-            centerX: true,
-            backgroundColor: { h: 40, s: 80, l: 50 },
+        this.rows = [];
+    }
+
+    init() {
+        this.levelData.forEach(data => {
+            this.levelsList.clearChildren();
+            let row = {};
+            row.main = new UIElement(this, this.levelsList, {
+                width: "100%", height: "100px",
+                backgroundColor: colors.white,
+            })
+            this.rows.push(row);
         });
     }
 
@@ -45,6 +58,7 @@ export class EditorMenu extends PageBase {
 
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
         this.backButton.backgroundColor = col;
+        this.levelsContainer.backgroundColor = col;
         
         this.mainContent.recursiveRender();
     }

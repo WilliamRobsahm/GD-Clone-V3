@@ -1,3 +1,4 @@
+import API from "../../APIClient.js";
 import { colors } from "../../helpers/ColorHelper.js";
 import { applyProperties } from "../../helpers/helper.js";
 import { ButtonArrowModel } from "../elements/buttonmodels/ButtonArrow.js";
@@ -152,7 +153,7 @@ export class MainLevels extends PageBase {
     }
 
     loadLevel(levelId) {
-        this.levelManager.loadMainLevelData(levelId, (data, info) => {
+        API.getMainLevelContent(levelId, (data, info) => {
             fadeOverlay.beginFadeOut(() => {
                 this.menu.game.loadLevel(data, info)
             });
