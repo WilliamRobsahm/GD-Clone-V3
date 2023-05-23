@@ -48,13 +48,21 @@ export class CreatedLevels extends PageBase {
             row.main = new UIElement(this, this.levelsList, {
                 width: "100%", height: "80px",
             });
+
             row.title = new UIText(this, row.main, {
                 font: "32px Arco",
                 text: data.title,
                 centerX: false,
                 offsetX: "20px",
             });
-            
+
+            row.length = new UIText(this, row.main, {
+                font: "20px Arco",
+                text: "Length: " + data.getLengthFromDuration(),
+                centerX: false,
+                offsetX: "40px",
+            });
+
             this.rows.push(row);
         });
     }

@@ -13,9 +13,7 @@ export default class API {
         xmlGet("get_main_levels_info", null, (response) => {
             const levelInfoList = [];
             response.forEach(leveldata => {
-                let info;
-                try { info = JSON.parse(leveldata) } 
-                catch { console.error("Invalid JSON: " + leveldata) }
+                let info = tryToParse(leveldata, true);
                 levelInfoList.push(new LevelInfo(info));
             });
             onLoad(levelInfoList);
@@ -35,10 +33,12 @@ export default class API {
 
     static getCreatedLevelsInfo(onLoad) {
         xmlGet("get_created_levels_info", null, (response) => {
-            response = response.map(leveldata => {
-                return tryToParse(leveldata);
+            const levelInfoList = [];
+            response.forEach(leveldata => {
+                let info = tryToParse(leveldata, true);
+                levelInfoList.push(new LevelInfo(info));
             });
-            onLoad(response);
+            onLoad(levelInfoList);
         })
     }
 }
