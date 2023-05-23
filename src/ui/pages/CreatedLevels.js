@@ -5,7 +5,7 @@ import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
-export class EditorMenu extends PageBase {
+export class CreatedLevels extends PageBase {
     constructor(menu) {
         super(menu, "EDITOR_MENU");
 
@@ -46,9 +46,15 @@ export class EditorMenu extends PageBase {
             this.levelsList.clearChildren();
             let row = {};
             row.main = new UIElement(this, this.levelsList, {
-                width: "100%", height: "100px",
-                backgroundColor: colors.white,
-            })
+                width: "100%", height: "80px",
+            });
+            row.title = new UIText(this, row.main, {
+                font: "32px Arco",
+                text: data.title,
+                centerX: false,
+                offsetX: "20px",
+            });
+            
             this.rows.push(row);
         });
     }
@@ -56,9 +62,13 @@ export class EditorMenu extends PageBase {
     render() {
         this.renderBackground({ h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS });
 
-        let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
-        this.backButton.backgroundColor = col;
-        this.levelsContainer.backgroundColor = col;
+        let darkBg = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 3 };
+        let darkerBg = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 6 };
+        this.backButton.backgroundColor = darkBg;
+        this.levelsContainer.backgroundColor = darkBg;
+        this.rows.forEach(row => {
+            row.main.backgroundColor = darkerBg;
+        })
         
         this.mainContent.recursiveRender();
     }
