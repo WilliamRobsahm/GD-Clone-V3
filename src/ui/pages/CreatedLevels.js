@@ -42,8 +42,9 @@ export class CreatedLevels extends PageBase {
     }
 
     init() {
-        this.levelData.forEach(data => {
-            this.levelsList.clearChildren();
+        this.levelsList.clearChildren();
+
+        this.levelData.forEach(data => { 
             let row = {};
             row.main = new UIElement(this, this.levelsList, {
                 width: "100%", height: "80px",

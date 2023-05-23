@@ -57,8 +57,11 @@ function xmlGet(method, data, onLoad) {
 
     xml.onreadystatechange = function() {
         if(xmlReady(xml)) {
-            let response = tryToParse(this.responseText, true);
-            onLoad(response);
+            const response = tryToParse(this.responseText, true);
+            let status = response.status;
+            let msg = response.message;
+            let data = tryToParse(response.data);
+            onLoad(data);
         }
     };
 
