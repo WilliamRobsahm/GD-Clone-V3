@@ -55,3 +55,58 @@ export function rotateCanvas(ctx, x, y, degrees)
 export function isValidListIndex(list, index) {
     return (!isNaN(index) && index >= 0 && index < list.length)
 }
+
+/**
+ * Return true if the passed argument is an object
+ * @param {any} arg 
+ */
+export function isObject(arg) {
+    return(typeof arg === 'object' && !Array.isArray(arg) && arg !== null);
+}
+
+/**
+ * Try to parse a JSON string, and return the result.
+ * If parsing fails, return the passed string, or throw an error.
+ * @param {string} json JSON string
+ * @param {boolean} errorOnFail If true, throw an error if parsing fails.
+ * @returns {string}
+ */
+export function tryToParse(json, errorOnFail = false) {
+    // If we try to parse something that isn't a json string, such as an object, it's returned, even if errorOnFail is true.
+    if(typeof json !== "string") return json;
+
+    try { 
+        return JSON.parse(json);
+    }
+    catch {
+        if(errorOnFail) {
+            console.error(`Failed to parse JSON: \n${json}`);
+        } else {
+            return json;
+        }
+    }
+}
+
+/**
+ * Parse a JSON string. If the result is an array or object, parse all its contained values, too. And so on.
+ * @param {string} json JSON string
+ */
+export function recursiveParse(json) {
+    let result = tryToParse(json);
+
+    // Parse object values
+    if(isObject(result)) {
+        for(const i in result) {
+            result[i] = recursiveParse(result[i]);
+        }
+    } 
+    
+    // Parse array items
+    else if(Array.isArray(result)) {
+        for(let i = 0; i < result.length; i++) {
+            result[i] = recursiveParse(result[i]);
+        }
+    }
+
+    return result;
+}

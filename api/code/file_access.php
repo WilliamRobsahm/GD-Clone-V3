@@ -11,5 +11,11 @@ class FileAccess {
         } 
         return null;
     }
+
+    static function create_file($dir_path, $file_name, $file_content) {
+        $f = fopen($dir_path . "/" . $file_name, "wb");
+        fwrite($f, $file_content);
+        fclose($f);
+    }
 }
 ?>

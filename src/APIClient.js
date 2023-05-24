@@ -1,4 +1,6 @@
 import LevelInfo from "./level/LevelInfo.js";
+import { tryToParse, recursiveParse } from "./helpers/helper.js";
+
 
 const API_PATH = "api/methods/";
 
@@ -12,8 +14,7 @@ export default class API {
     static getMainLevelsInfo(onLoad) {
         xmlGet("get_main_levels_info", null, (response) => {
             const levelInfoList = [];
-            response.forEach(leveldata => {
-                let info = tryToParse(leveldata, true);
+            response.forEach(info => {
                 levelInfoList.push(new LevelInfo(info));
             });
             onLoad(levelInfoList);
@@ -41,6 +42,10 @@ export default class API {
             onLoad(levelInfoList);
         })
     }
+
+    static logError(message) {
+        console.error("API ERROR: " + message);
+    }
 }
 
 /**
@@ -57,11 +62,13 @@ function xmlGet(method, data, onLoad) {
 
     xml.onreadystatechange = function() {
         if(xmlReady(xml)) {
-            const response = tryToParse(this.responseText, true);
-            let status = response.status;
-            let msg = response.message;
-            let data = tryToParse(response.data);
-            onLoad(data);
+            const response = recursiveParse(this.responseText);
+
+            if(response.status == "OK") {
+                onLoad(response.data);
+            } else {
+                API.logError(response.message);
+            }
         }
     };
 
@@ -93,24 +100,4 @@ function formatRequestURL(methodName, data) {
     }
 
     return url + "?" + urlData.join("&");
-}
-
-/**
- * Try to parse a JSON string, and return the result.
- * If parsing fails, return the passed string, or throw an error.
- * @param {string} json JSON string
- * @param {boolean} errorOnFail If true, throw an error if parsing fails.
- * @returns {string}
- */
-function tryToParse(json, errorOnFail = false) {
-    try { 
-        return JSON.parse(json);
-    }
-    catch {
-        if(errorOnFail) {
-            console.error(`Failed to parse JSON: \n${json}`);
-        } else {
-            return json;
-        }
-    }
 }

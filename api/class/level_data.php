@@ -15,8 +15,13 @@ class LevelData {
     public $channels;
     public $objects;
 
-    function __construct($data = new stdClass()) {
-        $data = json_decode($data);
+    function __construct($data = "{}") {
+        try {
+            $data = json_decode($data);
+        } catch(Exception $e) {
+            $data = new stdClass();
+        }
+        
         $this->background = $data?->background ?? 0;
         $this->floor = $data?->floor ?? 0;
         $this->speed = $data?->speed ?? 1;

@@ -12,8 +12,13 @@ class LevelInfo {
     public $difficulty;
     public $duration;
 
-    function __construct($info = new stdClass()) {
-        $info = json_decode($info);
+    function __construct($info = "{}") {
+        try {
+            $info = json_decode($info);
+        } catch(Exception $e) {
+            $info = new stdClass();
+        }
+        
         $this->title = $info->title ?? "Unnamed";
         $this->songID = $info->songID ?? null;
         $this->levelID = $info->levelID ?? null;

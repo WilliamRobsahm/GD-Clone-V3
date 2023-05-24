@@ -1,10 +1,11 @@
 
 <?php
 
-function success_response($msg = null) {
+function success_response($msg = null, $data = null) {
     $r = new Response();
     $r->status = "OK";
     $r->message = $msg ?? "Operation successful";
+    $r->data = $data;
     die(json_encode($r));
 }
 
