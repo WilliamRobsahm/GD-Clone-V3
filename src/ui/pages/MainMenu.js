@@ -51,8 +51,8 @@ export class MainMenu extends PageBase {
             model: new MainMenuButtonModel(null),
         }, () => {
             API.getCreatedLevelsInfo((data) => {
-                this.menu.pageList.CREATED_LEVELS.levelData = data;
-                this.menu.loadPage("CREATED_LEVELS");
+                this.menu.pageList.CREATED_LEVELS_LIST.levelData = data;
+                this.menu.loadPage("CREATED_LEVELS_LIST");
             });
         });
 

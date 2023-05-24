@@ -5,7 +5,7 @@ import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
-export class CreatedLevels extends PageBase {
+export class CreatedLevelsList extends PageBase {
     constructor(menu) {
         super(menu, "EDITOR_MENU");
 
