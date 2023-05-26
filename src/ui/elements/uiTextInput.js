@@ -18,7 +18,7 @@ export default class UITextInput extends UIElement {
         this.legalChars = props.legalChars ?? " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         this.maxInputLength = props.maxInputLength ?? 256;
 
-        this.valueOnFocus;
+        this.valueOnFocus = this.text;
 
         this.onInputChanged = () => {};
         if(props.onInputChanged) {
@@ -32,8 +32,9 @@ export default class UITextInput extends UIElement {
         };
 
         this.onDefocus = () => {
+            if(!this.isFocused) return;
             this.isFocused = false;
-            if(this.text !== this.valueOnFocus && this.valueOnFocus !== undefined) {
+            if(this.text !== this.valueOnFocus) {
                 this.valueOnFocus = this.text;
                 this.onInputChanged(this.text);
             }

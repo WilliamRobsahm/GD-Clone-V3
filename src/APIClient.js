@@ -12,9 +12,9 @@ export default class API {
      * @param {Function} onLoad Function which runs when the levels have loaded. Receives level info as arg
      */
     static getMainLevelsInfo(onLoad) {
-        xmlGet("get_main_levels_info", null, (response) => {
+        xmlRequest("get_main_levels_info", "get", null, (response) => {
             const levelInfoList = [];
-            response.forEach(info => {
+            response.data.forEach(info => {
                 levelInfoList.push(new LevelInfo(info));
             });
             onLoad(levelInfoList);
@@ -27,20 +27,31 @@ export default class API {
      * @param {Function} onLoad Function which runs when content has loaded. Receives level info as arg
      */
     static getMainLevelContent(id, onLoad) {
-        xmlGet(`get_main_level_from_id`, {id: id}, (response) => {
-            onLoad(response.data, response.info);
+        xmlRequest(`get_main_level_from_id`, "get", {id: id}, (response) => {
+            let level = response.data;
+            onLoad(level.data, level.info);
         });
     }
 
     static getCreatedLevelsInfo(onLoad) {
-        xmlGet("get_created_levels_info", null, (response) => {
+        xmlRequest("get_created_levels_info", "get", null, (response) => {
             const levelInfoList = [];
-            response.forEach(leveldata => {
+            response.data.forEach(leveldata => {
                 let info = tryToParse(leveldata, true);
                 levelInfoList.push(new LevelInfo(info));
             });
             onLoad(levelInfoList);
         })
+    }
+
+    /**
+     * Update the info of a created level.
+     * @param {LevelInfo} levelInfo Level info object.
+     */
+    static saveLevelInfo(levelInfo) {
+        let json = JSON.stringify(levelInfo);
+        console.log(json);
+        xmlRequest("save_level_info", "post", {info: json}, (response) => {});
     }
 
     static logError(message) {
@@ -49,26 +60,29 @@ export default class API {
 }
 
 /**
- * Helper function for doing an XML GET-request.
- * @param {string} method Name of method (without ".php")
+ * Helper function for doing an XML request.
+ * @param {string} apiMethod Name of api method (without ".php")
+ * @param {string} requestMethod either "get" or "post"
  * @param {object} data Object containing the data included in the url.
- * @param {Function} onLoad Function
+ * @param {Function} onLoad Function which runs when the request is done. Receives response data.
  */
-function xmlGet(method, data, onLoad) {
+function xmlRequest(apiMethod, requestMethod, data, onLoad,) {
     const xml = new XMLHttpRequest();
-    const url = formatRequestURL(method, data);    
+    const url = formatRequestURL(apiMethod, data);    
 
-    xml.open("get", url, true);
+    xml.open(requestMethod, url, true);
 
     xml.onreadystatechange = function() {
-        if(xmlReady(xml)) {
-            const response = recursiveParse(this.responseText);
-
-            if(response.status == "OK") {
-                onLoad(response.data);
-            } else {
-                API.logError(response.message);
-            }
+        if(!xmlReady(xml)) return;
+        const response = recursiveParse(this.responseText.trim());
+        
+        if(response.status == "OK") {
+            onLoad(response);
+        } else {
+            let errorMessage = response.message ? response.message : 
+                (typeof response == "string" && response) ? response : 
+                "Request failed";
+            API.logError(errorMessage);
         }
     };
 

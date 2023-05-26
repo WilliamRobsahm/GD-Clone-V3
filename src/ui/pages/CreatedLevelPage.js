@@ -1,3 +1,4 @@
+import API from "../../APIClient.js";
 import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
 import UITextInput from "../elements/uiTextInput.js";
@@ -28,8 +29,10 @@ export class CreatedLevelPage extends PageBase {
             font: "40px Arco",
             placeholder: "Level Name",
             maxInputLength: 32,
+            // Save title changes
             onInputChanged: (value) => {
-                console.log(value);
+                this.levelInfo.title = value.trim();
+                API.saveLevelInfo(this.levelInfo);
             }
         });
 
@@ -40,8 +43,10 @@ export class CreatedLevelPage extends PageBase {
             cornerRadius: "28px",
             font: "20px Trebuchet MS",
             placeholder: "Description [optional]",
+            // Save description changes
             onInputChanged: (value) => {
-                console.log(value);
+                this.levelInfo.description = value.trim();
+                API.saveLevelInfo(this.levelInfo);
             }
         });
 
@@ -71,6 +76,4 @@ export class CreatedLevelPage extends PageBase {
 
         this.mainContent.recursiveRender();
     }
-
-
 }
