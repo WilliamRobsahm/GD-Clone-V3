@@ -7,6 +7,7 @@ function get_level_info($info) {
 
 class LevelInfo {
     public $title;
+    public $description;
     public $songID;
     public $levelID;
     public $difficulty;
@@ -20,6 +21,7 @@ class LevelInfo {
         }
         
         $this->title = $info->title ?? "Unnamed";
+        $this->description = $info->description ?? "";
         $this->songID = $info->songID ?? null;
         $this->levelID = $info->levelID ?? null;
         $this->difficulty = $info->difficulty ?? null;
