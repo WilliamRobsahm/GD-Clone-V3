@@ -6,7 +6,7 @@ require_once("../code/helper.php");
 
 $id = required_get("id");
 
-$path = "../../data/created_levels/" . $id;
+$path = "../../data/custom_levels/" . $id;
 
 data_response([
     "data" => FileAccess::get_file_content($path . "/data.json"),

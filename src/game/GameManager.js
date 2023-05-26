@@ -68,8 +68,8 @@ export class GameManager {
         });
     }
 
-    loadCreatedLevel(levelId) {
-        API.getCreatedLevelContent(levelId, (data, info) => {
+    loadCustomLevel(levelId) {
+        API.getCustomLevelContent(levelId, (data, info) => {
             this.enterLevel(data, info);
         });
     }
@@ -86,7 +86,7 @@ export class GameManager {
     }
 
     enterLevelEditor(levelId) {
-        API.getCreatedLevelContent(levelId, (data, info) => {
+        API.getCustomLevelContent(levelId, (data, info) => {
             fadeOverlay.beginFadeOut(() => {
                 this.gameState = "EDITOR";
                 this.menu.exit();

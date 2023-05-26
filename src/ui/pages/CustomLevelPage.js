@@ -7,12 +7,12 @@ import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
 
-export class CreatedLevelPage extends PageBase {
+export class CustomLevelPage extends PageBase {
     constructor(menu) {
-        super(menu, "CREATED_LEVEL_PAGE");
+        super(menu, "CUSTOM_LEVEL_PAGE");
 
         this.backButton = new UIButton(this, this.mainContent, {
-            onClick: () => { this.menu.loadPage("CREATED_LEVELS_LIST") },
+            onClick: () => { this.menu.loadPage("CUSTOM_LEVELS_LIST") },
             classList: ["btnBack"]
         });
 
@@ -99,7 +99,7 @@ export class CreatedLevelPage extends PageBase {
 
         this.playLevelButton.onClick = () => {
             this.onPageExit();
-            this.menu.game.loadCreatedLevel(this.levelInfo.id);
+            this.menu.game.loadCustomLevel(this.levelInfo.id);
         }
 
         this.editLevelButton.onClick = () => {

@@ -15,8 +15,8 @@ export default class MenuManager {
             MAIN: new pages.MainMenu(this),
             MAIN_LEVELS: new pages.MainLevels(this, this.game.levelManager),
             CUSTOMIZE_ICON: new pages.CustomizeIcon(this),
-            CREATED_LEVELS_LIST: new pages.CreatedLevelsList(this),
-            CREATED_LEVEL_PAGE: new pages.CreatedLevelPage(this),
+            CUSTOM_LEVELS_LIST: new pages.CustomLevelsList(this),
+            CUSTOM_LEVEL_PAGE: new pages.CustomLevelPage(this),
         }
         this.pageList.MAIN.level = this.game.level;
 

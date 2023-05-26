@@ -33,8 +33,8 @@ export default class API {
         });
     }
 
-    static getCreatedLevelsInfo(onLoad) {
-        xmlRequest("get_created_levels_info", "get", null, (response) => {
+    static getCustomLevelsInfo(onLoad) {
+        xmlRequest("get_custom_levels_info", "get", null, (response) => {
             const levelInfoList = [];
             response.data.forEach(leveldata => {
                 let info = tryToParse(leveldata, true);
@@ -44,15 +44,15 @@ export default class API {
         })
     }
 
-    static getCreatedLevelContent(id, onLoad) {
-        xmlRequest(`get_created_level`, "get", {id: id}, (response) => {
+    static getCustomLevelContent(id, onLoad) {
+        xmlRequest(`get_custom_level`, "get", {id: id}, (response) => {
             let level = response.data;
             onLoad(level.data, level.info);
         });
     }
 
     /**
-     * Update the info of a created level.
+     * Update the info of a custom level.
      * @param {LevelInfo} levelInfo Level info object.
      */
     static saveLevelInfo(levelInfo) {

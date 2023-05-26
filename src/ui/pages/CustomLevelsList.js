@@ -5,9 +5,9 @@ import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
 
-export class CreatedLevelsList extends PageBase {
+export class CustomLevelsList extends PageBase {
     constructor(menu) {
-        super(menu, "CREATED_LEVELS_LIST");
+        super(menu, "CUSTOM_LEVELS_LIST");
 
         this.levelData = [];
 
@@ -50,8 +50,8 @@ export class CreatedLevelsList extends PageBase {
                 width: "100%", 
                 height: "80px",
                 onClick: () => {
-                    this.menu.pageList.CREATED_LEVEL_PAGE.levelInfo = info;
-                    this.menu.loadPage("CREATED_LEVEL_PAGE");
+                    this.menu.pageList.CUSTOM_LEVEL_PAGE.levelInfo = info;
+                    this.menu.loadPage("CUSTOM_LEVEL_PAGE");
                 }
             });
 

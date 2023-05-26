@@ -53,9 +53,9 @@ export class MainMenu extends PageBase {
             scaleOnHover: true,
             model: new MainMenuButtonModel(null),
             onClick: () => {
-                API.getCreatedLevelsInfo((data) => {
-                    this.menu.pageList.CREATED_LEVELS_LIST.levelData = data;
-                    this.menu.loadPage("CREATED_LEVELS_LIST");
+                API.getCustomLevelsInfo((data) => {
+                    this.menu.pageList.CUSTOM_LEVELS_LIST.levelData = data;
+                    this.menu.loadPage("CUSTOM_LEVELS_LIST");
                 });
             }
         });
