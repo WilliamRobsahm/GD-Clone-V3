@@ -108,7 +108,9 @@ export default class Level {
         this.floor.setVariant(levelData.background ?? 0);
 
         this.colors.loadValues(levelData.channels);
-        this.loadObjects(levelData.objects, builder);
+
+        let objectData = levelData.objects ?? [];
+        this.loadObjects(objectData, builder);
 
         this.levelLength = this.findLength();
         this.setupChunks(CHUNK_SIZE);

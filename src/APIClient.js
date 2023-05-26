@@ -44,13 +44,19 @@ export default class API {
         })
     }
 
+    static getCreatedLevelContent(id, onLoad) {
+        xmlRequest(`get_created_level`, "get", {id: id}, (response) => {
+            let level = response.data;
+            onLoad(level.data, level.info);
+        });
+    }
+
     /**
      * Update the info of a created level.
      * @param {LevelInfo} levelInfo Level info object.
      */
     static saveLevelInfo(levelInfo) {
         let json = JSON.stringify(levelInfo);
-        console.log(json);
         xmlRequest("save_level_info", "post", {info: json}, (response) => {});
     }
 

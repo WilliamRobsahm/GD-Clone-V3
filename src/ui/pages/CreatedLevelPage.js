@@ -1,4 +1,5 @@
 import API from "../../APIClient.js";
+import { colors } from "../../helpers/ColorHelper.js";
 import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
 import UITextInput from "../elements/uiTextInput.js";
@@ -50,6 +51,41 @@ export class CreatedLevelPage extends PageBase {
             }
         });
 
+        this.buttonContainer = new UIElement(this, this.levelInfoContainer, {
+            width: "100%",
+            height: "240px",
+            offsetY: "20px",
+        });
+
+        this.editLevelButton = new UIButton(this, this.buttonContainer, {
+            width: "200px",
+            height: "200px",
+            cornerRadius: "100px",
+            offsetX: "36px",
+            centerY: true,
+            floatX: "LEFT",
+            text: "Edit",
+            font: "32px Arco",
+        });
+
+        this.playLevelButton = new UIButton(this, this.buttonContainer, {
+            width: "200px",
+            height: "200px",
+            cornerRadius: "100px",
+            centerX: true, centerY: true,
+            text: "Play",
+            font: "32px Arco",
+        });
+
+        this.unusedButton = new UIButton(this, this.buttonContainer, {
+            width: "200px",
+            height: "200px",
+            cornerRadius: "100px",
+            offsetX: "-36px",
+            centerY: true,
+            floatX: "RIGHT",
+        });
+
         this.levelInfo = null;
     }
 
@@ -60,6 +96,16 @@ export class CreatedLevelPage extends PageBase {
         if(!this.levelInfo) return;
         this.levelTitleInput.text = this.levelInfo.title;
         this.levelDescriptionInput.text = this.levelInfo.description;
+
+        this.playLevelButton.onClick = () => {
+            this.onPageExit();
+            this.menu.game.loadCreatedLevel(this.levelInfo.id);
+        }
+
+        this.editLevelButton.onClick = () => {
+            this.onPageExit();
+            this.menu.game.enterLevelEditor(this.levelInfo.id);
+        }
     }
 
     onPageExit() {
@@ -73,6 +119,9 @@ export class CreatedLevelPage extends PageBase {
         this.backButton.backgroundColor = darkBg;
         this.levelTitleInput.backgroundColor = darkBg;
         this.levelDescriptionInput.backgroundColor = darkBg;
+        this.editLevelButton.backgroundColor = darkBg;
+        this.playLevelButton.backgroundColor = darkBg;
+        this.unusedButton.backgroundColor = darkBg;
 
         this.mainContent.recursiveRender();
     }

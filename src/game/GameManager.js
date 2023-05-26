@@ -9,6 +9,7 @@ import config from "./config.js";
 import GameRenderer from "./GameRenderer.js";
 import { input } from "./InputHandler.js";
 import { fadeOverlay } from "../ui/FadeOverlay.js";
+import API from "../APIClient.js";
 
 export class GameManager {
     // Declare game constants
@@ -61,13 +62,39 @@ export class GameManager {
         }
     }
 
-    loadLevel(levelData, levelInfo) {
-        this.gameState = "IN_GAME";
-        this.menu.exit();
-        this.level.floorY = 0;
-        this.level.loadLevel(levelData, levelInfo, this.objectBuilder);
-        this.player.respawn(this.level);
-        fadeOverlay.beginFadeIn();
+    loadMainLevel(levelId) {
+        API.getMainLevelContent(levelId, (data, info) => {
+            this.enterLevel(data, info);
+        });
+    }
+
+    loadCreatedLevel(levelId) {
+        API.getCreatedLevelContent(levelId, (data, info) => {
+            this.enterLevel(data, info);
+        });
+    }
+
+    enterLevel(levelData, levelInfo) {
+        fadeOverlay.beginFadeOut(() => {
+            this.gameState = "IN_GAME";
+            this.menu.exit();
+            this.level.floorY = 0;
+            this.level.loadLevel(levelData, levelInfo, this.objectBuilder);
+            this.player.respawn(this.level);
+            fadeOverlay.beginFadeIn();
+        });
+    }
+
+    enterLevelEditor(levelId) {
+        API.getCreatedLevelContent(levelId, (data, info) => {
+            fadeOverlay.beginFadeOut(() => {
+                this.gameState = "EDITOR";
+                this.menu.exit();
+                fadeOverlay.beginFadeIn();
+                console.log("TODO ENTER EDITOR");
+            });
+        });
+        
     }
 
     render() {

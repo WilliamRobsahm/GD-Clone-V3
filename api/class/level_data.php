@@ -28,7 +28,16 @@ class LevelData {
         $this->gamemode = $data?->gamemode ?? 0;
         $this->pulseBPM = $data?->pulseBPM ?? 120;
         $this->pulseOffset = $data?->pulseOffset ?? 0;
-        $this->channels = $data?->channels ?? "{}";
+
+        // Ternary just didn't work for this one?? I don't know why. It just became null.
+        $this->channels = $data?->channels ?? null;
+        if($this->channels == null) {
+            $this->channels = '{
+            "bg":{"h":230,"s":100,"l":62},
+            "g":{"h":230,"s":60,"l":40}
+            }';
+        }
+
         $this->objects = $data?->objects ?? "[]";
     }
 }
