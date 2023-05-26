@@ -16,6 +16,7 @@ export default class MenuManager {
             MAIN_LEVELS: new pages.MainLevels(this, this.game.levelManager),
             CUSTOMIZE_ICON: new pages.CustomizeIcon(this),
             CREATED_LEVELS_LIST: new pages.CreatedLevelsList(this),
+            CREATED_LEVEL_PAGE: new pages.CreatedLevelPage(this),
         }
         this.pageList.MAIN.level = this.game.level;
 
@@ -32,6 +33,9 @@ export default class MenuManager {
 
     loadPage(pageName) {
         if(!this.pageList.hasOwnProperty(pageName)) return;
+
+        if(this.activePage)
+            this.activePage.onPageExit();
 
         // Fade out, switch page, and fade back in.
         fadeOverlay.beginFadeOut(() => {

@@ -1,4 +1,4 @@
-import InputHandler from "../../game/InputHandler.js";
+import { InputHandler } from "../../game/InputHandler.js";
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import RenderHelper from "../../helpers/RenderHelper.js";
 import { ctx } from "../../misc/global.js";
@@ -478,9 +478,7 @@ export default class UIElement extends Rect {
 
         RenderHelper.fillRoundedRect(this, this.getCornerRadius(), ctx, this.outlineType);
 
-        if(this.text !== null) {
-            this.renderText(this.text);
-        }
+        this.renderText(this.text);
 
         if(this.model) this.model.render(this);
     }
@@ -518,5 +516,14 @@ export default class UIElement extends Rect {
 
     clearChildren() {
         this.children = [];
+    }
+
+    defocusAllInputs() {
+        if(this.onDefocus) {
+            this.onDefocus();
+        }
+        this.children.forEach(child => {
+            child.defocusAllInputs();
+        })
     }
 }

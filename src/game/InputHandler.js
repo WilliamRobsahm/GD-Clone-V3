@@ -1,9 +1,7 @@
 import config from "./config.js";
 
-export default class InputHandler {
-
-    constructor(game) {
-        this.game = game;
+export class InputHandler {
+    constructor() {
 
         this.click = false;
         this.mouseX = 0;
@@ -95,6 +93,8 @@ export default class InputHandler {
         );
     }
 }
+
+export const input = new InputHandler();
 
 // Prevent right click menu from opening
 canvas.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }

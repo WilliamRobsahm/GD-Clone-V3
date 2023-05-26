@@ -7,7 +7,7 @@ import PageBase from "./PageBase.js";
 
 export class CreatedLevelsList extends PageBase {
     constructor(menu) {
-        super(menu, "EDITOR_MENU");
+        super(menu, "CREATED_LEVELS_LIST");
 
         this.levelData = [];
 
@@ -44,22 +44,27 @@ export class CreatedLevelsList extends PageBase {
     init() {
         this.levelsList.clearChildren();
 
-        this.levelData.forEach(data => { 
+        this.levelData.forEach(info => { 
             let row = {};
-            row.main = new UIElement(this, this.levelsList, {
-                width: "100%", height: "80px",
+            row.main = new UIButton(this, this.levelsList, {
+                width: "100%", 
+                height: "80px",
+                onClick: () => {
+                    this.menu.pageList.CREATED_LEVEL_PAGE.levelInfo = info;
+                    this.menu.loadPage("CREATED_LEVEL_PAGE");
+                }
             });
 
             row.title = new UIText(this, row.main, {
                 font: "32px Arco",
-                text: data.title,
+                text: info.title,
                 centerX: false,
                 offsetX: "20px",
             });
 
             row.length = new UIText(this, row.main, {
                 font: "20px Arco",
-                text: "Length: " + data.getLengthFromDuration(),
+                text: "Length: " + info.getLengthFromDuration(),
                 centerX: false,
                 offsetX: "40px",
             });

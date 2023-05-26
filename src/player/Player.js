@@ -4,7 +4,7 @@ import { ctx } from "../misc/global.js";
 import PlayerHitbox from "../collision/PlayerHitbox.js";
 import Collision from "../collision/Collision.js";
 import Level from "../level/Level.js";
-import InputHandler from "../game/InputHandler.js";
+import { InputHandler } from "../game/InputHandler.js";
 import config from "../game/config.js";
 import { rotateCanvas } from "../helpers/helper.js";
 import Camera from "./Camera.js";

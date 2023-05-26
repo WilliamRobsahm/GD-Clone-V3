@@ -8,6 +8,7 @@ export default class LevelInfo {
     constructor(params) {
         this.id = params.levelID ?? -1;
         this.title = params.title ?? "";
+        this.description = params.description ?? "";
         this.difficulty = params.difficulty ?? "N/A";
         this.songId = params.songID ?? null;
         this.duration = params.duration ?? 0;

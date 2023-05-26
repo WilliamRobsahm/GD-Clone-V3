@@ -2,6 +2,7 @@ import API from "../../APIClient.js";
 import GameRenderer from "../../game/GameRenderer.js";
 import { canvas, ctx } from "../../misc/global.js";
 import { MainMenuButtonModel } from "../elements/buttonmodels/MainMenuButton.js";
+import UIButton from "../elements/uiButton.js";
 import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
 import PageBase from "./PageBase.js";
@@ -15,7 +16,7 @@ export class MainMenu extends PageBase {
 
         // Create buttons
 
-        this.addButton("TO_ICON_MENU", this.mainContent, {
+        this.iconMenuButton = new UIButton(this, this.mainContent, {
             position: "ABSOLUTE",
             width: "180px",
             height: "180px",
@@ -24,11 +25,12 @@ export class MainMenu extends PageBase {
             centerX: true, centerY: true,
             scaleOnHover: true,
             model: new MainMenuButtonModel(null),
-        }, () => {
-            this.menu.loadPage("CUSTOMIZE_ICON");
+            onClick: () => {
+                this.menu.loadPage("CUSTOMIZE_ICON");
+            }
         });
-        
-        this.addButton("TO_MAIN_LEVELS", this.mainContent, {
+
+        this.mainLevelsButton = new UIButton(this, this.mainContent, {
             position: "ABSOLUTE",
             width: "240px",
             height: "240px",
@@ -36,11 +38,12 @@ export class MainMenu extends PageBase {
             centerX: true, centerY: true,
             scaleOnHover: true,
             model: new MainMenuButtonModel(null),
-        }, () => {
-            this.menu.loadPage("MAIN_LEVELS");
-        });
+            onClick: () => {
+                this.menu.loadPage("MAIN_LEVELS");
+            }
+        })
 
-        this.addButton("TO_EDITOR", this.mainContent, {
+        this.editorButton = new UIButton(this, this.mainContent, {
             position: "ABSOLUTE",
             width: "180px",
             height: "180px",
@@ -49,11 +52,12 @@ export class MainMenu extends PageBase {
             centerX: true, centerY: true,
             scaleOnHover: true,
             model: new MainMenuButtonModel(null),
-        }, () => {
-            API.getCreatedLevelsInfo((data) => {
-                this.menu.pageList.CREATED_LEVELS_LIST.levelData = data;
-                this.menu.loadPage("CREATED_LEVELS_LIST");
-            });
+            onClick: () => {
+                API.getCreatedLevelsInfo((data) => {
+                    this.menu.pageList.CREATED_LEVELS_LIST.levelData = data;
+                    this.menu.loadPage("CREATED_LEVELS_LIST");
+                });
+            }
         });
 
         this.titleText = new UIText(this, this.mainContent, {

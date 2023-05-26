@@ -7,7 +7,7 @@ import ObjectBuilder from "../object/ObjectBuilder.js";
 import Player from "../player/Player.js";
 import config from "./config.js";
 import GameRenderer from "./GameRenderer.js";
-import InputHandler from "./InputHandler.js";
+import { input } from "./InputHandler.js";
 import { fadeOverlay } from "../ui/FadeOverlay.js";
 
 export class GameManager {
@@ -19,7 +19,6 @@ export class GameManager {
 
     // Set up other objects. This can't be done in constructor since other stuff has to be done beforehand, such as setting canvas size.
     initialize() {
-        this.input = new InputHandler(this);
         this.renderer = new GameRenderer(this);
         this.objectBuilder = new ObjectBuilder(this);
         this.player = new Player(this);
@@ -48,13 +47,13 @@ export class GameManager {
         if(this.gameState == "MENU") {
             document.body.style.cursor = "default";
             this.menu.update(physicsMultiplier);
-            this.menu.handleInput(this.input);
+            this.menu.handleInput(input);
         } 
         
         else if(this.gameState == "IN_GAME") {
             document.body.style.cursor = "none";
 
-            this.player.update(physicsMultiplier, this.input, this.level);
+            this.player.update(physicsMultiplier, input, this.level);
         
             let dx = this.player.getDX() * physicsMultiplier;
             this.level.background.update(this.player.camera.getX(), this.player.camera.getDX());

@@ -25,6 +25,10 @@ export default class PageBase {
 
     }
 
+    onPageExit() {
+        
+    }
+
     addButton(buttonId, parent, params = {}, onClick = () => {}) {
         params.id = buttonId;
         let btn = new UIButton(this, parent, params);
