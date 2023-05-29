@@ -11,12 +11,23 @@ export default class GameRenderer {
 
     /**
      * Clears the canvas
-     * @param {HTMLCanvasElement} canvas
      * @param {CanvasRenderingContext2D} ctx 
      * @param {PlayerCamera} camera 
      */
-    static clear(canvas, ctx, camera) {
-        ctx.clearRect(camera.getX(), camera.getY(), canvas.width, canvas.height);
+    static clear(ctx, camera) {
+        ctx.clearRect(
+            camera.getX() * camera.zoom, 
+            camera.getY() * camera.zoom, 
+            camera.getWidth(), 
+            camera.getHeight()
+        );
+    }
+
+    static translate(ctx, camera) {
+        ctx.translate(
+            -camera.getX() * camera.zoom, 
+            -camera.getY() * camera.zoom
+        );
     }
 
     static renderFPS(fps, camera, ctx) {

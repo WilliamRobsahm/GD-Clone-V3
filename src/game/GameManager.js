@@ -113,12 +113,10 @@ export class GameManager {
                        
         if(!camera) return;
 
-        // Set canvas position
+        // Prep canvas
         ctx.save();
-        ctx.translate(-camera.getX(),-camera.getY());
-
-        // Clear canvas
-        GameRenderer.clear(canvas, ctx, camera);
+        GameRenderer.translate(ctx, camera);
+        GameRenderer.clear(ctx, camera);
 
         // Render menu
         if(this.gameState == "MENU") {

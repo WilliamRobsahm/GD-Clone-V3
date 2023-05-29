@@ -110,3 +110,12 @@ export function recursiveParse(json) {
 
     return result;
 }
+
+/**
+ * Return the difference between the two numbers.
+ * @param {number} n1 First number
+ * @param {number} n2 Second number
+ */
+export function getDifference(n1, n2) {
+    return (Math.max(n1, n2) - Math.min(n1, n2));
+}
