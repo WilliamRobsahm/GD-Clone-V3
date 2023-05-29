@@ -125,4 +125,20 @@ export default class RenderHelper {
 
         return gradient;
     }
+
+    static renderVerticalLine(ctx, x, y1, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x, y1);
+        ctx.lineTo(x, y2);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    static renderHorizontalLine(ctx, x1, x2, y) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.stroke();
+        ctx.closePath();
+    }
 }

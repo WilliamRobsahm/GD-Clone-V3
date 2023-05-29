@@ -1,5 +1,5 @@
 import { input } from "../game/InputHandler.js";
-import { getDifference } from "../helpers/helper.js";
+import { clamp, getDifference } from "../helpers/helper.js";
 import RenderHelper from "../helpers/RenderHelper.js";
 import { ctx, FLOOR_HEIGHT } from "../misc/global.js";
 import Camera from "../player/Camera.js";
@@ -124,64 +124,43 @@ export default class Editor {
     render() {
         this.level.background.render(this.level.colors);
         this.renderGrid();
+        this.renderUI();
     }
 
     renderGrid() {
         ctx.scale(this.camera.zoom, this.camera.zoom);
         ctx.strokeStyle = "black";
-
         ctx.lineWidth = 1;
 
         let firstVerticalLine = Math.floor(this.camera.getX() / 64);
         let lastVerticalLine = Math.floor(this.camera.getX2() / 64);
-
-        let y1 = this.camera.getY();
-        let y2 = this.camera.getY2();
-        let maxY = this.level.floorY + GRID_BELOW_FLOOR * 64
-        if(y2 > maxY) y2 = maxY;
-        
-        // Render vertical grid lines
-        for(let i = firstVerticalLine; i <= lastVerticalLine; i++) {
-            if(i < 0) continue;
-            ctx.beginPath();
-            ctx.moveTo(i * 64 + 0.5, y1 + 0.5);
-            ctx.lineTo(i * 64 + 0.5, y2 + 0.5);
-            ctx.stroke();
-            ctx.closePath();
-        }
         let firstHorizontalLine = Math.floor((-this.camera.getY2() + this.level.floorY) / 64);
         let lastHorizontalLine = Math.floor((-this.camera.getY() + this.level.floorY) / 64);
 
-        let x1 = this.camera.getX();
-        let x2 = this.camera.getX2();
-        if(x1 < 0) x1 = 0;
-
-        // Render horizontal grid lines
-        for(let i = firstHorizontalLine; i <= lastHorizontalLine; i++) {
-            if(i < -GRID_BELOW_FLOOR) continue;
-            ctx.beginPath();
-            let y = this.level.floorY - i * 64;
-            ctx.moveTo(x1 + 0.5, y + 0.5);
-            ctx.lineTo(x2 + 0.5, y + 0.5);
-            ctx.stroke();
-            ctx.closePath();
+        let maxY = this.level.floorY + GRID_BELOW_FLOOR * 64
+        let y1 = this.camera.getY() + 0.5;
+        let y2 = Math.min(this.camera.getY2(), maxY) + 0.5;
+        let x1 = Math.max(this.camera.getX(), 0) + 0.5;
+        let x2 = this.camera.getX2() + 0.5;
+        
+        // Render vertical grid lines
+        for(let i = Math.max(firstVerticalLine, 0); i <= lastVerticalLine; i++) {
+            RenderHelper.renderVerticalLine(ctx, i * 64 + 0.5, y1, y2);
         }
 
-        // White Lines
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "white";
-        ctx.beginPath();
-        ctx.moveTo(x1 + 0.5, 0 + 0.5);
-        ctx.lineTo(x2 + 0.5, 0 + 0.5);
-        ctx.stroke();
-        ctx.closePath();
+        // Render horizontal grid lines
+        for(let i = Math.max(firstHorizontalLine, -GRID_BELOW_FLOOR); i <= lastHorizontalLine; i++) {
+            RenderHelper.renderHorizontalLine(ctx, x1, x2, this.level.floorY - i * 64 + 0.5);
+        }
 
-        if(y2 > 0) y2 = 0;
-        ctx.beginPath();
-        ctx.moveTo(0 + 0.5, y1 + 0.5);
-        ctx.lineTo(0 + 0.5, y2 + 0.5);
-        ctx.stroke();
-        ctx.closePath();
+        // Render white Lines
+        ctx.strokeStyle = "white";
+        RenderHelper.renderHorizontalLine(ctx, x1, x2, 0.5);
+        RenderHelper.renderVerticalLine(ctx, 0.5, y1, Math.min(y2, 0.5));
+    }
+
+    renderUI() {
+
     }
 }
 

@@ -11,13 +11,16 @@ export function rng(min, max) {
 
 /**
  * Takes a number. Forces the number to be within the given range, then returns it.
+ * Leave min/max as false to not have a limit.
  * @param {int} number The number
  * @param {int} min Minimum value
  * @param {int} max Maximum value
  * @returns {int}
  */
-export function clamp(number, min, max) {
-    return Math.min(Math.max(number, min), max);
+export function clamp(number, min = false, max = false) {
+    if(min !== false && number < min) return min;
+    if(max !== false && number > max) return max;
+    return number;
 }
 
 /**
