@@ -86,6 +86,12 @@ export default class Level {
         return collidibleChunks;
     }
 
+    setFloorPosition(y) {
+        this.floorY = y;
+        this.background.floorY = y;
+        this.floor.floorY = y;
+    }
+
     /**
      * 
      * @param {object} levelData Contains level content. Objects, color channels, etc.

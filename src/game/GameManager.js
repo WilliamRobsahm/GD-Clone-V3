@@ -10,6 +10,7 @@ import GameRenderer from "./GameRenderer.js";
 import { input } from "./InputHandler.js";
 import { fadeOverlay } from "../ui/FadeOverlay.js";
 import API from "../APIClient.js";
+import Editor from "../editor/Editor.js";
 
 export class GameManager {
     // Declare game constants
@@ -27,6 +28,8 @@ export class GameManager {
 
         this.levelManager = new LevelManager(this);
         this.level = new Level(this);
+
+        this.editor = new Editor(this);
 
         this.menu = new MenuManager(this);
         this.menu.enter();
@@ -60,6 +63,12 @@ export class GameManager {
             this.level.background.update(this.player.camera.getX(), this.player.camera.getDX());
             this.level.floor.update(this.player.camera.getX(), this.player.camera.getDX());
         }
+
+        else if(this.gameState == "EDITOR") {
+            document.body.style.cursor = "default";
+            this.editor.update();
+            this.editor.handleInput();
+        }
     }
 
     loadMainLevel(levelId) {
@@ -78,7 +87,7 @@ export class GameManager {
         fadeOverlay.beginFadeOut(() => {
             this.gameState = "IN_GAME";
             this.menu.exit();
-            this.level.floorY = 0;
+            this.level.setFloorPosition(0);
             this.level.loadLevel(levelData, levelInfo, this.objectBuilder);
             this.player.respawn(this.level);
             fadeOverlay.beginFadeIn();
@@ -91,16 +100,16 @@ export class GameManager {
                 this.gameState = "EDITOR";
                 this.menu.exit();
                 fadeOverlay.beginFadeIn();
-                console.log("TODO ENTER EDITOR");
+                this.editor.loadLevel(data, info);
             });
         });
-        
     }
 
     render() {
         
         const camera = this.gameState == "MENU" ? this.menu.getCamera() : 
-                       this.gameState == "IN_GAME" ? this.player.camera : null;
+                       this.gameState == "IN_GAME" ? this.player.camera : 
+                       this.gameState == "EDITOR" ? this.editor.camera : null;
                        
         if(!camera) return;
 
@@ -135,6 +144,10 @@ export class GameManager {
                 GameRenderer.renderFPS(this.FPSCounter.getFPS(), camera, ctx);
 
             GameRenderer.renderAttemptsText(this.player);
+        }
+
+        else if(this.gameState == "EDITOR") {
+            this.editor.render();
         }
 
         fadeOverlay.render(camera);

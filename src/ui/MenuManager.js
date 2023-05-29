@@ -51,7 +51,7 @@ export default class MenuManager {
         this.backgroundHue += COLOR_CYCLE_SPEED;
         if(this.backgroundHue >= 360) this.backgroundHue = 0;
 
-        this.activePage.update(d);
+        if(this.activePage) this.activePage.update(d);
     }
 
     handleInput(input) {

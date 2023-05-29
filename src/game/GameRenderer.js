@@ -44,7 +44,7 @@ export default class GameRenderer {
 
     static renderFloorLine(floor, camera, channels, ctx) {
         const FLOOR_LINE_WIDTH = 3;
-        const FLOOR_Y = floor.level.floorY + FLOOR_LINE_WIDTH / 2;
+        const FLOOR_Y = floor.floorY + FLOOR_LINE_WIDTH / 2;
         const LINE_VALUES = channels.getValues("line");
         let lineColor;
         if(LINE_VALUES.blending) {

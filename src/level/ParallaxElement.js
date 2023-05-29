@@ -12,6 +12,8 @@ export default class ParallaxElement {
         this.element;
         this.x = 0;
         this.y = 0;
+
+        this.floorY = this.level ? this.level.floorY : 0;
     }
 
     update(cameraX, distance) {
@@ -25,8 +27,16 @@ export default class ParallaxElement {
             this.x += this.element.getWidth();
         }
 
-        this.y = this.level.floorY;
+        this.y = this.floorY;
         if(this.type == "background") this.y -= this.element.getHeight();
+    }
+
+    getWidth() {
+        return this.element.getWidth();
+    }
+
+    getHeight() {
+        return this.element.getHeight();
     }
 
     setVariant(id = 0) {
@@ -55,7 +65,7 @@ export default class ParallaxElement {
     resetPosition() {
         if(!this.element) return;
         this.x = -this.element.getWidth();
-        this.y = this.level.floorY;
+        this.y = this.floorY;
         if(this.type == "background") this.y -= this.element.getHeight();
     }
 

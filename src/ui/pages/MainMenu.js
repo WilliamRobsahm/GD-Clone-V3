@@ -86,13 +86,13 @@ export class MainMenu extends PageBase {
         this.camera.y = 0;
 
         // Reset floor and background
-        this.level.floorY = canvas.height - 200;
+        this.level.setFloorPosition(canvas.height - 200);
         this.level.background.resetPosition();
         this.level.floor.resetPosition();
     }
 
     update(d) {
-        this.level.floorY = canvas.height - 200;
+        this.level.setFloorPosition(canvas.height - 200);
 
         this.camera.x += BG_DX;
         this.level.background.update(this.camera.getX(), BG_DX);

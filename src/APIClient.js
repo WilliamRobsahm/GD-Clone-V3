@@ -57,7 +57,7 @@ export default class API {
      */
     static saveLevelInfo(levelInfo) {
         let json = JSON.stringify(levelInfo);
-        xmlRequest("save_level_info", "post", {info: json}, (response) => {});
+        xmlRequest("save_level_info", "post", {info: json}, (response) => {console.log(response)});
     }
 
     static logError(message) {
