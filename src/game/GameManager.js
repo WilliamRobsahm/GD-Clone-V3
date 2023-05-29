@@ -121,6 +121,7 @@ export class GameManager {
         // Render menu
         if(this.gameState == "MENU") {
             this.menu.render();
+            fadeOverlay.render(camera);
         } 
         
         // Render game
@@ -142,13 +143,13 @@ export class GameManager {
                 GameRenderer.renderFPS(this.FPSCounter.getFPS(), camera, ctx);
 
             GameRenderer.renderAttemptsText(this.player);
+            fadeOverlay.render(camera);
         }
 
         else if(this.gameState == "EDITOR") {
             this.editor.render();
+            fadeOverlay.render(this.editor.UI.camera);
         }
-
-        fadeOverlay.render(camera);
 
         ctx.restore();
     }

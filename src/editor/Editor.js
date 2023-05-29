@@ -3,9 +3,12 @@ import { clamp, getDifference } from "../helpers/helper.js";
 import RenderHelper from "../helpers/RenderHelper.js";
 import { ctx, FLOOR_HEIGHT } from "../misc/global.js";
 import Camera from "../player/Camera.js";
+import UIElement from "../ui/elements/uiElement.js";
+import EditorUI from "./EditorUI.js";
 
-const GRID_BELOW_FLOOR = 3;
+const GRID_BELOW_FLOOR = 0;
 const ZOOM_DELTA = 0.05;
+const CAMERA_MARGIN = 320;
 
 export default class Editor {
     constructor(game) {
@@ -13,10 +16,13 @@ export default class Editor {
         this.camera = new Camera();
         this.camera.x = -200;
         this.camera.y = -(this.camera.getHeight() - 220);
-        this.camera.minX = -256;
-        this.camera.maxY = 256;
+        this.camera.minX = -CAMERA_MARGIN;
+        this.camera.maxY = CAMERA_MARGIN;
         this.camera.minZoom = 0.2;
         this.camera.maxZoom = 3;
+
+        this.UI = new EditorUI(this);
+        this.mode;
 
         // Level
         this.level = this.game.level;
@@ -37,6 +43,7 @@ export default class Editor {
     }
 
     update() {
+        this.UI.update();
         this.updateBackgroundPosition();
     }
 
@@ -59,11 +66,13 @@ export default class Editor {
     }
 
     handleInput() {
+        this.UI.handleInput(input);
+
         const mousePos = { x: input.getMouseX(), y: input.getMouseY() }
 
         // Zoom
         if(input.scroll) {
-            this.updateZoom(input.scroll);
+            this.updateZoom(input.scroll > 0 ? -1 : 1);
             input.scroll = 0;
         }
 
@@ -105,7 +114,8 @@ export default class Editor {
     }
 
     updateZoom(scroll) {
-        this.camera.updateZoom(scroll < 0 ? ZOOM_DELTA : -ZOOM_DELTA);
+        let z = ZOOM_DELTA * scroll;
+        this.camera.updateZoom(z);
         this.updateBackgroundPosition();
     }
 
@@ -124,7 +134,8 @@ export default class Editor {
     render() {
         this.level.background.render(this.level.colors);
         this.renderGrid();
-        this.renderUI();
+        ctx.restore();
+        this.UI.render();
     }
 
     renderGrid() {
@@ -157,10 +168,6 @@ export default class Editor {
         ctx.strokeStyle = "white";
         RenderHelper.renderHorizontalLine(ctx, x1, x2, 0.5);
         RenderHelper.renderVerticalLine(ctx, 0.5, y1, Math.min(y2, 0.5));
-    }
-
-    renderUI() {
-
     }
 }
 

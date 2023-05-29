@@ -91,7 +91,7 @@ export default class UIElement extends Rect {
 
         this.backgroundColor = colors.transparent; // HSL object
 
-        this.outlineColor = null;
+        this.outlineColor = colors.black;
         this.outlineWidth = 0;
         this.outlineType = false; // "DEFAULT", "INNER", or "OUTER"
 
@@ -387,6 +387,7 @@ export default class UIElement extends Rect {
     getUpdatedY() {
         let y = 0;
         let offset = this.getOffsetY();
+        if(this.floatY == "BOTTOM") offset *= -1;
 
         if(!this.parent) return 0;
 
@@ -402,7 +403,12 @@ export default class UIElement extends Rect {
         }
 
         if(this.position == "RELATIVE" && this.parent.childAlign == "COLUMN") {
-            return y + this.getRelativeY() + offset;
+            if(this.floatY == "TOP") {
+                return y + this.getRelativeY() + offset;
+            } else {
+                return y - this.getRelativeY() + offset;
+            }
+            
         }
 
         return y + offset;
@@ -429,7 +435,8 @@ export default class UIElement extends Rect {
         if(axis !== "X" && axis !== "Y") return 0;
         if(index) index = this.parent.children.length
 
-        let spacing = this.parent.childSpacing ?? 0;
+        let parentSize = axis == "X" ? this.parent.getWidth() : this.parent.getHeight();
+        let spacing = this.sizeToPixels(this.parent.childSpacing, parentSize);
         let position = spacing;
 
         const siblingList = this.getPreviousSiblings();
