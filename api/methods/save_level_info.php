@@ -6,9 +6,10 @@ require_once("../code/validation.php");
 
 $info = required_get("info");
 $info = json_decode($info);
-$path = "../../data/created_levels/" . $info->id . "/info.json";
+$path = "../../data/custom_levels/" . $info->id . "/info.json";
 
 Validation::require_properties($info, ["id", "songId", "title", "description", "difficulty", "duration"]);
+Validation::check_file($path);
 
 $saved_info = new stdClass();
 

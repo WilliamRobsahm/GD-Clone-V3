@@ -3,7 +3,9 @@ require_once("../class/level_info.php");
 require_once("../class/level_data.php");
 require_once("../class/response.php");
 require_once("../code/file_access.php");
-$main_path = "../../data/created_levels";
+
+$main_path = "../../data/custom_levels";
+Validation::check_directory($main_path);
 
 $id = 0;
 $path;
