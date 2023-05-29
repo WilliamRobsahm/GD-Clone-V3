@@ -1,9 +1,8 @@
 import { input } from "../game/InputHandler.js";
-import { clamp, getDifference } from "../helpers/helper.js";
+import { getDifference } from "../helpers/helper.js";
 import RenderHelper from "../helpers/RenderHelper.js";
-import { ctx, FLOOR_HEIGHT } from "../misc/global.js";
+import { ctx } from "../misc/global.js";
 import Camera from "../player/Camera.js";
-import UIElement from "../ui/elements/uiElement.js";
 import EditorUI from "./EditorUI.js";
 
 const GRID_BELOW_FLOOR = 0;
@@ -34,6 +33,12 @@ export default class Editor {
         this.clickPos = false;
         this.previousMousePos = { x: input.getMouseX(), y: input.getMouseY() }
         this.dragging = false;
+
+        // Togglable Modes
+        this.swipeMode = false;
+        this.rotateMode = false;
+        this.freeMoveMode = false;
+        this.snapMode = false;
     }
 
     loadLevel(levelData, levelInfo, builder) {
