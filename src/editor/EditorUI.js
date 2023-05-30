@@ -33,28 +33,14 @@ export default class EditorUI extends PageBase {
         });
 
         this.zoomOutBtn = new UIButton(null, this.leftContainer, {
-            width: "80px", height: "80px",
-            floatY: "BOTTOM", offsetY: "20px",
-            centerX: true,
-            cornerRadius: "40px",
-            outlineWidth: 3,
-            backgroundColor: { h: 90, s: 85, l: 40 },
             text: "-",
-            font: "48px Arco",
-            textOutlineSize: 3,
+            classList: ["editorZoomBtn"],
             onClick: () => { this.editor.updateZoom(-2) }
         });
 
         this.zoomInBtn = new UIButton(null, this.leftContainer, {
-            width: "80px", height: "80px",
-            floatY: "BOTTOM", offsetY: "20px",
-            centerX: true,
-            cornerRadius: "40px",
-            outlineWidth: 3,
-            backgroundColor: { h: 90, s: 85, l: 40 },
             text: "+",
-            font: "48px Arco",
-            textOutlineSize: 3,
+            classList: ["editorZoomBtn"],
             onClick: () => { this.editor.updateZoom(2) }
         });
 
@@ -76,87 +62,51 @@ export default class EditorUI extends PageBase {
 
         this.modeButtons = {
             BUILD: new UIButton(null, this.modesContainer, {
-                width: "80%", height: "25%",
-                cornerRadius: "10px",
-                centerX: true,
-                outlineWidth: 3,
-                backgroundColor: { h: 90, s: 85, l: 40 },
                 text: "Build",
-                font: "32px Arco",
-                textOutlineSize: 3,
+                classList: ["editorModeBtn"],
                 onClick: () => { this.setMode("BUILD") }
             }),
 
             EDIT: new UIButton(null, this.modesContainer, {
-                width: "80%", height: "25%",
-                cornerRadius: "10px",
-                centerX: true,
-                outlineWidth: 3,
-                backgroundColor: { h: 90, s: 85, l: 40 },
                 text: "Edit",
-                font: "32px Arco",
-                textOutlineSize: 3,
+                classList: ["editorModeBtn"],
                 onClick: () => { this.setMode("EDIT") }
             }),
 
             DELETE: new UIButton(null, this.modesContainer, {
-                width: "80%", height: "25%",
-                cornerRadius: "10px",
-                centerX: true,
-                backgroundColor: { h: 90, s: 85, l: 40 },
-                textOutlineSize: 3,
-                outlineWidth: 3,
                 text: "Delete",
-                font: "32px Arco",
+                classList: ["editorModeBtn"],
                 onClick: () => { this.setMode("DELETE") }
             }),
         }
 
         this.toggleButtons = {
             SWIPE: new UIButton(null, this.togglesR1, {
-                width: "44%", height: "80%", centerY: true, 
+                classList: ["editorToggleBtn"],
                 offsetY: "3%",
-                cornerRadius: "10px",
-                backgroundColor: { h: 90, s: 85, l: 40 },
-                textOutlineSize: 3,
-                outlineWidth: 3,
                 text: "Swipe",
-                font: "20px Arco",
                 onClick: () => { this.toggleSwipe() }
             }),
 
             ROTATE: new UIButton(null, this.togglesR1, {
-                width: "44%", height: "80%", centerY: true, 
+                classList: ["editorToggleBtn"],
                 offsetX: "6%", offsetY: "3%",
-                cornerRadius: "10px",
-                textOutlineSize: 3,
-                outlineWidth: 3,
                 text: "Rotate",
-                font: "20px Arco",
-                backgroundColor: { h: 90, s: 85, l: 40 },
                 onClick: () => { this.toggleRotate() }
             }),
 
             FREE_MOVE: new UIButton(null, this.togglesR2, {
-                width: "44%", height: "80%", centerY: true, 
+                classList: ["editorToggleBtn"],
                 offsetY: "-3%",
-                cornerRadius: "10px",
-                textOutlineSize: 3,
-                outlineWidth: 3,
                 text: "Free Move",
                 font: "16px Arco",
-                backgroundColor: { h: 90, s: 85, l: 40 },
                 onClick: () => { this.toggleFreeMove() }
             }),
 
             SNAP: new UIButton(null, this.togglesR2, {
-                width: "44%", height: "80%", centerY: true, 
+                classList: ["editorToggleBtn"],
                 offsetX: "6%", offsetY: "-3%",
-                cornerRadius: "10px",
                 text: "Snap",
-                textOutlineSize: 3,
-                font: "20px Arco",
-                backgroundColor: { h: 90, s: 85, l: 40 },
                 onClick: () => { this.toggleSnap() }
             }),
         }
@@ -196,7 +146,6 @@ export default class EditorUI extends PageBase {
         this.toggleButtons.SNAP.backgroundColor = color;
         this.editor.snapMode = !this.editor.snapMode;
     }
-
 
     update() {
         this.mainContent.recursiveUpdate();
