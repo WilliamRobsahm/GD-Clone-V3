@@ -1,5 +1,4 @@
-import ColorHelper, { colors } from "./ColorHelper.js";
-import { applyProperties } from "./helper.js";
+import { applyProperties, isInvalidNumber } from "./helper.js";
 
 export default class RenderHelper {
 
@@ -105,6 +104,8 @@ export default class RenderHelper {
     }
 
     static getHorizontalGradient(ctx, x, width, colorList) {
+        if(isInvalidNumber(x) || isInvalidNumber(width)) return;
+
         let dist = 1 / (colorList.length - 1);
 
         const gradient = ctx.createLinearGradient(x, 0, x + width, 0);
@@ -116,6 +117,8 @@ export default class RenderHelper {
     }
 
     static getVerticalGradient(ctx, y, height, colorList) { 
+        if(isInvalidNumber(y) || isInvalidNumber(height)) return;
+
         let dist = 1 / (colorList.length - 1);
 
         const gradient = ctx.createLinearGradient(0, y, 0, y + height);

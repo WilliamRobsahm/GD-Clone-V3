@@ -1,6 +1,5 @@
-import ObjectBuilder from "../object/ObjectBuilder.js";
+import { objectBuilder } from "../object/ObjectBuilder.js";
 import Chunk from "./Chunk.js";
-import ColorChannel from "./ColorChannel.js";
 import ColorChannelManager from "./ColorChannelManager.js";
 import ParallaxElement from "./ParallaxElement.js";
 
@@ -96,9 +95,8 @@ export default class Level {
      * 
      * @param {object} levelData Contains level content. Objects, color channels, etc.
      * @param {LevelInfo} levelInfo Contains name, difficulty, etc.
-     * @param {ObjectBuilder} builder Object builder
      */
-    loadLevel(levelData, levelInfo, builder) {
+    loadLevel(levelData, levelInfo) {
         this.id = levelInfo.id;
         this.title = levelInfo.title;
         this.difficulty = levelInfo.difficulty;
@@ -116,17 +114,17 @@ export default class Level {
         this.colors.loadValues(levelData.channels);
 
         let objectData = levelData.objects ?? [];
-        this.loadObjects(objectData, builder);
+        this.loadObjects(objectData);
 
         this.levelLength = this.findLength();
         this.setupChunks(CHUNK_SIZE);
         console.log(this.chunks);
     }
 
-    loadObjects(objectData, builder) {
+    loadObjects(objectData) {
         for(let i = 0; i < objectData.length; i++) {
             let data = objectData[i];
-            let object = builder.createObject(data.name, 
+            let object = objectBuilder.createObject(data.name, 
                 (data.gx ? data.gx : 0),
                 (data.gy ? data.gy : 0),
                 (data.sx ? data.sx : 0),

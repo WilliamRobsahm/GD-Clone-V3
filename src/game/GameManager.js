@@ -2,8 +2,7 @@ import Level from "../level/Level.js";
 import { LevelManager } from "../level/LevelManager.js";
 import MenuManager from "../ui/MenuManager.js";
 import FPSCounter from "../misc/FPSCounter.js";
-import { canvas, ctx } from "../misc/global.js";
-import ObjectBuilder from "../object/ObjectBuilder.js";
+import { ctx } from "../misc/global.js";
 import Player from "../player/Player.js";
 import config from "./config.js";
 import GameRenderer from "./GameRenderer.js";
@@ -11,6 +10,7 @@ import { input } from "./InputHandler.js";
 import { fadeOverlay } from "../ui/FadeOverlay.js";
 import API from "../APIClient.js";
 import Editor from "../editor/Editor.js";
+import { objectBuilder } from "../object/ObjectBuilder.js";
 
 export class GameManager {
     // Declare game constants
@@ -21,8 +21,7 @@ export class GameManager {
 
     // Set up other objects. This can't be done in constructor since other stuff has to be done beforehand, such as setting canvas size.
     initialize() {
-        this.renderer = new GameRenderer(this);
-        this.objectBuilder = new ObjectBuilder(this);
+        objectBuilder.initialize(this);
         this.player = new Player(this);
         this.FPSCounter = new FPSCounter(this);
 
@@ -88,7 +87,7 @@ export class GameManager {
             this.gameState = "IN_GAME";
             this.menu.exit();
             this.level.setFloorPosition(0);
-            this.level.loadLevel(levelData, levelInfo, this.objectBuilder);
+            this.level.loadLevel(levelData, levelInfo);
             this.player.respawn(this.level);
             fadeOverlay.beginFadeIn();
         });

@@ -1,7 +1,9 @@
 import ObjectHitbox from "../collision/ObjectHitbox.js";
+import Rect from "../misc/Rect.js";
 
-export class Object {
+export class Object extends Rect {
     constructor(name, gridX, gridY, shiftX, shiftY, rotation, game) {
+        super();
         this.game = game;
         this.name = name;
         this.gridX = gridX;
@@ -16,14 +18,8 @@ export class Object {
     getX() { return this.gridX * 64 + this.shiftX }
     getY() { return -this.gridY * 64 + this.shiftY - 64 }
 
-    getX2() { return this.getX() + this.getWidth() }
-    getY2() { return this.getY() + this.getHeight() }
-
     getGridX() { return this.gridX }
     getGridY() { return this.gridY }
-
-    getCenterX() { return this.getX() + this.getWidth() / 2 }
-    getCenterY() { return this.getY() + this.getHeight() / 2 }
 
     getWidth() { return this.model.width }
     getHeight() { return this.model.height }

@@ -1,6 +1,7 @@
 import { InputHandler } from "../../game/InputHandler.js";
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import RenderHelper from "../../helpers/RenderHelper.js";
+import UIHelper from "../../helpers/uiHelper.js";
 import { ctx } from "../../misc/global.js";
 import Rect from "../../misc/Rect.js";
 import Camera from "../../player/Camera.js";
@@ -54,10 +55,10 @@ export default class UIElement extends Rect {
         this.offsetY; // ..px, or ..%
 
         // Determines which direction the relatively positioned children puts itself in. Think CSS flow-direction.
-        this.childAlign = "ROW", // ROW or COLUMN
+        this.childAlign = "ROW"; // ROW or COLUMN
 
         // Determines what happens when child elements exceed the size of this element.
-        this.overflow = "STRETCH", // STRETCH, HIDDEN, WRAP or SCROLL
+        this.overflow; // STRETCH, HIDDEN, WRAP or SCROLL
 
         // A hard-coded spacing between relative children.
         this.childSpacing = null; // ..px, or ..%
@@ -210,21 +211,6 @@ export default class UIElement extends Rect {
         this.parent = parent;
     }
 
-    /**
-     * Takes a number with a unit and return its equivalent pixel count.
-     * Supported units: "px", "%"
-     * @param {string} x Number w/ unit (ex. "100px", "20%")
-     */
-    sizeToPixels(size, parentSize) {
-        if(!size) return 0;
-        if(size.includes("px")) {
-            return parseInt(size.replace("px", ""));
-        } else if(size.includes("%")) {
-            let percentage = parseInt(size.replace("%", ""));
-            return parentSize * (percentage / 100);
-        }
-    }
-
     xFromAlignment(x, alignX = this.selfAlignX) {
         switch(alignX) {
             case "LEFT": return x;
@@ -260,11 +246,11 @@ export default class UIElement extends Rect {
         ctx.textAlign = this.textAlignX.toLowerCase();
         switch(this.textAlignX) {
             case "LEFT":
-                return this.getX() + this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
+                return this.getX() + UIHelper.sizeToPx(this.textOffsetX, this.parent.getWidth()); 
             case "CENTER":
                 return this.getCenterX(); 
             case "RIGHT":
-                return this.getX2() - this.sizeToPixels(this.textOffsetX, this.parent.getWidth()); 
+                return this.getX2() - UIHelper.sizeToPx(this.textOffsetX, this.parent.getWidth()); 
         }
     }
 
@@ -272,13 +258,13 @@ export default class UIElement extends Rect {
         switch(this.textAlignY) {
             case "TOP":
                 ctx.textBaseline = "top";
-                return this.getY() + this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
+                return this.getY() + UIHelper.sizeToPx(this.textOffsetY, this.parent.getHeight()); 
             case "CENTER":
                 ctx.textBaseline = "middle";
                 return this.getCenterY(); 
             case "BOTTOM":
                 ctx.textBaseline = "alphabetic";
-                return this.getY2() - this.sizeToPixels(this.textOffsetY, this.parent.getHeight()); 
+                return this.getY2() - UIHelper.sizeToPx(this.textOffsetY, this.parent.getHeight()); 
         }
     }
 
@@ -304,8 +290,14 @@ export default class UIElement extends Rect {
     getHeight() { return this.heightPx }
     getWidth() { return this.widthPx }
 
-    getOffsetX() { return this.sizeToPixels(this.offsetX, this.parent.getWidth()) }
-    getOffsetY() { return this.sizeToPixels(this.offsetY, this.parent.getHeight()) }
+    getOffsetX() { return UIHelper.sizeToPx(this.offsetX, this.parent.getWidth()) }
+    getOffsetY() { return UIHelper.sizeToPx(this.offsetY, this.parent.getHeight()) }
+
+    getChildSpacing(axis = null) { 
+        if(!axis) axis = this.childAlign === "ROW" ? "X" : "Y";
+        let fullSize = axis === "X" ? this.getHeight() : this.getWidth();
+        return UIHelper.sizeToPx(this.childSpacing, fullSize);
+    }
 
     /**
      * Return true if element is currently being hovered
@@ -345,8 +337,17 @@ export default class UIElement extends Rect {
     }
 
     updateSize() {
-        this.widthPx = this.sizeToPixels(this.width, this.parent?.getWidth() ?? 0);
-        this.heightPx = this.sizeToPixels(this.height, this.parent?.getHeight() ?? 0);
+        // Convert "width" string to pixel value (ex. "50px", "20%")
+        this.widthPx = UIHelper.sizeToPx(this.width, this.parent?.getWidth() ?? 0);
+        this.heightPx = UIHelper.sizeToPx(this.height, this.parent?.getHeight() ?? 0);
+
+        // Stretch to fit child elements
+        if(this.overflow == "STRETCH") {
+            //console.log(this.getTotalChildWidth(), this.getTotalChildHeight());
+            this.widthPx = Math.max(this.widthPx, this.getTotalChildWidth());
+            this.heightPx = Math.max(this.heightPx, this.getTotalChildHeight());
+            //console.log(this.widthPx, this.heightPx);
+        }
 
         if(this.scaleOnHover) {
             this.widthPx *= this.scale;
@@ -362,7 +363,7 @@ export default class UIElement extends Rect {
 
     getUpdatedX() {
         let x = 0;
-        let offset = this.sizeToPixels(this.offsetX, this.parent.getWidth());
+        let offset = UIHelper.sizeToPx(this.offsetX, this.parent.getWidth());
 
         if(!this.parent) return 0;
 
@@ -408,18 +409,24 @@ export default class UIElement extends Rect {
             } else {
                 return y - this.getRelativeY() + offset;
             }
-            
         }
 
         return y + offset;
     }
 
-    // Get all siblings that exist 'before' this element. i.e. all siblings that matter when it comes to getting the relative position.
-    getPreviousSiblings() {
+    // Get all sibling elements that exist 'before' this element. i.e. all siblings that matter when it comes to getting the relative position.
+    getRelativeElements() {
         const siblings = [];
         for(let i = 0; i < this.parent.children?.length; i++) {
-            if(this.parent.children[i].index === this.index) break;
-            siblings.push(this.parent.children[i]);
+            const elem = this.parent.children[i];
+
+            if(elem.index === this.index) break;
+            if(elem.position !== "RELATIVE" || !elem.visible) continue;
+
+            if ((this.parent.childAlign === "ROW" && elem.floatX === this.floatX) ||
+                (this.parent.childAlign === "COLUMN" && elem.floatY === this.floatY)) {
+                    siblings.push(elem);
+            }
         }
         return siblings;
     }
@@ -430,41 +437,50 @@ export default class UIElement extends Rect {
      * @param {number} index This element's index. Leave blank to get sum of all elements.
      * @returns {number}
      */
-    getRelativePosition(axis, index) {
+    getRelativePosition(axis, index = null) {
         axis = axis.toUpperCase();
         if(axis !== "X" && axis !== "Y") return 0;
-        if(index) index = this.parent.children.length
+        if(!index) index = this.parent.children.length
 
-        let parentSize = axis == "X" ? this.parent.getWidth() : this.parent.getHeight();
-        let spacing = this.sizeToPixels(this.parent.childSpacing, parentSize);
-        let position = spacing;
+        const relativeElements = this.getRelativeElements();
 
-        const siblingList = this.getPreviousSiblings();
-        siblingList.forEach(sibling => {
-            if(sibling.position != "RELATIVE" || !sibling.visible) return;
+        if(axis === "X") {
+            let spacing = UIHelper.sizeToPx(this.parent.childSpacing, this.parent.getWidth());
+            return UIHelper.sumElementWidth(relativeElements, spacing);
+        }
+        else if(axis === "Y") {
+            let spacing = UIHelper.sizeToPx(this.parent.childSpacing, this.parent.getHeight());
+            return UIHelper.sumElementHeight(relativeElements, spacing);
+        }
 
-            
-            if(axis == "X" && sibling.floatX == this.floatX) {
-                position += sibling.getWidth() + sibling.getOffsetX() + spacing;
-            } else if(axis == "Y" && sibling.floatY == this.floatY) {
-                position += sibling.getHeight() + sibling.getOffsetY() + spacing;
-            }
-        });
-
-        return position;
+        return 0;
     }
 
-    getRelativeX() {
-        return this.getRelativePosition("X", this.index);
+    getRelativeX() { return this.getRelativePosition("X", this.index) }
+    getRelativeY() { return this.getRelativePosition("Y", this.index) }
+
+    getTotalChildWidth() { 
+        if(this.childAlign === "ROW") {
+            let s = this.getChildSpacing();
+            let w = UIHelper.sumElementWidth(this.children, s);
+            console.log(s, w);
+            return w;
+        }
+        else {
+            return UIHelper.getWidestElement(this.children);
+        }
     }
 
-    getRelativeY() {
-        return this.getRelativePosition("Y", this.index);
+    getTotalChildHeight() { 
+        if(this.childAlign === "COLUMN") 
+            return UIHelper.sumElementHeight(this.children, this.getChildSpacing());
+        else 
+            return UIHelper.getTallestElement(this.children);
     }
 
     getCornerRadius() {
         if(!this.cornerRadius) return 0;
-        return this.sizeToPixels(this.cornerRadius, this.getWidth());
+        return UIHelper.sizeToPx(this.cornerRadius, this.getWidth());
     }
 
     applyTextStyle() {

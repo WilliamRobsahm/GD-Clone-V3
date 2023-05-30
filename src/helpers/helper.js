@@ -122,3 +122,7 @@ export function recursiveParse(json) {
 export function getDifference(n1, n2) {
     return (Math.max(n1, n2) - Math.min(n1, n2));
 }
+
+export function isInvalidNumber(arg) {
+    return(arg === null || arg === undefined || isNaN(arg));
+}

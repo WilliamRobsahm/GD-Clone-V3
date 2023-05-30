@@ -1,3 +1,4 @@
+import { colors } from "../helpers/ColorHelper.js";
 import UIButton from "../ui/elements/uiButton.js";
 import UIElement from "../ui/elements/uiElement.js";
 import PageBase from "../ui/pages/PageBase.js";
@@ -109,6 +110,25 @@ export default class EditorUI extends PageBase {
                 text: "Snap",
                 onClick: () => { this.toggleSnap() }
             }),
+        }
+
+        this.objectTabContainer = new UIElement(null, this.lowerContainer, {
+            position: "ABSOLUTE",
+            selfAlignX: "CENTER",
+            overflow: "STRETCH",
+            centerX: true,
+            offsetY: "-40px",
+            childSpacing: "100px",
+            backgroundColor: { h: 0, s: 50, l: 50 },
+        });
+
+        this.tabList = [];
+        for(const tab in this.editor.objectTabs) {
+            this.tabList.push(new UIElement(null, this.objectTabContainer, {
+                height: "60px", width: "50px",
+                backgroundColor: colors.black,
+                text: this.editor.objectTabs[tab].name,
+            }));
         }
 
         this.setMode("BUILD");

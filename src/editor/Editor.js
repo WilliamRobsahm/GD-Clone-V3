@@ -4,6 +4,7 @@ import RenderHelper from "../helpers/RenderHelper.js";
 import { ctx } from "../misc/global.js";
 import Camera from "../player/Camera.js";
 import EditorUI from "./EditorUI.js";
+import ObjectTab from "./ObjectTab.js";
 
 const GRID_BELOW_FLOOR = 0;
 const ZOOM_DELTA = 0.05;
@@ -20,7 +21,6 @@ export default class Editor {
         this.camera.minZoom = 0.2;
         this.camera.maxZoom = 3;
 
-        this.UI = new EditorUI(this);
         this.mode;
 
         // Level
@@ -39,12 +39,25 @@ export default class Editor {
         this.rotateMode = false;
         this.freeMoveMode = false;
         this.snapMode = false;
+
+        this.objectTabs = {};
+        this.setupObjectTabs();
+
+        this.UI = new EditorUI(this);
     }
 
     loadLevel(levelData, levelInfo, builder) {
         this.level.loadLevel(levelData, levelInfo, builder);
         this.level.setFloorPosition(0);
         input.click = false;
+    }
+
+    setupObjectTabs() {
+        this.objectTabs = {
+            BLOCKS: new ObjectTab("BLOCKS", "default_block"),
+            PLATFORMS: new ObjectTab("PLATFORMS"),
+            SPIKES: new ObjectTab("SPIKES", "default_spike"),
+        }
     }
 
     update() {
