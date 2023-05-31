@@ -13,6 +13,7 @@ export default class ObjectTab {
     setIcon(objName) {
         let object = objectBuilder.createObject(objName);
         if(object === null) return;
+        object.scale = 0.5;
         this.iconObject = object;
     }
 

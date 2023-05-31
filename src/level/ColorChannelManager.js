@@ -3,7 +3,7 @@ import ColorChannel from "./ColorChannel.js";
 
 const CHANNEL_COUNT = 100;
 
-export default class ColorChannelManager {
+export class ColorChannelManager {
     constructor() {
         this.main = {
             bg: new ColorChannel(),
@@ -69,3 +69,5 @@ export default class ColorChannelManager {
         }
     }
 }
+
+export const colorChannels = new ColorChannelManager();

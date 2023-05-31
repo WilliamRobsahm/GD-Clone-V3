@@ -15,9 +15,11 @@ export default class ObjectModel {
     getWidth() { return this.width } 
     getHeight() { return this.height }
 
-    render(object, channels) {
+    render(object, baseChannel = null, detailChannel = null, scale = 1) {
         rotateCanvas(ctx, object.getCenterX(), object.getCenterX(), object.getRotation()*90);
-        this.renderModel(object, channels);
+        this.renderModel(object, baseChannel, detailChannel, scale);
         rotateCanvas(ctx, object.getCenterX(), object.getCenterY(), - object.getRotation()*90);
     }
+
+    renderModel(rect) {}
 }

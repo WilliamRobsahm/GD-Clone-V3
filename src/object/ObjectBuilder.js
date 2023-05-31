@@ -19,10 +19,12 @@ export class ObjectBuilder {
             case "default_block":
                 object.setModel(this.models.getModel("default_block"));
                 object.createHitbox("SOLID");
+                object.baseChannelName = "obj";
                 break;
             case "default_spike":
                 object.setModel(this.models.getModel("default_spike"));
                 object.createHitbox("HAZARD", 16, 32, 24, 16);
+                object.baseChannelName = "obj"
                 break;
         }
 

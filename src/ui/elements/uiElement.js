@@ -343,10 +343,8 @@ export default class UIElement extends Rect {
 
         // Stretch to fit child elements
         if(this.overflow == "STRETCH") {
-            //console.log(this.getTotalChildWidth(), this.getTotalChildHeight());
             this.widthPx = Math.max(this.widthPx, this.getTotalChildWidth());
             this.heightPx = Math.max(this.heightPx, this.getTotalChildHeight());
-            //console.log(this.widthPx, this.heightPx);
         }
 
         if(this.scaleOnHover) {
@@ -431,44 +429,23 @@ export default class UIElement extends Rect {
         return siblings;
     }
 
-    /**
-     * Get sum for all previous sibling elements sharing the same float value.
-     * @param {string} axis X or Y
-     * @param {number} index This element's index. Leave blank to get sum of all elements.
-     * @returns {number}
-     */
-    getRelativePosition(axis, index = null) {
-        axis = axis.toUpperCase();
-        if(axis !== "X" && axis !== "Y") return 0;
-        if(!index) index = this.parent.children.length
-
+    getRelativeX() { 
         const relativeElements = this.getRelativeElements();
-
-        if(axis === "X") {
-            let spacing = UIHelper.sizeToPx(this.parent.childSpacing, this.parent.getWidth());
-            return UIHelper.sumElementWidth(relativeElements, spacing);
-        }
-        else if(axis === "Y") {
-            let spacing = UIHelper.sizeToPx(this.parent.childSpacing, this.parent.getHeight());
-            return UIHelper.sumElementHeight(relativeElements, spacing);
-        }
-
-        return 0;
+        let spacing = UIHelper.sizeToPx(this.parent.childSpacing, this.parent.getWidth());
+        return UIHelper.sumElementWidth(relativeElements, spacing);
     }
 
-    getRelativeX() { return this.getRelativePosition("X", this.index) }
-    getRelativeY() { return this.getRelativePosition("Y", this.index) }
+    getRelativeY() {  
+        const relativeElements = this.getRelativeElements();
+        let spacing = UIHelper.sizeToPx(this.parent.childSpacing, this.parent.getHeight());
+        return UIHelper.sumElementHeight(relativeElements, spacing);
+    }
 
     getTotalChildWidth() { 
-        if(this.childAlign === "ROW") {
-            let s = this.getChildSpacing();
-            let w = UIHelper.sumElementWidth(this.children, s);
-            console.log(s, w);
-            return w;
-        }
-        else {
+        if(this.childAlign === "ROW")
+            return UIHelper.sumElementWidth(this.children, this.getChildSpacing());
+        else
             return UIHelper.getWidestElement(this.children);
-        }
     }
 
     getTotalChildHeight() { 

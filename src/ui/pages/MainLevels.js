@@ -1,7 +1,7 @@
 import API from "../../APIClient.js";
 import { colors } from "../../helpers/ColorHelper.js";
 import { applyProperties } from "../../helpers/helper.js";
-import { ButtonArrowModel } from "../elements/buttonmodels/ButtonArrow.js";
+import { ButtonArrowModel } from "../elements/models/ButtonArrow.js";
 import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
 import UIProgressBar from "../elements/uiProgressBar.js";

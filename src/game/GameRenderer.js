@@ -1,6 +1,7 @@
 import ColorHelper from "../helpers/ColorHelper.js";
 import { applyProperties } from "../helpers/helper.js";
 import RenderHelper from "../helpers/RenderHelper.js";
+import { colorChannels } from "../level/ColorChannelManager.js";
 import { ctx } from "../misc/global.js";
 import PlayerCamera from "../player/Camera.js";
 
@@ -44,19 +45,19 @@ export default class GameRenderer {
         ctx.fillText(`${fps} FPS`, x, y);
     }
 
-    static renderGameBackground(background, channels) {
-        background.render(channels);
+    static renderGameBackground(background) {
+        background.render();
     }
 
-    static renderGameFloor(floor, camera, channels, ctx) {
-        floor.render(channels);
-        this.renderFloorLine(floor, camera, channels, ctx)
+    static renderGameFloor(floor, camera, ctx) {
+        floor.render();
+        this.renderFloorLine(floor, camera, ctx)
     }
 
-    static renderFloorLine(floor, camera, channels, ctx) {
+    static renderFloorLine(floor, camera, ctx) {
         const FLOOR_LINE_WIDTH = 3;
         const FLOOR_Y = floor.floorY + FLOOR_LINE_WIDTH / 2;
-        const LINE_VALUES = channels.getValues("line");
+        const LINE_VALUES = colorChannels.getValues("line");
         let lineColor;
         if(LINE_VALUES.blending) {
             lineColor = RenderHelper.getHorizontalGradient(

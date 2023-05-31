@@ -1,6 +1,6 @@
 import { objectBuilder } from "../object/ObjectBuilder.js";
 import Chunk from "./Chunk.js";
-import ColorChannelManager from "./ColorChannelManager.js";
+import { colorChannels } from "./ColorChannelManager.js";
 import ParallaxElement from "./ParallaxElement.js";
 
 const BG_MOVEMENT_MULTIPLIER = 0.5;
@@ -15,7 +15,6 @@ export default class Level {
         this.title;
         this.initialSpeed;
         this.initialGamemode;
-        this.colorChannels;
         this.objects = [];
         
         this.floorY = 0; // Determines at what Y position the background and floor are rendered
@@ -24,8 +23,6 @@ export default class Level {
         this.floor = new ParallaxElement(this, "floor");
         
         this.objects = [];
-
-        this.colors = new ColorChannelManager();
 
         this.levelLength = 0;
         this.chunks = [];
@@ -111,7 +108,7 @@ export default class Level {
         this.background.setVariant(levelData.background ?? 0);
         this.floor.setVariant(levelData.background ?? 0);
 
-        this.colors.loadValues(levelData.channels);
+        colorChannels.loadValues(levelData.channels);
 
         let objectData = levelData.objects ?? [];
         this.loadObjects(objectData);
@@ -183,7 +180,7 @@ export default class Level {
     renderObjects(camera) {
         let chunkList = this.getChunksInRenderingRange(camera);
         chunkList.forEach(chunk => {
-            chunk.renderObjects(this.colors);
+            chunk.renderObjects();
         });
     }
 

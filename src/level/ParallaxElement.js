@@ -1,5 +1,6 @@
 import { canvas } from "../misc/global.js";
 import BackgroundClassic from "./backgrounds/BackgroundClassic.js";
+import { colorChannels } from "./ColorChannelManager.js";
 import FloorClassic from "./floors/FloorClassic.js";
 
 
@@ -75,7 +76,7 @@ export default class ParallaxElement {
     }
 
     // Render using bg/g color channels
-    render(channels) {
+    render() {
         if(!this.element) {
             this.setVariant();
         }
@@ -83,7 +84,7 @@ export default class ParallaxElement {
         this.segmentCount = this.getSegmentCount();
 
         // Prepare element for rendering (set up gradients, etc.)
-        let hsl = this.type == "background" ? channels.getValues("bg") : channels.getValues("g");
+        let hsl = this.type == "background" ? colorChannels.getValues("bg") : colorChannels.getValues("g");
         this.element.renderInit(this.x, this.y, hsl);
 
         // Render background multiple times

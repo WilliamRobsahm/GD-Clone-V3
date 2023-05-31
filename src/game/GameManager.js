@@ -127,7 +127,7 @@ export class GameManager {
         else if(this.gameState == "IN_GAME") {
             
 
-            GameRenderer.renderGameBackground(this.level.background, this.level.colors)
+            GameRenderer.renderGameBackground(this.level.background)
             GameRenderer.renderObject(this.player);
             GameRenderer.renderLevelObjects(this.level, camera);
 
@@ -135,7 +135,7 @@ export class GameManager {
             if(config.showHitboxes)
                 GameRenderer.renderHitboxes(this.level, this.player, camera);
 
-            GameRenderer.renderGameFloor(this.level.floor, camera, this.level.colors, ctx);
+            GameRenderer.renderGameFloor(this.level.floor, camera, ctx);
 
             // Render FPS Counter
             if(config.showFPS)

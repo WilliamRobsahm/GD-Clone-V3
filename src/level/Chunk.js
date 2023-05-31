@@ -60,7 +60,7 @@ export default class Chunk {
      */
     renderObjects(channels) {
         for(let i = 0; i < this.objectList.length; i++) {
-            this.level.getObject(this.objectList[i]).render(channels);
+            this.level.getObject(this.objectList[i]).render();
         }
     }
 

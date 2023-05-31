@@ -41,6 +41,7 @@ export default class Editor {
         this.snapMode = false;
 
         this.objectTabs = {};
+        this.activeTab;
         this.setupObjectTabs();
 
         this.UI = new EditorUI(this);
@@ -57,7 +58,11 @@ export default class Editor {
             BLOCKS: new ObjectTab("BLOCKS", "default_block"),
             PLATFORMS: new ObjectTab("PLATFORMS"),
             SPIKES: new ObjectTab("SPIKES", "default_spike"),
+            TEST1: new ObjectTab("TEST1", "default_spike"),
+            TEST2: new ObjectTab("TEST2", "default_spike"),
+            TEST3: new ObjectTab("TEST3", "default_spike"),
         }
+        this.activeTab = "BLOCKS";
     }
 
     update() {
@@ -135,6 +140,10 @@ export default class Editor {
         let z = ZOOM_DELTA * scroll;
         this.camera.updateZoom(z);
         this.updateBackgroundPosition();
+    }
+
+    getActiveObjectTab() {
+        return this.objectTabs[this.activeTab];
     }
 
     getMouseGridX() {

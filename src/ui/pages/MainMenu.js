@@ -1,7 +1,8 @@
 import API from "../../APIClient.js";
 import GameRenderer from "../../game/GameRenderer.js";
+import { colorChannels } from "../../level/ColorChannelManager.js";
 import { canvas, ctx } from "../../misc/global.js";
-import { MainMenuButtonModel } from "../elements/buttonmodels/MainMenuButton.js";
+import { MainMenuButtonModel } from "../elements/models/MainMenuButton.js";
 import UIButton from "../elements/uiButton.js";
 import UIText from "../elements/uiText.js";
 import { BG_LIGHTNESS, BG_SATURATION } from "../MenuManager.js";
@@ -102,11 +103,11 @@ export class MainMenu extends PageBase {
     }
 
     renderBackground() {
-        this.level.colors.getChannel("bg").setColor(this.menu.backgroundHue, BG_SATURATION, BG_LIGHTNESS);
-        this.level.colors.getChannel("g").setColor(this.menu.backgroundHue, BG_SATURATION, BG_LIGHTNESS - 10);
+        colorChannels.getChannel("bg").setColor(this.menu.backgroundHue, BG_SATURATION, BG_LIGHTNESS);
+        colorChannels.getChannel("g").setColor(this.menu.backgroundHue, BG_SATURATION, BG_LIGHTNESS - 10);
 
-        GameRenderer.renderGameBackground(this.level.background, this.level.colors);
-        GameRenderer.renderGameFloor(this.level.floor, this.camera, this.level.colors, ctx);
+        GameRenderer.renderGameBackground(this.level.background);
+        GameRenderer.renderGameFloor(this.level.floor, this.camera, ctx);
     }
 
     render() {

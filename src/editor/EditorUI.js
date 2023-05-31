@@ -1,4 +1,5 @@
 import { colors } from "../helpers/ColorHelper.js";
+import { IconTabModel } from "../ui/elements/models/IconTabModel.js";
 import UIButton from "../ui/elements/uiButton.js";
 import UIElement from "../ui/elements/uiElement.js";
 import PageBase from "../ui/pages/PageBase.js";
@@ -117,19 +118,22 @@ export default class EditorUI extends PageBase {
             selfAlignX: "CENTER",
             overflow: "STRETCH",
             centerX: true,
-            offsetY: "-40px",
-            childSpacing: "100px",
-            backgroundColor: { h: 0, s: 50, l: 50 },
+            offsetY: "-48px",
+            childSpacing: "20px",
         });
 
-        this.tabList = [];
-        for(const tab in this.editor.objectTabs) {
-            this.tabList.push(new UIElement(null, this.objectTabContainer, {
-                height: "60px", width: "50px",
-                backgroundColor: colors.black,
-                text: this.editor.objectTabs[tab].name,
-            }));
+        this.tabList = {};
+        for(const tabname in this.editor.objectTabs) {
+            const tab = this.editor.objectTabs[tabname];
+            this.tabList[tabname] = new UIButton(null, this.objectTabContainer, {
+                height: "48px", width: "100px",
+                model: new IconTabModel(tab.iconObject),
+                onClick: () => {
+                    this.selectObjectTab(tabname);
+                }
+            });
         }
+        this.selectObjectTab(this.editor.activeTab);
 
         this.setMode("BUILD");
     }
@@ -141,6 +145,12 @@ export default class EditorUI extends PageBase {
 
         this.editor.mode = mode;
         this.modeButtons[this.editor.mode].backgroundColor = { h: 180, s: 95, l: 40 };
+    }
+
+    selectObjectTab(tabName) {
+        this.tabList[this.editor.activeTab].model.enabled = false;
+        this.tabList[tabName].model.enabled = true;
+        this.editor.activeTab = tabName;
     }
 
     toggleSwipe() {
