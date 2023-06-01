@@ -122,10 +122,10 @@ export default class EditorUI extends PageBase {
             childSpacing: "20px",
         });
 
-        this.tabList = {};
+        this.objectTabList = {};
         for(const tabname in this.editor.objectTabs) {
             const tab = this.editor.objectTabs[tabname];
-            this.tabList[tabname] = new UIButton(null, this.objectTabContainer, {
+            this.objectTabList[tabname] = new UIButton(null, this.objectTabContainer, {
                 height: "48px", width: "100px",
                 model: new IconTabModel(tab.iconObject),
                 onClick: () => {
@@ -145,11 +145,13 @@ export default class EditorUI extends PageBase {
 
         this.editor.mode = mode;
         this.modeButtons[this.editor.mode].backgroundColor = { h: 180, s: 95, l: 40 };
+
+        this.objectTabContainer.visible = (mode === "BUILD");
     }
 
     selectObjectTab(tabName) {
-        this.tabList[this.editor.activeTab].model.enabled = false;
-        this.tabList[tabName].model.enabled = true;
+        this.objectTabList[this.editor.activeTab].model.enabled = false;
+        this.objectTabList[tabName].model.enabled = true;
         this.editor.activeTab = tabName;
     }
 
