@@ -1,4 +1,4 @@
-import { InputHandler } from "../../game/InputHandler.js";
+import { input, InputHandler } from "../../game/InputHandler.js";
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import RenderHelper from "../../helpers/RenderHelper.js";
 import UIHelper from "../../helpers/uiHelper.js";
@@ -300,14 +300,28 @@ export default class UIElement extends Rect {
     }
 
     /**
+     * Recursive function that checks visibility on this element and all its parent elements.
+     * @returns {boolean}
+     */
+    isVisible() {
+        let v = true;
+
+        if(typeof this.parent.isVisible == "function") {
+            v = this.parent.isVisible();
+        }
+
+        return v ? this.visible : false;
+    }
+
+    /**
      * Return true if element is currently being hovered
-     * @param {InputHandler} input Input handler
      * @param {Camera} camera Currently active Camera object
      */
-    isHovering(input, camera) {
-        if(!this.hoverable || !this.visible) return false;
+    isHovering(camera) {
+        if(!this.hoverable || !this.isVisible()) return false;
         let hovering = input.mouseOn(this, camera);
 
+        // Hover scaling
         if(this.scaleOnHover) {
             if(hovering && this.scale < this.hoverScaleMax) {
                 this.scale += this.hoverScaleDelta;
@@ -319,16 +333,26 @@ export default class UIElement extends Rect {
     }
 
     /** 
-     * If this element, or one of its children is being hovered, return it.
+     * Recursive function that scans this element and all its children to find if any of them are hovered.
+     * If a hovered element is found, it is returned.
+     * @param {Camera} camera
+     * @returns {UIElement?} The hovered element, if one is found. Else null.
      */
-    getHoveredElement(input, camera) {
+    getHoveredElement(camera) {
         let hoveredElement = null;
+
+        // Non-visible elements can not be interacted with
+        if(!this.isVisible()) return null;
+
+        // Find hovered child element
         this.children.forEach(child => {
-            let h = child.getHoveredElement(input, camera);
-            if(h !== null) hoveredElement = h;
+            let hoveredChild = child.getHoveredElement(camera);
+            if(hoveredChild !== null) hoveredElement = hoveredChild;
         });
-        if(hoveredElement  === null) {
-            if(this.isHovering(input, camera)) {
+
+        // If no hovered child element is found, check if this element is hovered.
+        if(hoveredElement === null) {
+            if(this.isHovering(camera)) {
                 hoveredElement = this;
             }
         }
@@ -419,7 +443,7 @@ export default class UIElement extends Rect {
             const elem = this.parent.children[i];
 
             if(elem.index === this.index) break;
-            if(elem.position !== "RELATIVE" || !elem.visible) continue;
+            if(elem.position !== "RELATIVE" || !elem.isVisible()) continue;
 
             if ((this.parent.childAlign === "ROW" && elem.floatX === this.floatX) ||
                 (this.parent.childAlign === "COLUMN" && elem.floatY === this.floatY)) {
@@ -507,7 +531,7 @@ export default class UIElement extends Rect {
 
     // Render this element and all its (visible) children
     recursiveRender() {
-        if(!this.visible) return;
+        if(!this.isVisible()) return;
         this.render();
         this.children.forEach(child => {
             child.recursiveRender();

@@ -1,3 +1,4 @@
+import { input } from "../../game/InputHandler.js";
 import ColorHelper, { colors } from "../../helpers/ColorHelper.js";
 import { applyProperties } from "../../helpers/helper.js";
 import { ctx } from "../../misc/global.js";
@@ -40,8 +41,8 @@ export default class PageBase {
         this.mainContent.recursiveUpdate();
     }
 
-    handleInput(input) {
-        this.hoveredElement = this.findHoveredElement(input);
+    handleInput() {
+        this.hoveredElement = this.findHoveredElement();
         if(this.hoveredElement === null) return;
 
         document.body.style.cursor = "pointer";
@@ -53,8 +54,8 @@ export default class PageBase {
         }
     }
 
-    findHoveredElement(input) {
-        return this.mainContent.getHoveredElement(input, this.camera);
+    findHoveredElement() {
+        return this.mainContent.getHoveredElement(this.camera);
     }
 
     getMergedProps(props1, props2) {
