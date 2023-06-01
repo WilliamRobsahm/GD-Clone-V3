@@ -65,14 +65,14 @@ export default class Camera extends Rect {
      * (By default, camera position *can* be outside of limits, but getX()/getY() would only return values within the limits)
      */
     forceLimits() {
-        if(this.minX !== false && this.x < this.minX / this.zoom) {
-            this.x = this.minX / this.zoom;
+        if(this.minX !== false && this.x < this.minX) {
+            this.x = this.minX;
         }
 
         // maxX is not implemented currently.
 
-        if(this.minY !== false && this.y < this.minY / this.zoom) {
-            this.y = this.minY / this.zoom;
+        if(this.minY !== false && this.y < this.minY) {
+            this.y = this.minY;
         }
 
         if(this.maxY !== false && this.y + this.getHeight() > this.maxY) {

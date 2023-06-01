@@ -8,7 +8,7 @@ import ObjectTab from "./ObjectTab.js";
 
 const GRID_BELOW_FLOOR = 0;
 const ZOOM_DELTA = 0.05;
-const CAMERA_MARGIN = 320;
+const CAMERA_MARGIN = 256;
 
 export default class Editor {
     constructor(game) {
@@ -66,6 +66,7 @@ export default class Editor {
     }
 
     update() {
+        this.camera.maxY = CAMERA_MARGIN + (this.UI.lowerContainer.getHeight() / this.camera.zoom);
         this.UI.update();
         this.updateBackgroundPosition();
     }
