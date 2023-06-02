@@ -22,9 +22,8 @@ export class DefaultSpike extends ObjectModel {
         ctx.moveTo(rect.getX(), rect.getY2());
         ctx.lineTo(rect.getCenterX(), rect.getY());
         ctx.lineTo(rect.getX2(), rect.getY2());
-        ctx.lineTo(rect.getX(), rect.getY2());
+        ctx.closePath();
         ctx.fill();
         ctx.stroke();
-        ctx.closePath();
     }
 }
