@@ -126,3 +126,16 @@ export function getDifference(n1, n2) {
 export function isInvalidNumber(arg) {
     return(arg === null || arg === undefined || isNaN(arg));
 }
+
+/**
+ * I don't know what to call this function??
+ * If new index is lower than 0, we go to the end.
+ * If new index is higher than amount of items, we go to the beginning.
+ * Used for stuff like main level pages or editor object pages
+ */
+export function navigateThroughItems(currentIndex, indexDifference, itemCount) {
+    let index = currentIndex + indexDifference;
+    if(index >= itemCount) index -= itemCount;
+    if(index < 0) index += itemCount;
+    return index;
+}

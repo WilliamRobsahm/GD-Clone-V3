@@ -5,6 +5,7 @@ import { ctx } from "../misc/global.js";
 import Camera from "../player/Camera.js";
 import EditorUI from "./EditorUI.js";
 import ObjectTab from "./ObjectTab.js";
+import { objectTabManager } from "./ObjectTabManager.js";
 
 const GRID_BELOW_FLOOR = 0;
 const ZOOM_DELTA = 0.05;
@@ -45,6 +46,7 @@ export default class Editor {
         this.setupObjectTabs();
 
         this.UI = new EditorUI(this);
+        this.UI.initialize();
     }
 
     loadLevel(levelData, levelInfo, builder) {
@@ -54,15 +56,11 @@ export default class Editor {
     }
 
     setupObjectTabs() {
-        this.objectTabs = {
-            BLOCKS: new ObjectTab("BLOCKS", "default_block"),
-            PLATFORMS: new ObjectTab("PLATFORMS"),
-            SPIKES: new ObjectTab("SPIKES", "default_spike"),
-            TEST1: new ObjectTab("TEST1", "default_spike"),
-            TEST2: new ObjectTab("TEST2", "default_spike"),
-            TEST3: new ObjectTab("TEST3", "default_spike"),
-        }
-        this.activeTab = "BLOCKS";
+        objectTabManager.initialize();
+    }
+
+    getObjectTab(tabname) {
+        return objectTabManager.getTab(tabname);
     }
 
     update() {
@@ -144,7 +142,7 @@ export default class Editor {
     }
 
     getActiveObjectTab() {
-        return this.objectTabs[this.activeTab];
+        return objectTabManager.getActiveTab();
     }
 
     getMouseGridX() {

@@ -1,15 +1,29 @@
 import { colors } from "../helpers/ColorHelper.js";
-import { IconTabModel } from "../ui/elements/models/IconTabModel.js";
+import { ButtonArrowModel } from "../ui/elements/models/ButtonArrow.js";
+import { ObjectNavTabModel } from "../ui/elements/models/ObjectNavTabModel.js";
 import UIButton from "../ui/elements/uiButton.js";
 import UIElement from "../ui/elements/uiElement.js";
 import PageBase from "../ui/pages/PageBase.js";
+import { objectTabManager } from "./ObjectTabManager.js";
+
+const OBJECTS_PER_ROW = 9;
+const OBJECT_ROW_COUNT = 2;
+const OBJECTS_PER_PAGE = OBJECTS_PER_ROW * OBJECT_ROW_COUNT;
+
+const OBJ_SELECTOR_SIZE = 64;
+const OBJ_SELECTOR_MARGIN = 16;
+
+const OBJECT_CONTAINER_WIDTH = (OBJ_SELECTOR_SIZE * OBJECTS_PER_ROW) + (OBJ_SELECTOR_MARGIN * (OBJECTS_PER_ROW + 1));
+const OBJECT_CONTAINER_HEIGHT = (OBJ_SELECTOR_SIZE * OBJECT_ROW_COUNT) + (OBJ_SELECTOR_MARGIN * (OBJECT_ROW_COUNT + 1));
 
 export default class EditorUI extends PageBase {
     constructor(editor) {
         super(null, "LEVEL_EDITOR");
         this.editor = editor;
+    }
 
-        this.topContainer = new UIElement(null, this.mainContent, {
+	initialize() {
+		this.topContainer = new UIElement(null, this.mainContent, {
             position: "ABSOLUTE",
             width: "100%", height: "10%",
         });
@@ -113,7 +127,7 @@ export default class EditorUI extends PageBase {
             }),
         }
 
-        this.objectTabContainer = new UIElement(null, this.lowerContainer, {
+        this.objectNavTabContainer = new UIElement(null, this.lowerContainer, {
             position: "ABSOLUTE",
             selfAlignX: "CENTER",
             overflow: "STRETCH",
@@ -122,21 +136,82 @@ export default class EditorUI extends PageBase {
             childSpacing: "20px",
         });
 
-        this.objectTabList = {};
-        for(const tabname in this.editor.objectTabs) {
-            const tab = this.editor.objectTabs[tabname];
-            this.objectTabList[tabname] = new UIButton(null, this.objectTabContainer, {
+		// Set up object tabs and navigation
+        for(const tabname in objectTabManager.tabs) {
+
+			const tab = objectTabManager.getTab(tabname);
+
+            const navTabElement = new UIButton(null, this.objectNavTabContainer, {
                 height: "48px", width: "100px",
-                model: new IconTabModel(tab.iconObject),
+                model: new ObjectNavTabModel(tab.iconObject),
                 onClick: () => {
                     this.selectObjectTab(tabname);
                 }
             });
+
+			const pages = [];
+			for(let i = 0; i < 3; i++) {
+				let container = new UIElement(null, this.lowerContainer, {
+					width: OBJECT_CONTAINER_WIDTH + "px",
+					height: OBJECT_CONTAINER_HEIGHT + "px",
+					centerX: true, centerY: true,
+					backgroundColor: colors.black,
+					visible: false,
+					text: `${tabname} ${i}`,
+				});
+				let rows = [];
+
+				pages.push({
+					container: container,
+					rows: rows,
+				})
+			}
+
+			tab.uiNavTab = navTabElement;
+			tab.pages = pages;
+
+			console.log(tab);
         }
-        this.selectObjectTab(this.editor.activeTab);
+
+		this.objectPageLeft = new UIButton(null, this.lowerContainer, {
+			width: "80px", height: "120px", centerX: true, centerY: true,
+			offsetX: -OBJECT_CONTAINER_WIDTH / 2 - 40,
+			model: new ButtonArrowModel("LEFT", true),
+			scaleOnHover: true,
+			onClick: () => {
+				console.log("LEFT");
+				objectTabManager.getActiveTab().navigatePages(-1);
+			}
+		});
+
+		this.objectPageRight = new UIButton(null, this.lowerContainer, {
+			width: "80px", height: "120px", centerX: true, centerY: true,
+			offsetX: OBJECT_CONTAINER_WIDTH / 2 + 40,
+			model: new ButtonArrowModel("RIGHT", true),
+			scaleOnHover: true,
+			onClick: () => {
+				console.log("RIGHT");
+				objectTabManager.getActiveTab().navigatePages(1);
+			}
+		});
+
+        this.selectObjectTab(objectTabManager.activeTab);
 
         this.setMode("BUILD");
-    }
+	}
+
+	getObjectTab(tabname) {
+		return objectTabManager.getTab(tabname);
+	}
+
+	getObjectNavTab(tabname) {
+		console.log(this.getObjectTab(tabname))
+		return this.getObjectTab(tabname).uiNavTab;
+	}
+
+	getObjectTabContainer(tabname) {
+		return this.getObjectTab(tabname).uiContainer;
+	}
 
     // "BUILD", "EDIT", or "DELETE"
     setMode(mode) {
@@ -146,13 +221,19 @@ export default class EditorUI extends PageBase {
         this.editor.mode = mode;
         this.modeButtons[this.editor.mode].backgroundColor = { h: 180, s: 95, l: 40 };
 
-        this.objectTabContainer.visible = (mode === "BUILD");
+		this.objectNavTabContainer.visible = (mode === "BUILD");
+		objectTabManager.getActiveTabPage().visible = (mode === "BUILD");
+		this.objectPageLeft.visible = (mode === "BUILD");
+		this.objectPageRight.visible = (mode === "BUILD");
+        
     }
 
-    selectObjectTab(tabName) {
-        this.objectTabList[this.editor.activeTab].model.enabled = false;
-        this.objectTabList[tabName].model.enabled = true;
-        this.editor.activeTab = tabName;
+    selectObjectTab(tabname) {
+      	objectTabManager.getActiveTab().uiNavTab.model.selected = false;
+		objectTabManager.getTab(tabname).uiNavTab.model.selected = true;
+		objectTabManager.getActiveTabPage().visible = false;
+		objectTabManager.getTab(tabname).getActivePage().visible = true;
+        objectTabManager.activeTab = tabname;
     }
 
     toggleSwipe() {

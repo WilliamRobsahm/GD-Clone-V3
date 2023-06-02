@@ -1,3 +1,4 @@
+import { navigateThroughItems } from "../helpers/helper.js";
 import { objectBuilder } from "../object/ObjectBuilder.js";
 
 export default class ObjectTab {
@@ -5,6 +6,10 @@ export default class ObjectTab {
         this.name = name;
         this.iconObject = null;
         this.objectList = [];
+
+        this.uiNavTab = null;
+        this.pages = [];
+        this.activePage = 0;
 
         if(iconObjectName) 
             this.setIcon(iconObjectName);
@@ -23,5 +28,19 @@ export default class ObjectTab {
             if(object === null) return;
             this.objectList.push(object);
         });
+    }
+
+    navigatePages(d) {
+        this.getActivePage().visible = false;
+        this.activePage = navigateThroughItems(this.activePage, d, this.pages.length);
+        this.getActivePage().visible = true;
+    }
+    
+    getActivePage() {
+        return this.pages[this.activePage].container;
+    }
+
+    getActivePageRows() {
+        return this.pages[this.activePage].rows;
     }
 }

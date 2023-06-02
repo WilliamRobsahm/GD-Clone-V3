@@ -4,10 +4,10 @@ import { ctx } from "../../../misc/global.js";
 
 const RADIUS = 20;
 
-export class IconTabModel {
+export class ObjectNavTabModel {
     constructor(object) {
         this.object = object;
-        this.enabled = false;
+        this.selected = false;
     }
 
     render(rect) {
@@ -18,7 +18,7 @@ export class IconTabModel {
             lineWidth: 2,
         })
 
-        ctx.globalAlpha = this.enabled ? 1 : 0.5;
+        ctx.globalAlpha = this.selected ? 1 : 0.5;
 
         ctx.save();
         ctx.beginPath();
