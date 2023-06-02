@@ -1,4 +1,5 @@
 import { colors } from "../helpers/ColorHelper.js";
+import { ActivePageIndicatorModel } from "../ui/elements/models/ActivePageIndicator.js";
 import { ButtonArrowModel } from "../ui/elements/models/ButtonArrow.js";
 import { ObjectNavTabModel } from "../ui/elements/models/ObjectNavTabModel.js";
 import UIButton from "../ui/elements/uiButton.js";
@@ -167,8 +168,17 @@ export default class EditorUI extends PageBase {
 				})
 			}
 
+			const indicator = new UIElement(null, this.lowerContainer, {
+				position: "ABSOLUTE",
+				centerX: true,
+				floatY: "BOTTOM",
+				offsetY: "16px",
+				model: new ActivePageIndicatorModel(pages.length),
+			});
+
 			tab.uiNavTab = navTabElement;
 			tab.pages = pages;
+			tab.pageIndicator = indicator;
 
 			console.log(tab);
         }
@@ -179,8 +189,8 @@ export default class EditorUI extends PageBase {
 			model: new ButtonArrowModel("LEFT", true),
 			scaleOnHover: true,
 			onClick: () => {
-				console.log("LEFT");
 				objectTabManager.getActiveTab().navigatePages(-1);
+				this.updatePageIndicator();
 			}
 		});
 
@@ -190,27 +200,27 @@ export default class EditorUI extends PageBase {
 			model: new ButtonArrowModel("RIGHT", true),
 			scaleOnHover: true,
 			onClick: () => {
-				console.log("RIGHT");
 				objectTabManager.getActiveTab().navigatePages(1);
+				this.updatePageIndicator();
 			}
 		});
 
+		this.pageIndicator = new UIElement(null, this.lowerContainer, {
+			position: "ABSOLUTE",
+			centerX: true,
+			floatY: "BOTTOM",
+			offsetY: "16px",
+			model: new ActivePageIndicatorModel(),
+		});
+
         this.selectObjectTab(objectTabManager.activeTab);
-
         this.setMode("BUILD");
+		this.updatePageIndicator();
 	}
 
-	getObjectTab(tabname) {
-		return objectTabManager.getTab(tabname);
-	}
-
-	getObjectNavTab(tabname) {
-		console.log(this.getObjectTab(tabname))
-		return this.getObjectTab(tabname).uiNavTab;
-	}
-
-	getObjectTabContainer(tabname) {
-		return this.getObjectTab(tabname).uiContainer;
+	updatePageIndicator() {
+		this.pageIndicator.model.itemCount = objectTabManager.getCurrentPageCount();
+		this.pageIndicator.model.activeItem = objectTabManager.getActiveTab().activePage;
 	}
 
     // "BUILD", "EDIT", or "DELETE"
@@ -225,7 +235,7 @@ export default class EditorUI extends PageBase {
 		objectTabManager.getActiveTabPage().visible = (mode === "BUILD");
 		this.objectPageLeft.visible = (mode === "BUILD");
 		this.objectPageRight.visible = (mode === "BUILD");
-        
+		objectTabManager.getActiveTab().pageIndicator.visible = (mode === "BUILD");
     }
 
     selectObjectTab(tabname) {
@@ -234,6 +244,7 @@ export default class EditorUI extends PageBase {
 		objectTabManager.getActiveTabPage().visible = false;
 		objectTabManager.getTab(tabname).getActivePage().visible = true;
         objectTabManager.activeTab = tabname;
+		this.updatePageIndicator();
     }
 
     toggleSwipe() {

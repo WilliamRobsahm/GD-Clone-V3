@@ -43,6 +43,10 @@ export class ObjectTabManager {
     getActivePageRows() {
         return this.getActiveTab().getActivePageRows();
     }
+
+    getCurrentPageCount() {
+        return this.getActiveTab().pages.length;
+    }
 }
 
 export const objectTabManager = new ObjectTabManager();

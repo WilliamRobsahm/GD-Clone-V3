@@ -34,6 +34,8 @@ export default class ObjectTab {
         this.getActivePage().visible = false;
         this.activePage = navigateThroughItems(this.activePage, d, this.pages.length);
         this.getActivePage().visible = true;
+
+        this.pageIndicator.activeItem = this.activePage;
     }
     
     getActivePage() {

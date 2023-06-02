@@ -1,6 +1,7 @@
 import API from "../../APIClient.js";
 import { colors } from "../../helpers/ColorHelper.js";
-import { applyProperties } from "../../helpers/helper.js";
+import { applyProperties, navigateThroughItems } from "../../helpers/helper.js";
+import { ActivePageIndicatorModel } from "../elements/models/ActivePageIndicator.js";
 import { ButtonArrowModel } from "../elements/models/ButtonArrow.js";
 import UIButton from "../elements/uiButton.js";
 import UIElement from "../elements/uiElement.js";
@@ -127,6 +128,16 @@ export class MainLevels extends PageBase {
         }
 
         this.pages.push(lastPageElements);
+
+        // Page indicator (That line of dots where one is white)
+        this.pageIndicator = new UIElement(this, this.mainContent, {
+            position: "ABSOLUTE",
+            centerX: true, centerY: true,
+            offsetY: "300px",
+            model: new ActivePageIndicatorModel(),
+        });
+        this.pageIndicator.model.itemCount = this.pages.length;
+
         this.switchPages(0);
     }
 
@@ -144,9 +155,8 @@ export class MainLevels extends PageBase {
         this.setPageVisibility(false);
 
         // Go to new page
-        this.activePage += pageScroll ?? 0;
-        if(this.activePage < 0) this.activePage += this.pages.length;
-        if(this.activePage >= this.pages.length) this.activePage -= this.pages.length ?? 1;
+        this.activePage = navigateThroughItems(this.activePage, pageScroll, this.pages.length);
+        this.pageIndicator.model.activeItem = this.activePage;
 
         // Load elements on new page
         this.setPageVisibility(true);
@@ -154,7 +164,6 @@ export class MainLevels extends PageBase {
 
     loadLevel(levelId) {
         this.menu.game.loadMainLevel(levelId);
-        
     }
 
     /**
