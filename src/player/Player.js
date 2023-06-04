@@ -101,19 +101,8 @@ export default class Player {
     }
 
     handleInput(input) {
-
         if(this.isAlive && this.dx !== 0)
             this.gamemode.handleInput(input);
-
-        // Show Hitboxes
-        if(input.getSingleKeyPress(config.controls.toggleShowHitboxes)) {
-            config.showHitboxes = !config.showHitboxes;
-        }
-            
-        // Show FPS
-        if(input.getSingleKeyPress(config.controls.toggleShowFPS)) {
-            config.showFPS = !config.showFPS;
-        }
     }
 
     /**
@@ -156,36 +145,35 @@ export default class Player {
     updateCollision(level) {
         if(!this.isAlive) return;
 
-        const chunks = level.getChunksInCollisionRange(this);
+        let collisionRange = level.getChunkCollisionRange(this);
+        const objects = level.getObjectsInChunkRange(collisionRange);
 
-        for(let i = 0; i < chunks.length; i++) {
+        const hazards = objects.filter(obj => obj.isHazard());
+        const solids = objects.filter(obj => obj.isSolid());
 
-            // Hazard objects
-            const hazardObjects = chunks[i].getHazardObjects();
-            for(let j = 0; j < hazardObjects.length; j++) {
-                if(Collision.overlapRect(this.outerHitbox, hazardObjects[j].hitbox)) {
-                    this.onDeath();
-                    return;
-                }
+        // Hazard objects
+        for(let j = 0; j < hazards.length; j++) {
+            if(Collision.overlapRect(this.outerHitbox, hazards[j].hitbox)) {
+                this.onDeath();
+                return;
+            }
+        }
+
+        // Solid objects
+        for(let j = 0; j < solids.length; j++) {
+            let obj = solids[j];
+
+            // Check if player is standing on object
+            if(Collision.objectFloorCollision(this, obj.hitbox)) {
+                this.grounded = true;
+                this.dy = 0;
+                this.y = (this.gravityMode == 1 ? obj.getY() : solids[j].getY2()) - this.getHeight();
             }
 
-            // Solid objects
-            const solidObjects = chunks[i].getSolidObjects();
-            for(let j = 0; j < solidObjects.length; j++) {
-                let obj = solidObjects[j];
-
-                // Check if player is standing on object
-                if(Collision.objectFloorCollision(this, obj.hitbox)) {
-                    this.grounded = true;
-                    this.dy = 0;
-                    this.y = (this.gravityMode == 1 ? obj.getY() : solidObjects[j].getY2()) - this.getHeight();
-                }
-
-                // Collision with inner hitbox
-                if(Collision.overlapRect(this.innerHitbox, obj.hitbox)) {
-                    this.onDeath();
-                    return;
-                }
+            // Collision with inner hitbox
+            if(Collision.overlapRect(this.innerHitbox, obj.hitbox)) {
+                this.onDeath();
+                return;
             }
         }
     }
@@ -271,10 +259,10 @@ export default class Player {
         ctx.fill();
         ctx.stroke();
         rotateCanvas(ctx, this.getCenterX(), this.getCenterY(), -this.rotationDeg);
-    }
 
-    renderHitbox() {
-        this.outerHitbox.render();
-        this.innerHitbox.render();
+        if(config.showHitboxes) {
+            this.outerHitbox.render();
+            this.innerHitbox.render();
+        }
     }
 }

@@ -1,4 +1,5 @@
 import ObjectHitbox from "../collision/ObjectHitbox.js";
+import config from "../game/config.js";
 import { colorChannels } from "../level/ColorChannelManager.js";
 import { GRID_SIZE } from "../misc/global.js";
 import Rect from "../misc/Rect.js";
@@ -74,6 +75,10 @@ export class Object extends Rect {
         let baseChannel = colorChannels.getChannel(this.baseChannelName);
         let detailChannel = colorChannels.getChannel(this.detailChannelName);
         this.model.render(this, baseChannel, detailChannel, this.scale);
+
+        if(config.showHitboxes && this.hitbox) {
+            this.hitbox.render();
+        }
     }
 }
 

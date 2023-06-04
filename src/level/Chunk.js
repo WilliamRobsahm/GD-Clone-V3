@@ -1,45 +1,17 @@
+import { GRID_SIZE } from "../misc/global.js";
 import PlayerCamera from "../player/Camera.js";
 
 export default class Chunk {
-    constructor(level, gridX, size) {
-        this.level = level;
+    constructor(gridX, size) {
         this.gridX = gridX;
         this.size = size;
-        this.objectList = []
-    }
-
-    // objectList stores the list index of all objects belonging to the chunk
-    add(index) {
-        this.objectList.push(index);
-    }
-
-    getHazardObjects() {
-        const hazardObjects = [];
-        this.objectList.forEach(objIndex => {
-            let obj = this.level.getObject(objIndex);
-            if(obj.isHazard()) {
-                hazardObjects.push(obj);
-            }
-        });
-        return hazardObjects;
-    }
-
-    getSolidObjects() {
-        const solidObjects = [];
-        this.objectList.forEach(objIndex => {
-            let obj = this.level.getObject(objIndex);
-            if(obj.isSolid()) {
-                solidObjects.push(obj);
-            }
-        });
-        return solidObjects;
     }
 
     // Return true if player is close enough to the chunk to check collision for all objects in it
     inCollisionRange(player) {
         let leeway = 32;
-        return (this.gridX + this.size) * 64 > player.getX() - leeway &&
-        this.gridX * 64 < player.getX() + player.getWidth() + leeway
+        return (this.gridX + this.size) * GRID_SIZE > player.getX() - leeway &&
+        this.gridX * GRID_SIZE < player.getX() + player.getWidth() + leeway
     }
 
     /**
@@ -49,24 +21,8 @@ export default class Chunk {
     inRenderingRange(camera) {
         // Gives one extra tile of leeway on both ends, 
         // to prevent any larger objects (like saws) from popping in/out of existance.
-        let leeway = 64;
-        return (this.gridX + this.size) * 64 > camera.getX() - leeway &&
-            this.gridX * 64 < camera.getX() + camera.getWidth() + leeway
-    }
-
-    /**
-     * Once I introduce object layering, this will have to be changed.
-     * @param {object} channels 
-     */
-    renderObjects(channels) {
-        for(let i = 0; i < this.objectList.length; i++) {
-            this.level.getObject(this.objectList[i]).render();
-        }
-    }
-
-    renderHitboxes() {
-        for(let i = 0; i < this.objectList.length; i++) {
-            this.level.getObject(this.objectList[i]).getHitbox()?.render();
-        }
+        let leeway = GRID_SIZE;
+        return (this.gridX + this.size) * GRID_SIZE > camera.getX() - leeway &&
+            this.gridX * GRID_SIZE < camera.getX() + camera.getWidth() + leeway
     }
 }

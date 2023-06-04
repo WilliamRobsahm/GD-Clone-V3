@@ -1,3 +1,4 @@
+import { GRID_SIZE } from "../misc/global.js";
 import { objectBuilder } from "../object/ObjectBuilder.js";
 import Chunk from "./Chunk.js";
 import { colorChannels } from "./ColorChannelManager.js";
@@ -82,6 +83,39 @@ export default class Level {
         return collidibleChunks;
     }
 
+    getChunkRenderingRange(camera) {
+        const chunks = [];
+        for(let i = 0; i < this.chunks.length; i++) {
+            if(this.chunks[i].inRenderingRange(camera)) chunks.push(i);
+        }
+        return {
+            c1: chunks[0],
+            c2: chunks[chunks.length - 1],
+        }
+    }
+
+    getChunkCollisionRange(player) {
+        const chunks = [];
+        for(let i = 0; i < this.chunks.length; i++) {
+            if(this.chunks[i].inCollisionRange(player)) chunks.push(i);
+        }
+        return {
+            c1: chunks[0],
+            c2: chunks[chunks.length - 1],
+        }
+    }
+
+    isValidRange(range) {
+        if(range.hasOwnProperty("c1") && range.hasOwnProperty("c2")) return true;
+        console.warn("Invalid range");
+        return false;
+    }
+
+    getObjectsInChunkRange(range) {
+        if(!this.isValidRange(range)) return [];
+        return this.objects.filter(obj => (obj.chunk >= range.c1 && obj.chunk <= range.c2));
+    }
+
     setFloorPosition(y) {
         this.floorY = y;
         this.background.floorY = y;
@@ -114,7 +148,7 @@ export default class Level {
         this.loadObjects(objectData);
 
         this.levelLength = this.findLength();
-        this.setupChunks(CHUNK_SIZE);
+        this.setupChunks();
         console.log(this.chunks);
     }
 
@@ -122,14 +156,25 @@ export default class Level {
         for(let i = 0; i < objectData.length; i++) {
             let data = objectData[i];
             let object = objectBuilder.createObject(data.name, 
-                (data.gx ? data.gx : 0),
-                (data.gy ? data.gy : 0),
-                (data.sx ? data.sx : 0),
-                (data.sy ? data.sy : 0),
-                (data.r ? data.r : 0),
+                (data.gx ?? 0), (data.gy ?? 0),
+                (data.sx ?? 0), (data.sy ?? 0),
+                (data.r ?? 0),
             );
             if(object) {
                 this.objects.push(object);
+            }
+        }
+    }
+
+    updateObjectChunk(index) {
+        let object = this.getObject(index);
+        let chunkIndex = this.getChunkIndex(object.getGridX());
+        object.setChunk(chunkIndex);
+
+        // If object is out of chunk range, new chunks are added.
+        if(chunkIndex >= this.chunks.length) {
+            while(this.chunks.length <= chunkIndex) {
+                this.addChunk();
             }
         }
     }
@@ -149,25 +194,24 @@ export default class Level {
         return levelLength;
     }
 
+    getChunkIndex(x) {
+        return Math.floor(x / CHUNK_SIZE);
+    }
+
+    addChunk() {
+        let gridX = this.chunks.length > 0 ? this.chunks[this.chunks.length - 1].gridX + CHUNK_SIZE : 0;
+        this.chunks.push(new Chunk(gridX, CHUNK_SIZE));
+    }
+
     /**
      * Create 'chunks' and assign objects to them.
      * A chunk is a collection of objects sharing a similar X position. 
      * Collision and rendering conditions are checked on each individual chunk instead of object, for performance reasons.
-     * 
-     * @param {number} chunkSize The width of each chunk in tiles
      */
-    setupChunks(chunkSize) {
-
-        // Create chunks
-        for(let x = 0; x <= this.getLength(); x += chunkSize) {
-            this.chunks.push(new Chunk(this, x, chunkSize));
-        }
-
+    setupChunks() {
         // Loop through all objects, and add them to the appropriate chunk
         for(let i = 0; i < this.objects.length; i++) {
-            let chunkIndex = Math.floor(this.getObject(i).getGridX() / 4);
-            this.chunks[chunkIndex].add(i);
-            this.getObject(i).setChunk(chunkIndex);
+            this.updateObjectChunk(i);
         }
     }
 
@@ -178,16 +222,11 @@ export default class Level {
 
     // Has to be reworked once object layers are added
     renderObjects(camera) {
-        let chunkList = this.getChunksInRenderingRange(camera);
-        chunkList.forEach(chunk => {
-            chunk.renderObjects();
+        let range = this.getChunkRenderingRange(camera);
+        let objects = this.getObjectsInChunkRange(range);
+        
+        objects.forEach(obj => {
+            obj.render();
         });
-    }
-
-    renderHitboxes(camera) {
-        let chunkList = this.getChunksInRenderingRange(camera);
-        chunkList.forEach(chunk => {
-            chunk.renderHitboxes();     
-        })
     }
 }

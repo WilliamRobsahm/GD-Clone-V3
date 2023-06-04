@@ -47,6 +47,8 @@ export class GameManager {
 
         fadeOverlay.update(physicsMultiplier);
 
+        this.handleInput();
+
         if(this.gameState == "MENU") {
             document.body.style.cursor = "default";
             this.menu.update(physicsMultiplier);
@@ -104,6 +106,19 @@ export class GameManager {
         });
     }
 
+    handleInput() {
+        // Show Hitboxes
+        if(input.getSingleKeyPress(config.controls.toggleShowHitboxes)) {
+            config.showHitboxes = !config.showHitboxes;
+            console.log("Hitbox mode " + (config.showHitboxes ? "ON" : "OFF"));
+        }
+            
+        // Show FPS
+        if(input.getSingleKeyPress(config.controls.toggleShowFPS)) {
+            config.showFPS = !config.showFPS;
+        }
+    }
+
     render() {
         
         const camera = this.gameState == "MENU" ? this.menu.getCamera() : 
@@ -130,10 +145,6 @@ export class GameManager {
             GameRenderer.renderGameBackground(this.level.background)
             GameRenderer.renderObject(this.player);
             GameRenderer.renderLevelObjects(this.level, camera);
-
-            // Render Hitboxes
-            if(config.showHitboxes)
-                GameRenderer.renderHitboxes(this.level, this.player, camera);
 
             GameRenderer.renderGameFloor(this.level.floor, camera, ctx);
 
