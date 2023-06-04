@@ -1,10 +1,10 @@
 import { input } from "../game/InputHandler.js";
 import { getDifference } from "../helpers/helper.js";
 import RenderHelper from "../helpers/RenderHelper.js";
-import { ctx } from "../misc/global.js";
+import { ctx, GRID_SIZE } from "../misc/global.js";
+import { objectBuilder } from "../object/ObjectBuilder.js";
 import Camera from "../player/Camera.js";
 import EditorUI from "./EditorUI.js";
-import ObjectTab from "./ObjectTab.js";
 import { objectTabManager } from "./ObjectTabManager.js";
 
 const GRID_BELOW_FLOOR = 0;
@@ -110,7 +110,9 @@ export default class Editor {
                 this.dragging = false;
             }
             else {
-                console.log(this.getMouseGridX(), this.getMouseGridY());
+                if(this.mode === "BUILD") {
+                    this.placeObject(this.getMouseGridX(), this.getMouseGridY());
+                }
             }
         }
 
@@ -148,18 +150,26 @@ export default class Editor {
     getMouseGridX() {
         let cx = this.camera.getX();
         let mx = input.getMouseX() / this.camera.zoom;
-        return Math.floor((cx + mx) / 64);
+        return Math.floor((cx + mx) / GRID_SIZE);
     }
 
     getMouseGridY() {
         let cy = this.camera.getY();
         let my = input.getMouseY() / this.camera.zoom;
-        return Math.floor(-(cy + my) / 64);
+        return Math.floor(-(cy + my) / GRID_SIZE);
+    }
+
+    placeObject(gridX, gridY) {
+        if(this.selectedObjectType === null) return;
+
+        let object = objectBuilder.createObject(this.selectedObjectType, gridX, gridY);
+        this.level.addObject(object);
     }
 
     render() {
         this.level.background.render(this.level.colors);
         this.renderGrid();
+        this.renderObjects();
         ctx.restore();
         this.UI.render();
     }
@@ -169,12 +179,12 @@ export default class Editor {
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
 
-        let firstVerticalLine = Math.floor(this.camera.getX() / 64);
-        let lastVerticalLine = Math.floor(this.camera.getX2() / 64);
-        let firstHorizontalLine = Math.floor((-this.camera.getY2() + this.level.floorY) / 64);
-        let lastHorizontalLine = Math.floor((-this.camera.getY() + this.level.floorY) / 64);
+        let firstVerticalLine = Math.floor(this.camera.getX() / GRID_SIZE);
+        let lastVerticalLine = Math.floor(this.camera.getX2() / GRID_SIZE);
+        let firstHorizontalLine = Math.floor((-this.camera.getY2() + this.level.floorY) / GRID_SIZE);
+        let lastHorizontalLine = Math.floor((-this.camera.getY() + this.level.floorY) / GRID_SIZE);
 
-        let maxY = this.level.floorY + GRID_BELOW_FLOOR * 64
+        let maxY = this.level.floorY + GRID_BELOW_FLOOR * GRID_SIZE
         let y1 = this.camera.getY() + 0.5;
         let y2 = Math.min(this.camera.getY2(), maxY) + 0.5;
         let x1 = Math.max(this.camera.getX(), 0) + 0.5;
@@ -182,18 +192,22 @@ export default class Editor {
         
         // Render vertical grid lines
         for(let i = Math.max(firstVerticalLine, 0); i <= lastVerticalLine; i++) {
-            RenderHelper.renderVerticalLine(ctx, i * 64 + 0.5, y1, y2);
+            RenderHelper.renderVerticalLine(ctx, i * GRID_SIZE + 0.5, y1, y2);
         }
 
         // Render horizontal grid lines
         for(let i = Math.max(firstHorizontalLine, -GRID_BELOW_FLOOR); i <= lastHorizontalLine; i++) {
-            RenderHelper.renderHorizontalLine(ctx, x1, x2, this.level.floorY - i * 64 + 0.5);
+            RenderHelper.renderHorizontalLine(ctx, x1, x2, this.level.floorY - i * GRID_SIZE + 0.5);
         }
 
         // Render white Lines
         ctx.strokeStyle = "white";
         RenderHelper.renderHorizontalLine(ctx, x1, x2, 0.5);
         RenderHelper.renderVerticalLine(ctx, 0.5, y1, Math.min(y2, 0.5));
+    }
+
+    renderObjects() {
+        this.level.renderObjects(this.camera);
     }
 }
 

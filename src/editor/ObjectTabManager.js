@@ -2,7 +2,7 @@ import ObjectTab from "./ObjectTab.js";
 
 const OBJECTS = {
     BLOCKS: [
-        "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block","default_block", "default_block", "default_block","default_block","default_block","default_block","default_block","default_block",
+        "default_block",
     ],
     PLATFORMS: [],
     SPIKES: [

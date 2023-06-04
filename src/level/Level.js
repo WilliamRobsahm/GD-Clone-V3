@@ -166,6 +166,12 @@ export default class Level {
         }
     }
 
+    addObject(object) {
+        this.objects.push(object);
+        let index = this.objects.length - 1;
+        this.updateObjectChunk(index);
+    }
+
     updateObjectChunk(index) {
         let object = this.getObject(index);
         let chunkIndex = this.getChunkIndex(object.getGridX());
