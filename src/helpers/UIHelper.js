@@ -56,4 +56,11 @@ export default class UIHelper {
         });
         return tallest;
     }
+
+    static swapVisibility(element1, element2) {
+        let e1v = element1.visible;
+        let e2v = element2.visible;
+        element1.setVisible(e2v);
+        element2.setVisible(e1v);
+    }
 }

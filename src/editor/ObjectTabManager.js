@@ -36,12 +36,8 @@ export class ObjectTabManager {
         return this.getTab(this.activeTab);
     }
 
-    getActiveTabPage() {
-        return this.getActiveTab().getActivePage().container;
-    }
-
-    getActivePageRows() {
-        return this.getActiveTab().getActivePage().rows;
+    getActivePage() {
+        return this.getActiveTab().getActivePage();
     }
 
     getCurrentPageCount() {

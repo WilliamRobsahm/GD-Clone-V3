@@ -211,6 +211,12 @@ export default class UIElement extends Rect {
         this.parent = parent;
     }
 
+    setVisible(v) {
+        if(typeof v !== "boolean") return;
+        this.visible = v;
+        this.recursiveUpdate();
+    }
+
     xFromAlignment(x, alignX = this.selfAlignX) {
         switch(alignX) {
             case "LEFT": return x;

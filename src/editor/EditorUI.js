@@ -266,17 +266,17 @@ export default class EditorUI extends PageBase {
         this.modeButtons[this.editor.mode].backgroundColor = { h: 180, s: 95, l: 40 };
 
         let isBuildMode = mode === "BUILD"
-		this.objectNavTabContainer.visible = isBuildMode;
-		objectTabManager.getActiveTabPage().visible = isBuildMode;
-		this.objectPageLeft.visible = isBuildMode;
-		this.objectPageRight.visible = isBuildMode;
+		this.objectNavTabContainer.setVisible(isBuildMode);
+		objectTabManager.getActivePage().container.setVisible(isBuildMode);
+		this.objectPageLeft.setVisible(isBuildMode);
+		this.objectPageRight.setVisible(isBuildMode);
     }
 
     selectObjectTab(tabname) {
       	objectTabManager.getActiveTab().uiNavTab.model.selected = false;
 		objectTabManager.getTab(tabname).uiNavTab.model.selected = true;
-		objectTabManager.getActiveTabPage().visible = false;
-		objectTabManager.getTab(tabname).getActivePage().container.visible = true;
+		objectTabManager.getActivePage().container.setVisible(false);
+		objectTabManager.getTab(tabname).getActivePage().container.setVisible(true);
         objectTabManager.activeTab = tabname;
 		this.updatePageIndicator();
     }

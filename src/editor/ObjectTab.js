@@ -1,4 +1,5 @@
 import { isValidListIndex, navigateThroughItems } from "../helpers/helper.js";
+import UIHelper from "../helpers/uiHelper.js";
 import ScrollableItemList from "../misc/ScrollableItemList.js";
 import { objectBuilder } from "../object/ObjectBuilder.js";
 
@@ -32,8 +33,7 @@ export default class ObjectTab {
 
     navigatePages(d) {
         let indexes = this.pages.shift(d);
-        this.getPage(indexes.previous).container.visible = false;
-        this.getPage(indexes.new).container.visible = true;
+        UIHelper.swapVisibility(this.getPage(indexes.previous).container, this.getPage(indexes.new).container);
     }
 
     getPage(index) {

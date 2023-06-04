@@ -169,8 +169,8 @@ export class MainLevels extends PageBase {
      */
     setPageVisibility(pageIndex, visibility) {
         let page = this.getPage(pageIndex);
-        if(this.isLastPage(pageIndex)) page.text.visible = visibility;
-        else page.container.visible = visibility;
+        if(this.isLastPage(pageIndex)) page.text.setVisible(visibility);
+        else page.container.setVisible(visibility);
     }
 
     /**
