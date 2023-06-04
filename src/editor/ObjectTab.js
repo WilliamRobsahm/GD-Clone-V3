@@ -1,4 +1,5 @@
 import { isValidListIndex, navigateThroughItems } from "../helpers/helper.js";
+import ScrollableItemList from "../misc/ScrollableItemList.js";
 import { objectBuilder } from "../object/ObjectBuilder.js";
 
 export default class ObjectTab {
@@ -8,8 +9,7 @@ export default class ObjectTab {
         this.objectList = [];
 
         this.uiNavTab = null;
-        this.pages = [];
-        this.activePage = 0;
+        this.pages = new ScrollableItemList();
 
         if(iconObjectName) 
             this.setIcon(iconObjectName);
@@ -31,19 +31,16 @@ export default class ObjectTab {
     }
 
     navigatePages(d) {
-        this.getActivePage().visible = false;
-        this.activePage = navigateThroughItems(this.activePage, d, this.pages.length);
-        this.getActivePage().visible = true;
+        let indexes = this.pages.shift(d);
+        this.getPage(indexes.previous).container.visible = false;
+        this.getPage(indexes.new).container.visible = true;
+    }
 
-        this.pageIndicator.activeItem = this.activePage;
+    getPage(index) {
+        return this.pages.getItem(index);
     }
     
     getActivePage() {
-        if(!isValidListIndex(this.pages, this.activePage)) return null;
-        return this.pages[this.activePage].container;
-    }
-
-    getActivePageRows() {
-        return this.pages[this.activePage].rows;
+        return this.pages.getActiveItem();
     }
 }

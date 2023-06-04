@@ -1,6 +1,7 @@
 import API from "../../APIClient.js";
 import { colors } from "../../helpers/ColorHelper.js";
 import { applyProperties, navigateThroughItems } from "../../helpers/helper.js";
+import ScrollableItemList from "../../misc/ScrollableItemList.js";
 import { ActivePageIndicatorModel } from "../elements/models/ActivePageIndicator.js";
 import { ButtonArrowModel } from "../elements/models/ButtonArrow.js";
 import UIButton from "../elements/uiButton.js";
@@ -20,10 +21,9 @@ export class MainLevels extends PageBase {
     }
 
     init() {
-        this.activePage = 0;
         this.mainContent.clearChildren();
         this.buttons = {};
-        this.pages = [];
+        this.pages = new ScrollableItemList();
 
         // ==========================
         //      DEFAULT ELEMENTS
@@ -111,7 +111,7 @@ export class MainLevels extends PageBase {
             props = this.getMergedProps({ progressPercentage: 10, barColor: { h: 200, s: 100, l: 50 } }, progressBarProps);
             pageElements.practiceModeBar = new UIProgressBar(this, pageElements.container, props);
 
-            this.pages.push(pageElements);
+            this.pages.addItem(pageElements);
         });
 
         // ==========================
@@ -127,22 +127,25 @@ export class MainLevels extends PageBase {
             })
         }
 
-        this.pages.push(lastPageElements);
+        this.pages.addItem(lastPageElements);
 
         // Page indicator (That line of dots where one is white)
         this.pageIndicator = new UIElement(this, this.mainContent, {
             position: "ABSOLUTE",
             centerX: true, centerY: true,
             offsetY: "300px",
-            model: new ActivePageIndicatorModel(),
+            model: new ActivePageIndicatorModel(this.pages),
         });
-        this.pageIndicator.model.itemCount = this.pages.length;
 
         this.switchPages(0);
     }
 
+    getPage(index) {
+        return this.pages.getItem(index);
+    }
+
     getActivePage() {
-        return this.pages[this.activePage];
+        return this.pages.getActiveItem();
     }
     
     /**
@@ -150,16 +153,9 @@ export class MainLevels extends PageBase {
      * @param {number} pageScroll Either 1 (right) or -1 (left) 
      */
     switchPages(pageScroll) {
-
-        // Hide all elements on currently active page
-        this.setPageVisibility(false);
-
-        // Go to new page
-        this.activePage = navigateThroughItems(this.activePage, pageScroll, this.pages.length);
-        this.pageIndicator.model.activeItem = this.activePage;
-
-        // Load elements on new page
-        this.setPageVisibility(true);
+        let indexes = this.pages.shift(pageScroll);
+        this.setPageVisibility(indexes.previous, false);
+        this.setPageVisibility(indexes.new, true);
     }
 
     loadLevel(levelId) {
@@ -167,20 +163,21 @@ export class MainLevels extends PageBase {
     }
 
     /**
-     * Set visibility on all elements on the currently active page to 'v'
-     * @param {boolean} v Element visibility on page
+     * Set visibility on all elements on the page to true/false
+     * @param {number} pageIndex Index of page
+     * @param {boolean} visibility Element visibility (true/false)
      */
-    setPageVisibility(v) {
-        let page = this.getActivePage();
-        if(this.onLastPage()) page.text.visible = v;
-        else page.container.visible = v;
+    setPageVisibility(pageIndex, visibility) {
+        let page = this.getPage(pageIndex);
+        if(this.isLastPage(pageIndex)) page.text.visible = visibility;
+        else page.container.visible = visibility;
     }
 
     /**
      * Return true if currently active page is the "coming soon" page
      */
-    onLastPage() {
-        return (this.activePage == this.pages.length - 1)
+    isLastPage(pageIndex) {
+        return (pageIndex == this.pages.getCount() - 1)
     }
 
     render() {
@@ -188,7 +185,7 @@ export class MainLevels extends PageBase {
 
         let col = { h: this.menu.backgroundHue, s: BG_SATURATION, l: BG_LIGHTNESS / 4 };
         this.backButton.backgroundColor = col;
-        if(!this.onLastPage()) {
+        if(!this.isLastPage(this.pages.activeItem)) {
             this.getActivePage().levelBox.backgroundColor = col;
             this.getActivePage().normalModeBar.backgroundColor = col;
             this.getActivePage().practiceModeBar.backgroundColor = col;

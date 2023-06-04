@@ -141,6 +141,14 @@ export default class EditorUI extends PageBase {
 
 		this.objectTypeSelectors = {};
 
+        this.pageIndicator = new UIElement(null, this.lowerContainer, {
+            position: "ABSOLUTE",
+            centerX: true,
+            floatY: "BOTTOM",
+            offsetY: "16px",
+            model: new ActivePageIndicatorModel(),
+        });
+
 		// Set up object tabs and navigation
         for(const tabname in objectTabManager.tabs) {
 
@@ -200,25 +208,14 @@ export default class EditorUI extends PageBase {
 					rowList.push(rowElement);
 				}
 
-				console.log(rowList);
-
 				pages.push({
 					container: container,
 					rows: rowList,
 				})
 			}
 
-			const indicator = new UIElement(null, this.lowerContainer, {
-				position: "ABSOLUTE",
-				centerX: true,
-				floatY: "BOTTOM",
-				offsetY: "16px",
-				model: new ActivePageIndicatorModel(pages.length),
-			});
-
 			tab.uiNavTab = navTabElement;
-			tab.pages = pages;
-			tab.pageIndicator = indicator;
+			tab.pages.setItems(pages);
         }
 
 		this.objectPageLeft = new UIButton(null, this.lowerContainer, {
@@ -257,8 +254,7 @@ export default class EditorUI extends PageBase {
 	}
 
 	updatePageIndicator() {
-		this.pageIndicator.model.itemCount = objectTabManager.getCurrentPageCount();
-		this.pageIndicator.model.activeItem = objectTabManager.getActiveTab().activePage;
+        this.pageIndicator.model.itemList = objectTabManager.getActiveTab().pages;
 	}
 
     // "BUILD", "EDIT", or "DELETE"
@@ -269,18 +265,18 @@ export default class EditorUI extends PageBase {
         this.editor.mode = mode;
         this.modeButtons[this.editor.mode].backgroundColor = { h: 180, s: 95, l: 40 };
 
-		this.objectNavTabContainer.visible = (mode === "BUILD");
-		objectTabManager.getActiveTabPage().visible = (mode === "BUILD");
-		this.objectPageLeft.visible = (mode === "BUILD");
-		this.objectPageRight.visible = (mode === "BUILD");
-		objectTabManager.getActiveTab().pageIndicator.visible = (mode === "BUILD");
+        let isBuildMode = mode === "BUILD"
+		this.objectNavTabContainer.visible = isBuildMode;
+		objectTabManager.getActiveTabPage().visible = isBuildMode;
+		this.objectPageLeft.visible = isBuildMode;
+		this.objectPageRight.visible = isBuildMode;
     }
 
     selectObjectTab(tabname) {
       	objectTabManager.getActiveTab().uiNavTab.model.selected = false;
 		objectTabManager.getTab(tabname).uiNavTab.model.selected = true;
 		objectTabManager.getActiveTabPage().visible = false;
-		objectTabManager.getTab(tabname).getActivePage().visible = true;
+		objectTabManager.getTab(tabname).getActivePage().container.visible = true;
         objectTabManager.activeTab = tabname;
 		this.updatePageIndicator();
     }

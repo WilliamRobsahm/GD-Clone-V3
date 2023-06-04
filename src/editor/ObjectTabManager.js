@@ -2,7 +2,7 @@ import ObjectTab from "./ObjectTab.js";
 
 const OBJECTS = {
     BLOCKS: [
-        "default_block",
+        "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block", "default_block","default_block", "default_block", "default_block","default_block","default_block","default_block","default_block","default_block",
     ],
     PLATFORMS: [],
     SPIKES: [
@@ -37,11 +37,11 @@ export class ObjectTabManager {
     }
 
     getActiveTabPage() {
-        return this.getActiveTab().getActivePage();
+        return this.getActiveTab().getActivePage().container;
     }
 
     getActivePageRows() {
-        return this.getActiveTab().getActivePageRows();
+        return this.getActiveTab().getActivePage().rows;
     }
 
     getCurrentPageCount() {
