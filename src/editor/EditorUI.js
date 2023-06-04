@@ -1,13 +1,15 @@
 import { colors } from "../helpers/ColorHelper.js";
+import { isValidListIndex } from "../helpers/helper.js";
 import { ActivePageIndicatorModel } from "../ui/elements/models/ActivePageIndicator.js";
 import { ButtonArrowModel } from "../ui/elements/models/ButtonArrow.js";
 import { ObjectNavTabModel } from "../ui/elements/models/ObjectNavTabModel.js";
+import { ObjectTypeSelectorModel } from "../ui/elements/models/ObjectTypeSelector.js";
 import UIButton from "../ui/elements/uiButton.js";
 import UIElement from "../ui/elements/uiElement.js";
 import PageBase from "../ui/pages/PageBase.js";
 import { objectTabManager } from "./ObjectTabManager.js";
 
-const OBJECTS_PER_ROW = 9;
+const OBJECTS_PER_ROW = 7;
 const OBJECT_ROW_COUNT = 2;
 const OBJECTS_PER_PAGE = OBJECTS_PER_ROW * OBJECT_ROW_COUNT;
 
@@ -137,6 +139,8 @@ export default class EditorUI extends PageBase {
             childSpacing: "20px",
         });
 
+		this.objectTypeSelectors = {};
+
 		// Set up object tabs and navigation
         for(const tabname in objectTabManager.tabs) {
 
@@ -150,21 +154,57 @@ export default class EditorUI extends PageBase {
                 }
             });
 
+			const getObjectTypeSelector = (rowElement, object) => {
+				return new UIButton(null, rowElement, {
+					width: OBJ_SELECTOR_SIZE, height: OBJ_SELECTOR_SIZE,
+					centerY: true,
+					model: new ObjectTypeSelectorModel(object, 0.8),
+					onClick: () => {
+						this.selectObjectType(object.name);
+					}
+				});
+			}
+
+
 			const pages = [];
-			for(let i = 0; i < 3; i++) {
+			let pageCount = Math.ceil(tab.objectList.length / OBJECTS_PER_PAGE);
+			if(pageCount == 0) pageCount = 1;
+
+			let objectIndex = 0;
+			for(let i = 0; i < pageCount; i++) {
 				let container = new UIElement(null, this.lowerContainer, {
 					width: OBJECT_CONTAINER_WIDTH + "px",
 					height: OBJECT_CONTAINER_HEIGHT + "px",
 					centerX: true, centerY: true,
 					backgroundColor: colors.black,
+					childAlign: "COLUMN",
 					visible: false,
-					text: `${tabname} ${i}`,
 				});
-				let rows = [];
+
+				const rowList = [];
+				
+				for(let y = 0; y < OBJECT_ROW_COUNT; y++) {
+					const rowElement = new UIElement(null, container, {
+						height: OBJECT_CONTAINER_HEIGHT / OBJECT_ROW_COUNT + "px",
+						childSpacing: OBJ_SELECTOR_MARGIN,
+						width: "100%",
+					});
+
+					for(let x = 0; x < OBJECTS_PER_ROW; x++) {
+						if(!isValidListIndex(tab.objectList, objectIndex)) break;
+						let object = tab.objectList[objectIndex];
+						this.objectTypeSelectors[object.name] = getObjectTypeSelector(rowElement, object);
+						objectIndex++;
+					}
+
+					rowList.push(rowElement);
+				}
+
+				console.log(rowList);
 
 				pages.push({
 					container: container,
-					rows: rows,
+					rows: rowList,
 				})
 			}
 
@@ -179,8 +219,6 @@ export default class EditorUI extends PageBase {
 			tab.uiNavTab = navTabElement;
 			tab.pages = pages;
 			tab.pageIndicator = indicator;
-
-			console.log(tab);
         }
 
 		this.objectPageLeft = new UIButton(null, this.lowerContainer, {
@@ -246,6 +284,15 @@ export default class EditorUI extends PageBase {
         objectTabManager.activeTab = tabname;
 		this.updatePageIndicator();
     }
+
+	selectObjectType(typeName) {
+		let prevType = this.editor.selectedObjectType;
+		if(prevType) {
+			this.objectTypeSelectors[prevType].model.selected = false; 
+		}
+		this.objectTypeSelectors[typeName].model.selected = true;
+		this.editor.selectedObjectType = typeName;
+	}
 
     toggleSwipe() {
         let color = this.editor.swipeMode ? { h: 90, s: 85, l: 40 } : { h: 180, s: 95, l: 40 };

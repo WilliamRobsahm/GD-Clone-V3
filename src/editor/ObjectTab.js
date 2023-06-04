@@ -1,4 +1,4 @@
-import { navigateThroughItems } from "../helpers/helper.js";
+import { isValidListIndex, navigateThroughItems } from "../helpers/helper.js";
 import { objectBuilder } from "../object/ObjectBuilder.js";
 
 export default class ObjectTab {
@@ -39,6 +39,7 @@ export default class ObjectTab {
     }
     
     getActivePage() {
+        if(!isValidListIndex(this.pages, this.activePage)) return null;
         return this.pages[this.activePage].container;
     }
 

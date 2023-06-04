@@ -41,8 +41,8 @@ export default class Editor {
         this.freeMoveMode = false;
         this.snapMode = false;
 
-        this.objectTabs = {};
-        this.activeTab;
+        this.selectedObjectType = null;
+
         this.setupObjectTabs();
 
         this.UI = new EditorUI(this);
