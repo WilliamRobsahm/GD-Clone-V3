@@ -5,7 +5,7 @@ import { ctx, GRID_SIZE } from "../misc/global.js";
 import { objectBuilder } from "../object/ObjectBuilder.js";
 import Camera from "../player/Camera.js";
 import EditorUI from "./EditorUI.js";
-import { objectTabManager } from "./ObjectTabManager.js";
+import { tabManager } from "./TabManager.js";
 
 const GRID_BELOW_FLOOR = 0;
 const ZOOM_DELTA = 0.05;
@@ -43,6 +43,7 @@ export default class Editor {
 
         this.selectedObjectType = null;
 
+        tabManager.initialize();
         this.setupObjectTabs();
 
         this.UI = new EditorUI(this);
@@ -56,7 +57,7 @@ export default class Editor {
     }
 
     setupObjectTabs() {
-        objectTabManager.initialize();
+        //objectTabManager.initialize();
     }
 
     getObjectTab(tabname) {
