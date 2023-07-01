@@ -1,5 +1,6 @@
 import { colors } from "../helpers/ColorHelper.js";
 import { isValidListIndex } from "../helpers/helper.js";
+import UIHelper from "../helpers/uiHelper.js";
 import { ActivePageIndicatorModel } from "../ui/elements/models/ActivePageIndicator.js";
 import { ButtonArrowModel } from "../ui/elements/models/ButtonArrow.js";
 import { EditButtonModel } from "../ui/elements/models/EditButtonModel.js";
@@ -8,8 +9,8 @@ import { ObjectTypeSelectorModel } from "../ui/elements/models/ObjectTypeSelecto
 import UIButton from "../ui/elements/uiButton.js";
 import UIElement from "../ui/elements/uiElement.js";
 import PageBase from "../ui/pages/PageBase.js";
-import { ButtonPage } from "./ButtonPage.js";
 import { tabManager } from "./TabManager.js";
+import { UIRowCollection } from "./uiRowCollection.js";
 
 const BUTTONS_PER_ROW = 7;
 const BUTTON_ROW_COUNT = 2;
@@ -208,96 +209,90 @@ export default class EditorUI extends PageBase {
 
     initializeObjectTabs() {
         
-
         const getObjectTypeSelector = (rowElement, object) => {
-            return new UIButton(null, rowElement, {
+            let btn = new UIButton(null, rowElement, {
                 width: BUTTON_SIZE, height: BUTTON_SIZE,
                 centerY: true,
                 model: new ObjectTypeSelectorModel(object, 0.8),
                 onClick: () => this.selectObjectType(object.name)
             });
+            this.objectTypeSelectors[object.name] = btn;
+            return btn;
+        }
+
+        const getContainer = () => {
+            return new UIElement(null, this.lowerContainer, CONTAINER_PROPS);
+        }
+
+        const getRow = (container) => {
+            return new UIElement(null, container, ROW_PROPS);
         }
 
         for(const tabname in tabManager.objectTabs) {
 
             const tab = tabManager.objectTabs[tabname];
 
-            const navTab = new UIButton(null, this.objectNavTabContainer, {
+            this.objectNavTabs[tabname] = new UIButton(null, this.objectNavTabContainer, {
                 height: "48px", width: "100px",
                 model: new ObjectNavTabModel(tab.iconObject),
                 onClick: () => this.selectObjectTab(tabname)
             });
-            
-			const pages = [];
-			let pageCount = Math.ceil(tab.objectList.length / BUTTONS_PER_PAGE);
-			if(pageCount == 0) pageCount = 1;
 
-			let objectIndex = 0;
-			for(let i = 0; i < pageCount; i++) {
-				const container = new UIElement(null, this.lowerContainer, CONTAINER_PROPS);
-
-				const rowList = [];
-				
-				for(let y = 0; y < BUTTON_ROW_COUNT; y++) {
-					const rowElement = new UIElement(null, container, ROW_PROPS);
-
-					for(let x = 0; x < BUTTONS_PER_ROW; x++) {
-						if(!isValidListIndex(tab.objectList, objectIndex)) break;
-						let object = tab.objectList[objectIndex];
-						this.objectTypeSelectors[object.name] = getObjectTypeSelector(rowElement, object);
-						objectIndex++;
-					}
-
-					rowList.push(rowElement);
-				}
-
-                pages.push(new ButtonPage(container, rowList));
-			}
-
-            this.objectNavTabs[tabname] = navTab;
-			tab.pages.setItems(pages);
+            let pageList = UIHelper.getFilledPageList({
+                itemsPerRow: BUTTONS_PER_ROW, 
+                rowsPerPage: BUTTON_ROW_COUNT,
+                itemData: tab.objectList, 
+                getItemFn: getObjectTypeSelector, 
+                getRowFn: getRow, 
+                getContainerFn: getContainer, 
+            });
+    
+			tab.pages.setItems(pageList);
         }
     }
 
     initializeEditButtons() {
-        const BUTTON_LIST = {
-            "moveLeft": () => { console.log("TODO Move selection left") },
-            "moveUp": () => { console.log("TODO Move selection up") },
-            "moveDown": () => { console.log("TODO Move selection down") },
-            "moveRight": () => { console.log("TODO Move selection right") },
-            "rotateCW": () => { console.log("TODO Rotate selection clockwise") },
-            "rotateCCW": () => { console.log("TODO Rotate selection counterclockwise") },
-        }
+        const BUTTON_LIST = [
+            {type: "moveLeft", fn: () => { console.log("TODO Move selection left") }},
+            {type: "moveUp", fn: () => { console.log("TODO Move selection up") }},
+            {type: "moveDown", fn: () => { console.log("TODO Move selection down") }},
+            {type: "moveRight", fn: () => { console.log("TODO Move selection right") }},
+            {type: "rotateCCW", fn: () => { console.log("TODO Rotate selection counterclockwise") }},
+            {type: "rotateCW", fn: () => { console.log("TODO Rotate selection clockwise") }},
+        ]
 
-        const getEditButton = (row, type) => {
-            return new UIButton(null, row, {
+        const getEditButton = (rowElement, data) => {
+            console.log(data);
+            const btn = new UIButton(null, rowElement, {
                 width: BUTTON_SIZE, height: BUTTON_SIZE,
                 centerY: true,
-                model: new EditButtonModel(type),
-                onClick: BUTTON_LIST[type]
-            })
+                model: new EditButtonModel(data.type),
+                onClick: data.fn
+            });
+            this.editBtns[data.type] = btn;
+            
+            return btn;
         }
 
-        const getNewContainer = () => {
+        const getContainer = () => {
             return new UIElement(null, this.lowerContainer, CONTAINER_PROPS);
         }
 
-        const getNewRow = () => {
-            return new UIElement(null, pageList[pageIndex].container, ROW_PROPS);
+        const getRow = (container) => {
+            return new UIElement(null, container, ROW_PROPS);
         }
 
-        let index = 0;
-        let rowIndex = 0;
-        let pageIndex = 0;
+        let pageList = UIHelper.getFilledPageList({
+            itemsPerRow: BUTTONS_PER_ROW, 
+            rowsPerPage: BUTTON_ROW_COUNT,
+            itemData: BUTTON_LIST, 
+            getItemFn: getEditButton, 
+            getRowFn: getRow, 
+            getContainerFn: getContainer, 
+        });
 
-        let pageList = [
-            new ButtonPage(getNewContainer(), [])
-        ];
-
-        let rowList = [
-            getNewRow()
-        ];
-        
+        tabManager.tabs["EDIT"].setItems(pageList);
+        /*
         for(const btnName in BUTTON_LIST) {
             console.log(btnName);
 
@@ -320,8 +315,7 @@ export default class EditorUI extends PageBase {
             this.editBtns[btnName] = btn;
             index++;
         }
-
-        tabManager.tabs["EDIT"].setItems(pageList);
+        */
     }
 
     navigatePages(n) {

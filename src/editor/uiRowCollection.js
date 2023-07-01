@@ -1,7 +1,7 @@
 import UIElement from "../ui/elements/uiElement.js";
 
 
-export class ButtonPage {
+export class UIRowCollection {
     /**
      * @param {UIElement} container 
      * @param {UIElement[]} rows 
